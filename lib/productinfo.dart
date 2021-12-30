@@ -365,6 +365,9 @@ class _ProductInfoState extends State<ProductInfo> {
                                       ),
                                     )
                                   )
+
+
+
                                   // GestureDetector(
                                   //   onTap: ()=>setState((){
                                   //     _descHeight==0.0?_descHeight=240.0:_descHeight=0.0;}),
