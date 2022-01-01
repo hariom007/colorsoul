@@ -1,4 +1,6 @@
 import 'package:colorsoul/appColors.dart';
+import 'package:expandable/expandable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
 
@@ -297,143 +299,60 @@ class _ProductInfoState extends State<ProductInfo> {
                               SizedBox(height: 10),
                               Padding(
                                 padding: EdgeInsets.only(left: 20,right: 20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      onTap: ()=>setState((){
-                                        _shadeHeight==0.0?_shadeHeight=50.0:_shadeHeight=0.0;}),
-                                      child:  Padding(
-                                        padding: EdgeInsets.only(bottom: 10),
-                                        child: Container(
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                "SHADE",
-                                                style: textStyle.copyWith(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: AppColors.black
-                                                ),
-                                              ),
-                                              Expanded(child: Container()),
-                                              _shadeHeight==0.0?Image.asset("assets/images/locater/down.png",width: 20,height: 20):Image.asset("assets/images/productsdata/up.png",width: 20,height: 20,color: AppColors.black)
-                                            ],
-                                          ),
-                                        ),
-                                      ),),
-                                    AnimatedContainer(duration: Duration(milliseconds: 120),
-                                      height: _shadeHeight,
-                                      width: width,
-                                      child: ColorAndSize2(),
+                                child: ExpandablePanel(
+                                  header: Padding(
+                                    padding: EdgeInsets.only(top: 8),
+                                    child: Text(
+                                      "SHADE",
+                                      style: textStyle.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.black
+                                      ),
                                     ),
-                                    AnimatedContainer(duration: Duration(milliseconds: 120),
-                                      height: _shadeHeight,
-                                      width: width,
-                                      child: ColorAndSize2(),
-                                    ),
-                                    AnimatedContainer(duration: Duration(milliseconds: 120),
-                                      height: _shadeHeight,
-                                      width: width,
-                                      child: ColorAndSize2(),
-                                    ),
-                                    AnimatedContainer(duration: Duration(milliseconds: 120),
-                                      height: _shadeHeight,
-                                      width: width,
-                                      child: ColorAndSize2(),
-                                    )
-                                  ],
+                                  ),
+                                  iconColor: AppColors.black,
+                                  expanded: Column(
+                                    children: [
+                                      ColorAndSize2(),
+                                      SizedBox(height: 10),
+                                      ColorAndSize2(),
+                                      SizedBox(height: 10),
+                                      ColorAndSize2(),
+                                      SizedBox(height: 10),
+                                      ColorAndSize2(),
+                                    ],
+                                  )
                                 ),
                               ),
                               Divider(
                                   color: Color.fromRGBO(185, 185, 185, 0.75),
                                   thickness: 2
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  ExpansionTile(
-                                    trailing: ,
-                                    title: Text(
+                              SizedBox(height: 10),
+                              Padding(
+                                padding: EdgeInsets.only(left: 20,right: 20),
+                                child: ExpandablePanel(
+                                  header: Padding(
+                                    padding: EdgeInsets.only(top: 8),
+                                    child: Text(
                                       "PRODUCT DESCRIPTION",
                                       style: textStyle.copyWith(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.black
                                       ),
-                                    )
-                                  )
-
-
-
-                                  // GestureDetector(
-                                  //   onTap: ()=>setState((){
-                                  //     _descHeight==0.0?_descHeight=240.0:_descHeight=0.0;}),
-                                  //   child:  Padding(
-                                  //     padding: EdgeInsets.only(bottom: 10),
-                                  //     child: Container(
-                                  //       child: Row(
-                                  //         children: [
-                                  //           Text(
-                                  //             "PRODUCT DESCRIPTION",
-                                  //             style: textStyle.copyWith(
-                                  //                 fontSize: 16,
-                                  //                 fontWeight: FontWeight.bold,
-                                  //                 color: AppColors.black
-                                  //             ),
-                                  //           ),
-                                  //           Expanded(child: Container()),
-                                  //           _descHeight==0.0?Image.asset("assets/images/locater/down.png",width: 20,height: 20):Image.asset("assets/images/productsdata/up.png",width: 20,height: 20,color: AppColors.black)
-                                  //         ],
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                  // AnimatedContainer(duration: Duration(milliseconds: 120),
-                                  //   height: _descHeight,
-                                  //   width: width,
-                                  //   child: ReadMoreText(
-                                  //     'DeBelle naturally enriched range of Gel Nail Lacquer. It gives a rich salon shine finish with good staying power and gives a very rich and elegant nails. Enriched with anti-oxidant rich seaweed extract, this gel nail polish helps to promote nail growth and to maintain healthy nails by preventing yellowing of nails.  nail polishes can be used in various nail art concepts. This Gel Nail Polish dries naturally. Paint away with 5 free Gel Nail Lacquer free from toxic chemicals. Get your professional manicure/pedicure right at the comfort of your home with DeBelle range of Gel Nail Lacquer. This nail polish shade is perfect summer nail shade.',
-                                  //     style: textStyle.copyWith(
-                                  //       fontSize: 15,
-                                  //       color: AppColors.black,
-                                  //     ),
-                                  //     trimLines: 5,
-                                  //     colorClickableText: Color(0xFF00A991),
-                                  //     trimMode: TrimMode.Line,
-                                  //     trimCollapsedText: 'More',
-                                  //     trimExpandedText: 'Less',
-                                  //     moreStyle: textStyle.copyWith(
-                                  //       fontSize: 15,
-                                  //       color: Color(0xFF00A991),
-                                  //       fontWeight: FontWeight.bold
-                                  //     )
-                                  //   ),
-                                  //   // child: RichText(
-                                  //   //   text: TextSpan(
-                                  //   //     children: [
-                                  //   //       TextSpan(
-                                  //   //         text: "DeBelle naturally enriched range of Gel Nail Lacquer. It gives a rich salon shine finish with good staying power and gives a very rich and elegant nails. Enriched with anti-oxidant rich seaweed extract, this gel nail polish helps to promote nail growth and to maintain healthy nails by preventing yellowing of nails.  nail polishes can be used in various nail art concepts. This Gel Nail Polish dries naturally. Paint away with 5 free Gel Nail Lacquer free from toxic chemicals. Get your professional manicure/pedicure right at the comfort of your home with DeBelle range of Gel Nail Lacquer. This nail polish shade is perfect summer nail shade that .... ",
-                                  //   //         style: textStyle.copyWith(
-                                  //   //           fontSize: 15,
-                                  //   //           color: AppColors.black,
-                                  //   //         )
-                                  //   //       ),
-                                  //   //       TextSpan(
-                                  //   //         text: "More",
-                                  //   //         style: textStyle.copyWith(
-                                  //   //           fontSize: 15,
-                                  //   //           color: Color(0xFF00A991),
-                                  //   //           fontWeight: FontWeight.bold
-                                  //   //         )
-                                  //   //       ),
-                                  //   //     ]
-                                  //   //   )
-                                  //   // )
-                                  // ),
-                                ],
+                                    ),
+                                  ),
+                                  iconColor: AppColors.black,
+                                  expanded: Text(
+                                    "DeBelle naturally enriched range of Gel Nail Lacquer. It gives a rich salon shine finish with good staying power and gives a very rich and elegant nails. Enriched with anti-oxidant rich seaweed extract, this gel nail polish helps to promote nail growth and to maintain healthy nails by preventing yellowing of nails.  nail polishes can be used in various nail art concepts. This Gel Nail Polish dries naturally. Paint away with 5 free Gel Nail Lacquer free from toxic chemicals. Get your professional manicure/pedicure right at the comfort of your home with DeBelle range of Gel Nail Lacquer. This nail polish shade is perfect summer nail shade.", softWrap: true,
+                                    style: textStyle.copyWith(
+                                      color: AppColors.black,
+                                      height: 1.4
+                                    ),
+                                  ),
+                                ),
                               ),
                               Divider(
                                 color: Color.fromRGBO(185, 185, 185, 0.75),
@@ -1013,7 +932,258 @@ class _ProductInfoState extends State<ProductInfo> {
                                           ),
                                           child: Image.asset("assets/images/productsdata/image6.png",width: 80,height: 80),
                                         ),
-                                        SizedBox(width: 15)
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "Very very dim and transparent even after applying 4 to 5 times. TAKES LONG to dry. Not worth. Looks really bad and ugly. And it's not even too cheap either. Like I've bought nai l polishes from normal shops around the same price and they look so much better.",
+                                      style: textStyle.copyWith(
+                                        color: AppColors.black,
+                                        height: 1.4
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Was this review helpful ?",
+                                          style: textStyle.copyWith(
+                                            color: AppColors.black,
+                                            fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        SizedBox(
+                                          height: 24,
+                                          width: 60,
+                                          child: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                  gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                                  borderRadius: round.copyWith()
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  Text(
+                                                    "17",
+                                                    style: textStyle.copyWith(),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(right: 4,bottom: 2),
+                                                    child: Image.asset("assets/images/productsdata/like.png",width: 14,height: 14),
+                                                  )
+                                                ],
+                                              )
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        SizedBox(
+                                          height: 24,
+                                          width: 60,
+                                          child: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                  gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                                  borderRadius: round.copyWith()
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  Text(
+                                                    "06",
+                                                    style: textStyle.copyWith(),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(right: 4,bottom: 2),
+                                                    child: Image.asset("assets/images/productsdata/dislike.png",width: 14,height: 14),
+                                                  )
+                                                ],
+                                              )
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Divider(
+                                  color: Color.fromRGBO(185, 185, 185, 0.75),
+                                  thickness: 2
+                              ),
+                              SizedBox(height: 10),
+                              Padding(
+                                padding: EdgeInsets.only(left: 20,right: 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                            radius: 24,
+                                            backgroundImage: AssetImage("assets/images/productsdata/person5.png")
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "Ruchira",
+                                          style: textStyle.copyWith(
+                                              color: AppColors.black,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          height: 24,
+                                          width: 60,
+                                          child: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                  gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                                  borderRadius: round.copyWith()
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  Text(
+                                                    "4.4",
+                                                    style: textStyle.copyWith(),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(right: 4,bottom: 2),
+                                                    child: Image.asset("assets/images/productsdata/star.png",width: 12,height: 12),
+                                                  )
+                                                ],
+                                              )
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "Worth every penny.",
+                                          style: textStyle.copyWith(
+                                              fontSize: 16,
+                                              color: AppColors.black,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 8),
+                                    Text(
+                                        "Reviewed in India on 12 October 2019"
+                                    ),
+                                    SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Image.asset("assets/images/productsdata/certified.png",width: 15,height: 15),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "Certified Buyer, Butibori",
+                                          style: textStyle.copyWith(
+                                              fontSize: 16,
+                                              color: AppColors.black,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(7),
+                                          decoration: BoxDecoration(
+                                              color: AppColors.white,
+                                              borderRadius: BorderRadius.only(
+                                                  bottomLeft: Radius.circular(10),
+                                                  bottomRight: Radius.circular(10),
+                                                  topRight: Radius.circular(10)
+                                              )
+                                          ),
+                                          child: Image.asset("assets/images/productsdata/image5.png",width: 80,height: 80),
+                                        ),
+                                        SizedBox(width: 15),
+                                        Container(
+                                          padding: EdgeInsets.all(7),
+                                          decoration: BoxDecoration(
+                                              color: AppColors.white,
+                                              borderRadius: BorderRadius.only(
+                                                  bottomLeft: Radius.circular(10),
+                                                  bottomRight: Radius.circular(10),
+                                                  topRight: Radius.circular(10)
+                                              )
+                                          ),
+                                          child: Image.asset("assets/images/productsdata/image6.png",width: 80,height: 80),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "Very very dim and transparent even after applying 4 to 5 times. TAKES LONG to dry. Not worth. Looks really bad and ugly. And it's not even too cheap either. Like I've bought nai l polishes from normal shops around the same price and they look so much better.",
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black,
+                                          height: 1.4
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "Was this review helpful ?",
+                                          style: textStyle.copyWith(
+                                              color: AppColors.black,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        SizedBox(
+                                          height: 24,
+                                          width: 60,
+                                          child: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                  gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                                  borderRadius: round.copyWith()
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  Text(
+                                                    "17",
+                                                    style: textStyle.copyWith(),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(right: 4,bottom: 2),
+                                                    child: Image.asset("assets/images/productsdata/like.png",width: 14,height: 14),
+                                                  )
+                                                ],
+                                              )
+                                          ),
+                                        ),SizedBox(width: 10),
+                                        SizedBox(
+                                          height: 24,
+                                          width: 60,
+                                          child: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                  gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                                  borderRadius: round.copyWith()
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  Text(
+                                                    "06",
+                                                    style: textStyle.copyWith(),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(right: 4,bottom: 2),
+                                                    child: Image.asset("assets/images/productsdata/dislike.png",width: 14,height: 14),
+                                                  )
+                                                ],
+                                              )
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ],
