@@ -96,7 +96,7 @@ class _DataState extends State<Data> {
             return;
           },
           child: SingleChildScrollView(
-            physics: NeverScrollableScrollPhysics(),
+            //physics: NeverScrollableScrollPhysics(),
             child: Column(
                 children: [
                   SizedBox(height: height*0.062),

@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.only(left: 10,right: 10),
             child: Column(
               children: [
-                SizedBox(height: height*0.04),
+                SizedBox(height: height*0.03),
                 Container(
                     alignment: Alignment.topRight,
                     child: TextButton(

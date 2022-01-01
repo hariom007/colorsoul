@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'appColors.dart';
 import 'location_card.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class Tasks extends StatefulWidget {
   const Tasks({Key key}) : super(key: key);
@@ -173,6 +174,7 @@ class _TasksState extends State<Tasks> {
                                   ),
                                   textAlign: TextAlign.center,
                                   style: textStyle.copyWith(
+                                    fontSize: 14,
                                     color: Colors.black
                                   ),
                                   focusNode: AlwaysDisabledFocusNode(),
@@ -199,7 +201,8 @@ class _TasksState extends State<Tasks> {
                                   ),
                                   textAlign: TextAlign.center,
                                   style: textStyle.copyWith(
-                                      color: Colors.black
+                                    fontSize: 14,
+                                    color: Colors.black
                                   ),
                                   focusNode: AlwaysDisabledFocusNode(),
                                   controller: _textEditingController2,
@@ -240,7 +243,8 @@ class _TasksState extends State<Tasks> {
                                   ),
                                   textAlign: TextAlign.center,
                                   style: textStyle.copyWith(
-                                      color: Colors.black
+                                    fontSize: 14,
+                                    color: Colors.black
                                   ),
                                   focusNode: AlwaysDisabledFocusNode(),
                                   controller: _textEditingController1,
@@ -266,7 +270,8 @@ class _TasksState extends State<Tasks> {
                                   ),
                                   textAlign: TextAlign.center,
                                   style: textStyle.copyWith(
-                                      color: Colors.black
+                                    fontSize: 14,
+                                    color: Colors.black
                                   ),
                                   focusNode: AlwaysDisabledFocusNode(),
                                   controller: _textEditingController2,
@@ -364,12 +369,14 @@ class _TasksState extends State<Tasks> {
 
     if (newSelectedDate != null) {
       _selectedDate = newSelectedDate;
+      initializeDateFormatting('es');
       _textEditingController1
-        ..text = DateFormat.yMMMd().format(_selectedDate)
+        ..text = DateFormat.yMd('es').format(_selectedDate)
         ..selection = TextSelection.fromPosition(TextPosition(
             offset: _textEditingController1.text.length,
-            affinity: TextAffinity.upstream)
-        );
+            affinity: TextAffinity.upstream
+        )
+      );
     }
   }
 

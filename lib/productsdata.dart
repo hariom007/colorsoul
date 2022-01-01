@@ -117,9 +117,10 @@ class _ProductsDataState extends State<ProductsData> {
                           borderRadius: round.copyWith(),
                           dropdownColor: AppColors.black,
                           style: textStyle.copyWith(
-                              fontSize: 14,
-                              color: AppColors.white,
-                              fontWeight: FontWeight.bold
+                            overflow: TextOverflow.ellipsis,
+                            fontSize: 14,
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold
                           ),
                           underline: SizedBox(),
                           items: [
@@ -133,11 +134,11 @@ class _ProductsDataState extends State<ProductsData> {
                             ),
                             DropdownMenuItem(
                                 value: "3",
-                                child: Text("Price - Low to High")
+                                child: Text("Low to High")
                             ),
                             DropdownMenuItem(
                                 value: "4",
-                                child: Text("Price - High to Low")
+                                child: Text("High to Low")
                             ),
                             DropdownMenuItem(
                                 value: "5",

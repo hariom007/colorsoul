@@ -6,6 +6,7 @@ import 'package:readmore/readmore.dart';
 
 import 'colorselect.dart';
 import 'components.dart';
+import 'preview.dart';
 
 
 class ProductInfo extends StatefulWidget {
@@ -23,8 +24,6 @@ class ProductInfo extends StatefulWidget {
 class _ProductInfoState extends State<ProductInfo> {
   int currentPage = 0;
   PageController _controller;
-  double _shadeHeight = 0.0;
-  double _descHeight = 0.0;
 
   @override
   void initState(){
@@ -149,23 +148,28 @@ class _ProductInfoState extends State<ProductInfo> {
                   ),
                 ),
                 Center(
-                  child: Hero(
-                      tag: widget.name,
-                      child: Container(
-                        height: height/2.4,
-                        child: PageView.builder(
-                            controller: _controller,
-                            onPageChanged: (value) {
-                              setState(() {
-                                currentPage = value;
-                              });
-                            },
-                            itemCount: ProductImg.length,
-                            itemBuilder: (context,index) => ProductContent(
-                                image: ProductImg[index]["image"],
-                            )
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Preview(imgname: widget.imgname)));
+                    },
+                    child: Hero(
+                        tag: widget.name,
+                        child: Container(
+                          height: height/2.4,
+                          child: PageView.builder(
+                              controller: _controller,
+                              onPageChanged: (value) {
+                                setState(() {
+                                  currentPage = value;
+                                });
+                              },
+                              itemCount: ProductImg.length,
+                              itemBuilder: (context,index) => ProductContent(
+                                  image: ProductImg[index]["image"],
+                              )
+                          ),
                         ),
-                      ),
+                    ),
                   ),
                 ),
                 SizedBox(height: 15),
