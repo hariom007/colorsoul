@@ -67,6 +67,50 @@ var fieldStyle1 = InputDecoration(
   )
 );
 
+var fieldStyle3 = InputDecoration(
+    hintStyle: TextStyle(fontSize: 15 ,color: Colors.white),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+          topRight: Radius.circular(30)
+      ),
+      borderSide: BorderSide(
+        color: AppColors.grey5,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+            topRight: Radius.circular(30)
+        ),
+        borderSide: BorderSide(
+          color: AppColors.grey5,
+        )
+    ),
+    errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+            topRight: Radius.circular(30)
+        ),
+        borderSide: BorderSide(
+          color: Colors.red,
+        )
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+            topRight: Radius.circular(30)
+        ),
+        borderSide: BorderSide(
+          color: Colors.red,
+        )
+    )
+);
+
 var decoration = BoxDecoration(
     gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2,AppColors.grey2]),
     borderRadius: round,

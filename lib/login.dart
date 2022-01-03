@@ -1,5 +1,6 @@
 import 'package:colorsoul/appColors.dart';
 import 'package:colorsoul/dashboard.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'components.dart';
 import 'forgot.dart';
@@ -26,7 +27,7 @@ class _LoginState extends State<Login> {
           height: height,
           decoration: BoxDecoration(
           image: DecorationImage(
-          image: AssetImage("assets/images/Flesh2.png"),
+          image: AssetImage("assets/images/Rectangle17.png"),
           fit: BoxFit.fill,
         )
        ),
@@ -38,152 +39,164 @@ class _LoginState extends State<Login> {
             child: SingleChildScrollView(
             child: Form(
               key: _formkey,
-              child: Stack(
+              child: Padding(
+                padding: EdgeInsets.only(top:45,right: 30,left: 30),
+                child: Column(
                   children: [
-                    Stack(
-                        children: [
-                          Padding(
-                              padding: EdgeInsets.only(bottom: 20),
-                              child: Image.asset('assets/images/upper.png')
+                    SizedBox(height: height*0.02),
+                    Image.asset('assets/images/Colorsoul_final-022(Traced).png',width: width/1.8,color: AppColors.black,),
+                    SizedBox(height: height*0.04),
+                    Image.asset('assets/images/Group668.png',width: width/1.8),
+                    SizedBox(height: height*0.05),
+                    Container(
+                      decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            center: Alignment.topLeft,
+                            focal: Alignment.centerLeft,
+                            radius: 4,
+                            colors: [
+                              AppColors.grey2,
+                              AppColors.grey4,
+                              AppColors.grey2,
+                            ],
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top:45,right: 30,left: 30),
-                            child: Column(
-                              children: [
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: Container(
-                                      height: 30,
-                                      width: 38,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2]),
-                                        borderRadius: round.copyWith()
-                                    ),
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                          elevation: 14,
-                                          primary: Colors.transparent,
-                                          shape: StadiumBorder()
-                                      ),
-                                      child: Text('!',
-                                        style: textStyle.copyWith(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: height*0.04),
-                                Image.asset('assets/images/Colorsoul_final-022(Traced).png',width: width-180),
-                                SizedBox(height: height*0.07),
-                                TextFormField(
-                                    controller: t1,
-                                    style: textStyle.copyWith(),
-                                    cursorColor: Colors.white,
-                                    textAlign: TextAlign.center,
-                                    decoration: fieldStyle.copyWith(
-                                        hintText: "Email / username",
-                                        isDense: true,
-
-                                    ),
-                                    validator: (String value) {
-                                      if(value.isEmpty)
-                                      {
-                                        return "Please enter Email";
-                                      }
-                                      else if(!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value))
-                                      {
-                                        return "Please enter a valid Email";
-                                      }
-                                      return null;
-                                    }
-                                ),
-                                SizedBox(height: height*0.03),
-                                TextFormField(
-                                    controller: t2,
-                                    obscureText: true,
-                                    style: textStyle.copyWith(),
-                                    cursorColor: Colors.white,
-                                    textAlign: TextAlign.center,
-                                    decoration: fieldStyle.copyWith(
-                                        hintText: "Password",
-                                        isDense: true
-                                    ),
-                                    validator: (String value) {
-
-                                      if(value.isEmpty)
-                                      {
-                                        return "Please enter Password";
-                                      }
-                                      return null;
-                                    }
-                                ),
-                                SizedBox(height: height*0.04),
-                                CheckBox(),
-                                SizedBox(height: height*0.01),
-                                TextButton(
-                                    onPressed: (){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Forgot()));
-                                    },
-                                    child: Text(
-                                        "Forgot Your Password?",
-                                        style: textStyle.copyWith()
-                                    )
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 30,
-                            left: 30,
-                            child: Container(
-                                height: 100,
-                                width: width-80,
-                                padding: EdgeInsets.only(top: 50),
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2,AppColors.grey2]),
-                                    borderRadius: round.copyWith(),
-                                    boxShadow: [new BoxShadow(
-                                    color: Color.fromRGBO(60, 57, 57, 0.8),
-                                    offset: Offset(0, 10),
-                                    blurRadius: 20,
-                                  )]
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      if(_formkey.currentState.validate())
-                                      {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
-                                      }
-                                      else
-                                      {
-                                        print("Error");
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      elevation: 14,
-                                      primary: Colors.transparent,
-                                      shape: StadiumBorder(),
-                                    ),
-                                    child: Text('Login',
-                                      style: textStyle.copyWith(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black
-                                      )
-                                    ),
-                                  ),
-                                )
-                            ),
-                          ),
+                          borderRadius: round.copyWith(),
+                          boxShadow: [new BoxShadow(
+                            color: Color.fromRGBO(0,0,0, 0.2),
+                            offset: Offset(0, 5),
+                            blurRadius: 5,
+                          )
                         ]
+                      ),
+                      child: TextFormField(
+                        controller: t1,
+                        style: textStyle.copyWith(
+                          color: AppColors.black
+                        ),
+                        cursorColor: AppColors.black,
+                        textAlign: TextAlign.center,
+                        decoration: fieldStyle3.copyWith(
+                          errorStyle: TextStyle(height: 0),
+                          hintText: "Email / username",
+                          hintStyle: textStyle.copyWith(
+                              color: AppColors.black
+                          ),
+                          isDense: true,
+                        ),
+                        validator: (String value) {
+                          if(value.isEmpty)
+                          {
+                            return "";
+                          }
+                          else if(!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value))
+                          {
+                            return "Please enter a valid Email";
+                          }
+                          return null;
+                        }
+                      ),
                     ),
+                    SizedBox(height: height*0.03),
+                    Container(
+                      decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            center: Alignment.topLeft,
+                            focal: Alignment.centerLeft,
+                            radius: 4,
+                            colors: [
+                              AppColors.grey2,
+                              AppColors.grey4,
+                              AppColors.grey2,
+                            ],
+                          ),
+                          borderRadius: round.copyWith(),
+                          boxShadow: [new BoxShadow(
+                            color: Color.fromRGBO(0,0,0, 0.2),
+                            offset: Offset(0, 5),
+                            blurRadius: 5,
+                          )
+                        ]
+                      ),
+                      child: TextFormField(
+                          controller: t2,
+                          obscureText: true,
+                          style: textStyle.copyWith(
+                            color: AppColors.black
+                          ),
+                          cursorColor: AppColors.black,
+                          textAlign: TextAlign.center,
+                          decoration: fieldStyle3.copyWith(
+                            hintStyle: textStyle.copyWith(
+                                color: AppColors.black
+                            ),
+                            errorStyle: TextStyle(height: 0),
+                            hintText: "Password",
+                            isDense: true
+                          ),
+                          validator: (String value) {
+
+                            if(value.isEmpty)
+                            {
+                              return "";
+                            }
+                            return null;
+                          }
+                      ),
+                    ),
+                    SizedBox(height: height*0.02),
+                    CheckBox(),
+                    TextButton(
+                        onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => Forgot()));
+                        },
+                        child: Text(
+                          "Forgot Your Password?",
+                          style: textStyle.copyWith(
+                            color: AppColors.black,
+                            fontWeight: FontWeight.bold
+                          )
+                        )
+                    ),
+                    Container(
+                      height: 50,
+                      width: width-80,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                          borderRadius: round.copyWith(),
+                          boxShadow: [new BoxShadow(
+                            color: Color.fromRGBO(0,0,0, 0.2),
+                            offset: Offset(0, 6),
+                            blurRadius: 3,
+                          )
+                        ]
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if(_formkey.currentState.validate())
+                          {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
+                          }
+                          else
+                          {
+                            print("Error");
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          elevation: 14,
+                          primary: Colors.transparent,
+                          shape: StadiumBorder(),
+                        ),
+                        child: Text('Login',
+                            style: textStyle.copyWith(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.white
+                            )
+                        ),
+                      ),
+                    )
                   ],
+                ),
               ),
             ),
           ),
@@ -208,10 +221,11 @@ class _CheckBoxState extends State<CheckBox> {
       children: <Widget>[
         Checkbox(
           side: BorderSide(
-            color: AppColors.white
+            color: AppColors.black
           ),
-          shape: StadiumBorder(),
-          activeColor: Colors.black,
+          //shape: StadiumBorder(),
+          activeColor: Colors.grey,
+          checkColor: AppColors.black,
           value: this.value,
           onChanged: (bool value) {
             setState(() {
@@ -220,8 +234,11 @@ class _CheckBoxState extends State<CheckBox> {
           },
         ),
         Text(
-            "Keep me Signed in",
-            style: textStyle.copyWith()
+            "Enables biometric access to Login",
+            style: textStyle.copyWith(
+              color: AppColors.black,
+              fontWeight: FontWeight.bold
+            )
         )
       ],
     );

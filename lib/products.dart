@@ -62,7 +62,7 @@ class _CalendarState extends State<Calendar> {
                           offset: Offset(0, 10),
                           blurRadius: 20,
                         )
-                        ]
+                      ]
                     ),
                     child: Row(
                       children: [
