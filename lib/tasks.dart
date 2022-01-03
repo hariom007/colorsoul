@@ -324,6 +324,7 @@ class _TasksState extends State<Tasks> {
                             ],
                           ),
                           ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
                             padding: EdgeInsets.only(top: 10),
                             shrinkWrap: true,
                             itemCount: LocationModel.location.length,

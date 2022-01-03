@@ -2,8 +2,6 @@ import 'package:colorsoul/appColors.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:readmore/readmore.dart';
-
 import 'colorselect.dart';
 import 'components.dart';
 import 'preview.dart';

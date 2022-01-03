@@ -81,6 +81,23 @@ class _DataState extends State<Data> {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.black,
+          leading: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Image.asset("assets/images/locater/menu.png"),
+          ),
+          title: Image.asset("assets/images/Colorsoul_final-022(Traced).png",height: 22),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: InkWell(
+                  onTap: (){},
+                  child: Image.asset("assets/images/locater/cart.png",height: 20)
+              ),
+            )
+          ],
+        ),
         body:Container(
           width: width,
           height: height,
@@ -96,28 +113,8 @@ class _DataState extends State<Data> {
             return;
           },
           child: SingleChildScrollView(
-            //physics: NeverScrollableScrollPhysics(),
             child: Column(
                 children: [
-                  SizedBox(height: height*0.062),
-                  Padding(
-                    padding: EdgeInsets.only(left: 20,right: 20),
-                    child: Row(
-                      children: [
-                        Image.asset("assets/images/locater/menu.png",width: 16),
-                        SizedBox(width: 37),
-                        Image.asset("assets/images/Colorsoul_final-022(Traced).png",height: 22),
-                        Expanded(
-                            child: Container()
-                        ),
-                        InkWell(
-                          onTap: (){},
-                          child: Image.asset("assets/images/locater/cart.png",height: 20)
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: height*0.03),
                   Container(
                     height: height/2.6,
                     child: GoogleMap(
@@ -218,9 +215,10 @@ class _DataState extends State<Data> {
                       return;
                     },
                     child: Container(
-                      height: height*0.36,
+                      //height: height*0.36,
                       padding: EdgeInsets.only(left: 15,right: 15,bottom: 50),
                       child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         padding: EdgeInsets.only(top: 10),
                         shrinkWrap: true,
                         itemCount: LocationModel1.location1.length,
