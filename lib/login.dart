@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'components.dart';
 import 'forgot.dart';
+import 'pin.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -174,7 +175,8 @@ class _LoginState extends State<Login> {
                         onPressed: () {
                           if(_formkey.currentState.validate())
                           {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
+                            // Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => Pin()));
                           }
                           else
                           {

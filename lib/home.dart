@@ -1,8 +1,6 @@
 import 'package:colorsoul/components.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'appColors.dart';
 
 class Home extends StatefulWidget {
@@ -13,7 +11,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
-    TabController _tabcontroller = new TabController(length: 4, vsync: this);
+    TabController _tabcontroller = new TabController(length: 3, vsync: this);
 
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
@@ -31,6 +29,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
           children: [
             SizedBox(height: height*0.05),
             ListTile(
+              leading: CircleAvatar(
+                  radius: 30,
+                  backgroundImage: AssetImage("assets/images/home/person.png")
+              ),
               title: Text(
                 "Hi Amit",
                 style: textStyle.copyWith(
@@ -52,16 +54,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                   ),
                 ],
               ),
-              trailing: CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage("assets/images/home/person.png")
-              ),
+              trailing: Image.asset("assets/images/bell.png",width: 24,height: 24),
             ),
-            SizedBox(height: height*0.03),
+            SizedBox(height: height*0.02),
             Padding(
               padding: EdgeInsets.only(left: 15,right: 15),
               child: Text(
-                "Let's be productive today!",
+                "Set Your Work Today!",
                 style: textStyle.copyWith(
                   fontSize: 22,
                   fontWeight: FontWeight.bold
@@ -99,7 +98,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                             )
                           ),
                           Text(
-                            "110 Notes",
+                            "110",
                             style: textStyle.copyWith(
                               fontSize: 13,
                               color: Colors.black
@@ -136,7 +135,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                               )
                           ),
                           Text(
-                            "35 Notes",
+                            "35",
                             style: textStyle.copyWith(
                               fontSize: 13,
                               color: Colors.black
@@ -173,7 +172,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                               )
                           ),
                           Text(
-                            "10 Notes",
+                            "10",
                             style: textStyle.copyWith(
                               fontSize: 13,
                               color: Colors.black
@@ -191,20 +190,82 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
             Container(
               padding: EdgeInsets.only(left: 15,right: 15),
               child: TabBar(
+                  labelPadding: EdgeInsets.only(left: 4,right: 4),
                   labelStyle: textStyle.copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.bold
                   ),
-                  isScrollable: true,
-
-                  indicatorSize: TabBarIndicatorSize.label,
+                  indicatorPadding: EdgeInsets.only(left: 4,right: 4,bottom: 2),
                   indicatorColor: AppColors.grey2,
+                  indicator: decoration.copyWith(
+                    gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                    boxShadow: [new BoxShadow(
+                      color: Color.fromRGBO(255,255,255, 0.2),
+                      offset: Offset(0, 5),
+                      blurRadius: 4,
+                    )]
+                  ),
                   controller: _tabcontroller,
                   tabs: [
-                    Tab(text:"Recent"),
-                    Tab(text:"Today"),
-                    Tab(text:"Upcoming"),
-                    Tab(text:"Notes")
+                    Tab(
+                      height: 30,
+                      child: Text('(28)',
+                        textAlign: TextAlign.center,
+                        style: textStyle.copyWith(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ),
+                    Tab(
+                      height: 30,
+                      child: Container(
+                        padding: EdgeInsets.only(top: 5),
+                        width: width,
+                        height: 30,
+                        decoration: decoration.copyWith(
+                            gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2,AppColors.grey2]),
+                              // : LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                            boxShadow: [new BoxShadow(
+                              color: Color.fromRGBO(0,0,0, 0.3),
+                              offset: Offset(0, 5),
+                              blurRadius: 6,
+                            )]
+                        ),
+                        child: Text('(10)',
+                          textAlign: TextAlign.center,
+                          style: textStyle.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.black
+                          ),
+                        ),
+                      )
+                    ),
+                    Tab(
+                      height: 30,
+                      child: Container(
+                        padding: EdgeInsets.only(top: 5),
+                        width: width,
+                        height: 30,
+                        decoration: decoration.copyWith(
+                            gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2,AppColors.grey2]),
+                            boxShadow: [new BoxShadow(
+                              color: Color.fromRGBO(0,0,0, 0.3),
+                              offset: Offset(0, 5),
+                              blurRadius: 6,
+                            )]
+                        ),
+                        child: Text('(09)',
+                          textAlign: TextAlign.center,
+                          style: textStyle.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.black
+                          ),
+                        ),
+                      )
+                    )
                 ]
               ),
             ),
@@ -258,12 +319,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                         style: textStyle.copyWith(
                             color: Colors.black
                         )
-                    ),
-                    Text("Page 4",
-                        style: textStyle.copyWith(
-                            color: Colors.black
-                        )
-                    ),
+                    )
                   ],
                 ),
               ),

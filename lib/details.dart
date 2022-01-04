@@ -391,8 +391,8 @@ class _DetailsState extends State<Details> {
                             width: width-30,
                             child: DecoratedBox(
                               decoration: BoxDecoration(
-                                  gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                  borderRadius: round.copyWith()
+                                gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                borderRadius: round.copyWith()
                               ),
                               child: ElevatedButton(
                                 onPressed: () {},
