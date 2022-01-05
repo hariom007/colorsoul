@@ -1,5 +1,6 @@
 import 'package:colorsoul/components.dart';
-import 'package:colorsoul/tasks.dart';
+import 'package:colorsoul/neworder.dart';
+import 'package:colorsoul/to_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -93,6 +94,9 @@ class _DashboardState extends State<Dashboard> {
                   )
               ),
             ),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => NewOrder()));
+            }
           ),
           SpeedDialChild(
             child: Image.asset("assets/images/home/home1.png",width: 20,height: 20),

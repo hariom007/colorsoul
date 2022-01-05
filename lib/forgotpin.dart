@@ -143,7 +143,7 @@ class _ForgotPinState extends State<ForgotPin> {
                           onChanged: (String value) {},
                         ),
                       ),
-                      SizedBox(height: height*0.16),
+                      SizedBox(height: height*0.13),
                       Container(
                         height: 50,
                         width: width-80,

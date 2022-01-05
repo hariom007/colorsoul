@@ -57,7 +57,7 @@ class _PinState extends State<Pin> {
                       fontSize: 24
                     ),
                   ),
-                  SizedBox(height: height*0.04),
+                  SizedBox(height: height*0.042),
                   Padding(
                     padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
                     child: PinCodeTextField(

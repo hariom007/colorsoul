@@ -93,6 +93,16 @@ class LocationCard extends StatelessWidget {
   }
 }
 
+// ListView.builder(
+//   physics: NeverScrollableScrollPhysics(),
+//   padding: EdgeInsets.only(top: 10),
+//   shrinkWrap: true,
+//   itemCount: LocationModel.location.length,
+//   itemBuilder: (context, index){
+//     return LocationCard(location: LocationModel.location[index]);
+//   },
+// ),
+
 class LocationCard1 extends StatelessWidget {
   final Location1 location1;
 
