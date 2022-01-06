@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:colorsoul/components.dart';
+import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'appColors.dart';
-import 'login.dart';
+import '../../Values/appColors.dart';
+import '../Login/login.dart';
 
 class Reset extends StatelessWidget {
 

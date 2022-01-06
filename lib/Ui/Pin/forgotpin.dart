@@ -1,9 +1,9 @@
-import 'package:colorsoul/login.dart';
+import 'package:colorsoul/Ui/Login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'appColors.dart';
-import 'components.dart';
+import '../../Values/appColors.dart';
+import '../../Values/components.dart';
 
 class ForgotPin extends StatefulWidget {
   const ForgotPin({Key key}) : super(key: key);

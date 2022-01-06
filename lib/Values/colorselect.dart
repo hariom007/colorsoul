@@ -1,5 +1,5 @@
-import 'package:colorsoul/appColors.dart';
-import 'package:colorsoul/components.dart';
+import 'package:colorsoul/Values/appColors.dart';
+import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 
 class ColorAndSize extends StatefulWidget {

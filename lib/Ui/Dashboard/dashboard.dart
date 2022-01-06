@@ -1,15 +1,14 @@
-import 'package:colorsoul/components.dart';
-import 'package:colorsoul/neworder.dart';
-import 'package:colorsoul/to_do.dart';
+import 'package:colorsoul/Values/components.dart';
+import 'package:colorsoul/Ui/Dashboard/NewOrder/neworder.dart';
+import 'package:colorsoul/Ui/Dashboard/ToDo/to_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'alert.dart';
-import 'appColors.dart';
+import 'Distributers/distributers.dart';
+import '../../Values/appColors.dart';
+import 'Products/products.dart';
+import '../../locater.dart';
+import 'Home/home.dart';
 import 'bottombar.dart';
-import 'products.dart';
-import 'locater.dart';
-import 'home.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -22,11 +21,10 @@ class _DashboardState extends State<Dashboard> {
 
    final pages = <Widget>[
     Home(),
-    Calendar(),
-    Alert(),
+    Distributors(),
+    Products(),
     Data(),
   ];
-
 
   @override
   Widget build(BuildContext context) {
@@ -45,21 +43,21 @@ class _DashboardState extends State<Dashboard> {
         animatedIcon: AnimatedIcons.add_event,
         children: [
           SpeedDialChild(
-              child: Padding(
-                padding: EdgeInsets.only(right: 2),
-                child: Image.asset("assets/images/home/TN.png",width: 26,height: 26),
+            child: Padding(
+              padding: EdgeInsets.only(right: 2),
+              child: Image.asset("assets/images/home/TN.png",width: 26,height: 26),
+            ),
+            labelWidget: Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: Text(
+                "Add Notes",
+                style: textStyle.copyWith(
+                  color: AppColors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold
+                )
               ),
-              labelWidget: Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: Text(
-                  "Add Notes",
-                  style: textStyle.copyWith(
-                    color: AppColors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold
-                  )
-                ),
-              ),
+            ),
           ),
           SpeedDialChild(
             child: Padding(

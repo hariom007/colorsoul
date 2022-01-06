@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'appColors.dart';
-import 'components.dart';
-import 'location.dart';
-import 'details.dart';
+import '../Values/appColors.dart';
+import '../Values/components.dart';
+import '../Model/location.dart';
+import '../details.dart';
 
 class LocationCard extends StatelessWidget {
   final Location location;
@@ -177,8 +177,8 @@ class LocationCard1 extends StatelessWidget {
                       Text(
                         "Direction",
                         style: textStyle.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.black
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.black
                         ),
                       )
                     ],

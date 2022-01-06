@@ -1,10 +1,10 @@
-import 'package:colorsoul/appColors.dart';
-import 'package:colorsoul/dashboard.dart';
+import 'package:colorsoul/Values/appColors.dart';
+import 'package:colorsoul/Ui/Dashboard/dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'components.dart';
-import 'forgot.dart';
-import 'pin.dart';
+import '../../Values/components.dart';
+import '../Forgot/forgot.dart';
+import '../Pin/pin.dart';
 
 class Login extends StatefulWidget {
   @override

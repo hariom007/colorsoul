@@ -1,9 +1,9 @@
-import 'package:colorsoul/appColors.dart';
+import 'package:colorsoul/Values/appColors.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'colorselect.dart';
-import 'components.dart';
+import '../../../Values/colorselect.dart';
+import '../../../Values/components.dart';
 import 'preview.dart';
 
 

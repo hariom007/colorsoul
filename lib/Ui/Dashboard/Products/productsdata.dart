@@ -1,9 +1,8 @@
-import 'package:colorsoul/productsfilter.dart';
+import 'package:colorsoul/Ui/Dashboard/Products/productsfilter.dart';
 import 'package:flutter/material.dart';
-
-import 'appColors.dart';
-import 'colorselect.dart';
-import 'components.dart';
+import '../../../Values/appColors.dart';
+import '../../../Values/colorselect.dart';
+import '../../../Values/components.dart';
 import 'productinfo.dart';
 
 class ProductsData extends StatefulWidget {

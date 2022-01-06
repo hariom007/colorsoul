@@ -1,8 +1,8 @@
-import 'package:colorsoul/components.dart';
-import 'package:colorsoul/reset.dart';
+import 'package:colorsoul/Values/components.dart';
+import 'package:colorsoul/Ui/Forgot/reset.dart';
 import 'package:flutter/material.dart';
 
-import 'appColors.dart';
+import '../../Values/appColors.dart';
 
 class Forgot extends StatefulWidget {
   @override

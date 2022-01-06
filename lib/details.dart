@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:colorsoul/components.dart';
-import 'package:colorsoul/location.dart';
+import 'package:colorsoul/Values/components.dart';
+import 'package:colorsoul/Model/location.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'appColors.dart';
-import 'location_card.dart';
+import 'Values/appColors.dart';
+import 'Provider/location_card.dart';
 
 class Details extends StatefulWidget {
   @override

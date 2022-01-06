@@ -1,8 +1,6 @@
+import 'package:colorsoul/Values/appColors.dart';
+import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
-
-import 'appColors.dart';
-import 'colorselect.dart';
-import 'components.dart';
 
 class ProductsFilter extends StatefulWidget {
   const ProductsFilter({Key key}) : super(key: key);

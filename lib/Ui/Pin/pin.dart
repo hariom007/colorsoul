@@ -1,11 +1,11 @@
-import 'package:colorsoul/components.dart';
-import 'package:colorsoul/forgotpin.dart';
+import 'package:colorsoul/Values/components.dart';
+import 'package:colorsoul/Ui/Pin/forgotpin.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-import 'appColors.dart';
-import 'dashboard.dart';
+import '../../Values/appColors.dart';
+import '../Dashboard/dashboard.dart';
 
 class Pin extends StatefulWidget {
   const Pin({Key key}) : super(key: key);

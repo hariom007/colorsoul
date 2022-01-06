@@ -1,4 +1,4 @@
-import 'package:colorsoul/appColors.dart';
+import 'package:colorsoul/Values/appColors.dart';
 import 'package:flutter/material.dart';
 
 class BottomBar extends StatefulWidget {
@@ -29,10 +29,10 @@ class _BottomBarState extends State<BottomBar> {
               )
           ),
           buildTabItem(index: 1, icon: Image.asset("assets/images/tab.png",height: 16)),
-          buildTabItem(index: 2, icon: Image.asset("assets/images/bell.png",height: 22)),
+          buildTabItem(index: 2, icon: Image.asset("assets/images/products.png",height: 18)),
           Padding(
               padding: EdgeInsets.only(right: 90),
-              child: buildTabItem(index: 3, icon: Image.asset("assets/images/location3.png",height: 20)
+              child: buildTabItem(index: 3, icon: Image.asset("assets/images/Group757.png",height: 18)
               )
           ),
         ],

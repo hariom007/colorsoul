@@ -1,9 +1,9 @@
-import 'package:colorsoul/components.dart';
+import 'package:colorsoul/Values/appColors.dart';
+import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'appColors.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class Tasks extends StatefulWidget {
