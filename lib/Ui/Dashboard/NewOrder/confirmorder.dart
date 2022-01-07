@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
@@ -429,6 +428,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                       isDense: true
                                     )
                                   ),
+                                  SizedBox(height: height*0.01),
                                 ],
                               ),
                             ),

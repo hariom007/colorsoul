@@ -38,8 +38,8 @@ class _AlertState extends State<Alert> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("assets/images/home/bell1.png",height: 150,width: 150),
-            SizedBox(height: 20),
+            Image.asset("assets/images/home/bell1.png",height: 120,width: 120),
+            SizedBox(height: 30),
             Text(
               "No Notification Yet",
               style: textStyle.copyWith(

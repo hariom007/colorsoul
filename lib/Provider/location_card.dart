@@ -1,3 +1,4 @@
+import 'package:colorsoul/Ui/Dashboard/NewOrder/location_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../Values/appColors.dart';
@@ -112,9 +113,9 @@ class LocationCard1 extends StatelessWidget {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     return Padding(
-      padding: EdgeInsets.only(bottom: 5),
+      padding: EdgeInsets.only(bottom: 10),
       child: Card(
-          elevation: 5,
+          elevation: 10,
           shape: RoundedRectangleBorder(
               borderRadius: round2.copyWith()
           ),
@@ -132,7 +133,7 @@ class LocationCard1 extends StatelessWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: height*0.01),
+                  SizedBox(height: height*0.012),
                   Row(
                     children: [
                       Image.asset("assets/images/tasks/location1.png",width: 15),
@@ -143,9 +144,8 @@ class LocationCard1 extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: textStyle.copyWith(
-                              fontSize: 13,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold
+                            fontSize: 14,
+                            color: Colors.black,
                           ),
                         ),
                       ),
@@ -153,42 +153,42 @@ class LocationCard1 extends StatelessWidget {
                   ),
                 ],
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Column(
-                    children: [
-                      Image.asset("assets/images/tasks/location2.png",width: 20),
-                      SizedBox(height: height*0.015),
-                      Text(
-                        location1.dist,
-                        style: textStyle.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.black
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(width: 20),
-                  Column(
-                    children: [
-                      Image.asset("assets/images/locater/direction.png",width: 22),
-                      SizedBox(height: height*0.015),
-                      Text(
-                        "Direction",
-                        style: textStyle.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.black
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
+              // trailing: Row(
+              //   mainAxisSize: MainAxisSize.min,
+              //   children: [
+              //     Column(
+              //       children: [
+              //         Image.asset("assets/images/tasks/location2.png",width: 20),
+              //         SizedBox(height: height*0.015),
+              //         Text(
+              //           location1.dist,
+              //           style: textStyle.copyWith(
+              //               fontWeight: FontWeight.bold,
+              //               color: AppColors.black
+              //           ),
+              //         )
+              //       ],
+              //     ),
+              //     SizedBox(width: 20),
+              //     Column(
+              //       children: [
+              //         Image.asset("assets/images/locater/direction.png",width: 22),
+              //         SizedBox(height: height*0.015),
+              //         Text(
+              //           "Direction",
+              //           style: textStyle.copyWith(
+              //             fontWeight: FontWeight.bold,
+              //             color: AppColors.black
+              //           ),
+              //         )
+              //       ],
+              //     ),
+              //   ],
+              // ),
               onTap: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Details()
+                    context,
+                    MaterialPageRoute(builder: (context) => LocationDetails()
                   )
                 );
               },

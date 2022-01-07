@@ -41,29 +41,24 @@ class Location1 {
 class LocationModel1{
   static final location1 = [
     Location1(
-        title: 'Shopper Stop',
-        add: 'Silicon Shoppers, F4, 1st Floor, ...',
-        dist: "3.6 Km"
+      title: 'Chandanvan society',
+      add: 'Silicon Shoppers, F4, 1st Floor, Udhna Main Road, udhna, Surat, Gujarat - 394210 (India)',
+        // dist: "3.6 Km"
     ),
     Location1(
-        title: 'Be Shopper Stop',
-        add: 'Silicon Shoppers, F4, 1st Floor, ...',
-        dist: "4.2 Km"
+      title: 'Udhna',
+      add: 'Silicon Shoppers, F4, 1st Floor, Udhna Main Road, udhna, Surat, Gujarat - 394210 (India)',
+        // dist: "4.2 Km"
     ),
     Location1(
-        title: 'Be Shopper Stop',
-        add: 'Silicon Shoppers, F4, 1st Floor, ...',
-        dist: "4.2 Km"
+      title: 'Udhna',
+      add: 'Udhna, Surat, Gujarat',
+        // dist: "4.2 Km"
     ),
     Location1(
-        title: 'Be Shopper Stop',
-        add: 'Silicon Shoppers, F4, 1st Floor, ...',
-        dist: "4.2 Km"
+      title: 'Udhna Railway Station',
+      add: 'Silicon Shoppers, F4, 1st Floor, Udhna Main Road, udhna, Surat, Gujarat - 394210 (India)',
+        // dist: "4.2 Km"
     ),
-    Location1(
-        title: 'Be Shopper Stop',
-        add: 'Silicon Shoppers, F4, 1st Floor, ...',
-        dist: "4.2 Km"
-    )
   ];
 }

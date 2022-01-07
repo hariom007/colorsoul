@@ -1,4 +1,5 @@
 import 'package:colorsoul/Ui/Dashboard/NewOrder/confirmorder.dart';
+import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:dropdown_below/dropdown_below.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -277,8 +278,12 @@ class _NewOrderState extends State<NewOrder> {
                                     style: textStyle.copyWith(
                                       color: AppColors.black
                                     ),
+                                    onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => LocationPage()));
+                                    },
                                     cursorColor: AppColors.black,
                                     cursorHeight: 22,
+                                    readOnly: true,
                                     decoration: fieldStyle1.copyWith(
                                       hintText: "Search Location",
                                       hintStyle: textStyle.copyWith(

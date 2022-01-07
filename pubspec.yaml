@@ -43,7 +43,7 @@ dependencies:
   pin_code_fields: ^7.3.0
   dropdown_below: ^1.0.3
   flutter_google_places: ^0.3.0
-  geocoder: ^0.2.1
+  geolocator: ^8.0.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -87,6 +87,7 @@ flutter:
     - assets/images/products/
     - assets/images/productsdata/
     - assets/images/neworder/
+    - assets/images/notes/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

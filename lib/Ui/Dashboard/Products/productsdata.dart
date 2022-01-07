@@ -96,10 +96,6 @@ class _ProductsDataState extends State<ProductsData> {
               padding: EdgeInsets.only(left: 20,right: 20),
               child: Row(
                 children: [
-                  Text(
-                    "Showing results 1-8"
-                  ),
-                  Expanded(child: Container()),
                   Container(
                       height: height*0.04,
                       width: width/2.8,
@@ -152,7 +148,7 @@ class _ProductsDataState extends State<ProductsData> {
                         ),
                       )
                   ),
-                  SizedBox(width: 10),
+                  Expanded(child: Container()),
                   InkWell(
                     onTap: (){
                       Navigator.push(
@@ -201,23 +197,11 @@ class _ProductsDataState extends State<ProductsData> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Stack(
-                                            children: [
-                                              InkWell(
-                                                onTap: (){
-                                                  setState(() {
-                                                    isFavorite =! isFavorite;
-                                                  });
-                                                },
-                                                child: isFavorite ? Icon(Icons.favorite, color: Colors.red) : Icon(Icons.favorite_border, color: Colors.black),
-                                              ),
-                                              Center(
-                                                child: Hero(
-                                                  tag: 'product1',
-                                                  child: Image.asset("assets/images/productsdata/nail-polish7.png",width: width/5)
-                                                ),
-                                              ),
-                                            ]
+                                          Center(
+                                            child: Hero(
+                                              tag: 'product1',
+                                              child: Image.asset("assets/images/productsdata/nail-polish7.png",width: width/5)
+                                            ),
                                           ),
                                           ColorAndSize(),
                                           SizedBox(height: 10),
@@ -244,38 +228,6 @@ class _ProductsDataState extends State<ProductsData> {
                                           SizedBox(height: 10),
                                           Row(
                                             children: [
-                                              SizedBox(
-                                                height: 24,
-                                                width: 50,
-                                                child: DecoratedBox(
-                                                  decoration: BoxDecoration(
-                                                      gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                      borderRadius: round.copyWith()
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                      Text(
-                                                        "4.4",
-                                                        style: textStyle.copyWith(),
-                                                      ),
-                                                      Image.asset("assets/images/productsdata/star.png",width: 10,height: 10)
-                                                    ],
-                                                  )
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Text(
-                                                "178",
-                                                style: textStyle.copyWith(
-                                                  color: AppColors.black,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
                                               Text(
                                                 "₹263",
                                                 style: textStyle.copyWith(
@@ -293,39 +245,7 @@ class _ProductsDataState extends State<ProductsData> {
                                                   decoration: TextDecoration.lineThrough
                                                 ),
                                               ),
-                                              Expanded(child: Container()),
-                                              Text(
-                                                "10% off",
-                                                style: textStyle.copyWith(
-                                                  color: Colors.red,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
                                             ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          SizedBox(
-                                            height: 30,
-                                            child: DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                  gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                  borderRadius: round.copyWith()
-                                              ),
-                                              child: ElevatedButton(
-                                                onPressed: () {},
-                                                style: ElevatedButton.styleFrom(
-                                                    elevation: 10,
-                                                    primary: Colors.transparent,
-                                                    shape: StadiumBorder()
-                                                ),
-                                                child: Text('+ ADD TO CART',
-                                                  textAlign: TextAlign.center,
-                                                  style: textStyle.copyWith(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                            )
                                           ),
                                         ],
                                       ),
@@ -357,21 +277,9 @@ class _ProductsDataState extends State<ProductsData> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Stack(
-                                              children: [
-                                                InkWell(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      isFavorite =! isFavorite;
-                                                    });
-                                                  },
-                                                  child: isFavorite ? Icon(Icons.favorite, color: Colors.red) : Icon(Icons.favorite_border, color: Colors.black),
-                                                ),
-                                                Hero(
-                                                  tag: 'product2',
-                                                  child: Center(child: Image.asset("assets/images/productsdata/nail-polish8.png",width: width/3))
-                                                ),
-                                              ]
+                                          Hero(
+                                            tag: 'product2',
+                                            child: Center(child: Image.asset("assets/images/productsdata/nail-polish8.png",width: width/3))
                                           ),
                                           SizedBox(height: 5),
                                           ColorAndSize(),
@@ -399,38 +307,6 @@ class _ProductsDataState extends State<ProductsData> {
                                           SizedBox(height: 10),
                                           Row(
                                             children: [
-                                              SizedBox(
-                                                height: 24,
-                                                width: 50,
-                                                child: DecoratedBox(
-                                                    decoration: BoxDecoration(
-                                                        gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                        borderRadius: round.copyWith()
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      children: [
-                                                        Text(
-                                                          "4.4",
-                                                          style: textStyle.copyWith(),
-                                                        ),
-                                                        Image.asset("assets/images/productsdata/star.png",width: 10,height: 10)
-                                                      ],
-                                                    )
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Text(
-                                                "178",
-                                                style: textStyle.copyWith(
-                                                  color: AppColors.black,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
                                               Text(
                                                 "₹263",
                                                 style: textStyle.copyWith(
@@ -448,40 +324,9 @@ class _ProductsDataState extends State<ProductsData> {
                                                     decoration: TextDecoration.lineThrough
                                                 ),
                                               ),
-                                              Expanded(child: Container()),
-                                              Text(
-                                                "10% off",
-                                                style: textStyle.copyWith(
-                                                  color: Colors.red,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
                                             ],
                                           ),
-                                          SizedBox(height: 10),
-                                          SizedBox(
-                                              height: 30,
-                                              child: DecoratedBox(
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                    borderRadius: round.copyWith()
-                                                ),
-                                                child: ElevatedButton(
-                                                  onPressed: () {},
-                                                  style: ElevatedButton.styleFrom(
-                                                      elevation: 10,
-                                                      primary: Colors.transparent,
-                                                      shape: StadiumBorder()
-                                                  ),
-                                                  child: Text('+ ADD TO CART',
-                                                    textAlign: TextAlign.center,
-                                                    style: textStyle.copyWith(
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                          ),
+                                          SizedBox(height: 4),
                                         ],
                                       ),
                                     ),
@@ -518,23 +363,11 @@ class _ProductsDataState extends State<ProductsData> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Stack(
-                                              children: [
-                                                InkWell(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      isFavorite =! isFavorite;
-                                                    });
-                                                  },
-                                                  child: isFavorite ? Icon(Icons.favorite, color: Colors.red) : Icon(Icons.favorite_border, color: Colors.black),
-                                                ),
-                                                Center(
-                                                  child: Hero(
-                                                      tag: 'product3',
-                                                      child: Image.asset("assets/images/productsdata/nail-polish7.png",width: width/5)
-                                                  ),
-                                                ),
-                                              ]
+                                          Center(
+                                            child: Hero(
+                                                tag: 'product3',
+                                                child: Image.asset("assets/images/productsdata/nail-polish7.png",width: width/5)
+                                            ),
                                           ),
                                           ColorAndSize(),
                                           SizedBox(height: 10),
@@ -561,38 +394,6 @@ class _ProductsDataState extends State<ProductsData> {
                                           SizedBox(height: 10),
                                           Row(
                                             children: [
-                                              SizedBox(
-                                                height: 24,
-                                                width: 50,
-                                                child: DecoratedBox(
-                                                    decoration: BoxDecoration(
-                                                        gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                        borderRadius: round.copyWith()
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      children: [
-                                                        Text(
-                                                          "4.4",
-                                                          style: textStyle.copyWith(),
-                                                        ),
-                                                        Image.asset("assets/images/productsdata/star.png",width: 10,height: 10)
-                                                      ],
-                                                    )
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Text(
-                                                "178",
-                                                style: textStyle.copyWith(
-                                                  color: AppColors.black,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
                                               Text(
                                                 "₹263",
                                                 style: textStyle.copyWith(
@@ -610,39 +411,7 @@ class _ProductsDataState extends State<ProductsData> {
                                                     decoration: TextDecoration.lineThrough
                                                 ),
                                               ),
-                                              Expanded(child: Container()),
-                                              Text(
-                                                "10% off",
-                                                style: textStyle.copyWith(
-                                                  color: Colors.red,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
                                             ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          SizedBox(
-                                              height: 30,
-                                              child: DecoratedBox(
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                    borderRadius: round.copyWith()
-                                                ),
-                                                child: ElevatedButton(
-                                                  onPressed: () {},
-                                                  style: ElevatedButton.styleFrom(
-                                                      elevation: 10,
-                                                      primary: Colors.transparent,
-                                                      shape: StadiumBorder()
-                                                  ),
-                                                  child: Text('+ ADD TO CART',
-                                                    textAlign: TextAlign.center,
-                                                    style: textStyle.copyWith(
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
                                           ),
                                         ],
                                       ),
@@ -674,21 +443,9 @@ class _ProductsDataState extends State<ProductsData> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Stack(
-                                              children: [
-                                                InkWell(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      isFavorite =! isFavorite;
-                                                    });
-                                                  },
-                                                  child: isFavorite ? Icon(Icons.favorite, color: Colors.red) : Icon(Icons.favorite_border, color: Colors.black),
-                                                ),
-                                                Hero(
-                                                    tag: 'product4',
-                                                    child: Center(child: Image.asset("assets/images/productsdata/nail-polish8.png",width: width/3))
-                                                ),
-                                              ]
+                                          Hero(
+                                              tag: 'product4',
+                                              child: Center(child: Image.asset("assets/images/productsdata/nail-polish8.png",width: width/3))
                                           ),
                                           SizedBox(height: 5),
                                           ColorAndSize(),
@@ -716,38 +473,6 @@ class _ProductsDataState extends State<ProductsData> {
                                           SizedBox(height: 10),
                                           Row(
                                             children: [
-                                              SizedBox(
-                                                height: 24,
-                                                width: 50,
-                                                child: DecoratedBox(
-                                                    decoration: BoxDecoration(
-                                                        gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                        borderRadius: round.copyWith()
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      children: [
-                                                        Text(
-                                                          "4.4",
-                                                          style: textStyle.copyWith(),
-                                                        ),
-                                                        Image.asset("assets/images/productsdata/star.png",width: 10,height: 10)
-                                                      ],
-                                                    )
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Text(
-                                                "178",
-                                                style: textStyle.copyWith(
-                                                  color: AppColors.black,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
                                               Text(
                                                 "₹263",
                                                 style: textStyle.copyWith(
@@ -765,40 +490,9 @@ class _ProductsDataState extends State<ProductsData> {
                                                     decoration: TextDecoration.lineThrough
                                                 ),
                                               ),
-                                              Expanded(child: Container()),
-                                              Text(
-                                                "10% off",
-                                                style: textStyle.copyWith(
-                                                  color: Colors.red,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
                                             ],
                                           ),
-                                          SizedBox(height: 10),
-                                          SizedBox(
-                                              height: 30,
-                                              child: DecoratedBox(
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                    borderRadius: round.copyWith()
-                                                ),
-                                                child: ElevatedButton(
-                                                  onPressed: () {},
-                                                  style: ElevatedButton.styleFrom(
-                                                      elevation: 10,
-                                                      primary: Colors.transparent,
-                                                      shape: StadiumBorder()
-                                                  ),
-                                                  child: Text('+ ADD TO CART',
-                                                    textAlign: TextAlign.center,
-                                                    style: textStyle.copyWith(
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                          ),
+                                          SizedBox(height: 4),
                                         ],
                                       ),
                                     ),
@@ -809,58 +503,7 @@ class _ProductsDataState extends State<ProductsData> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
-                      Stack(
-                        children: [
-                          Image.asset("assets/images/productsdata/image4.png",width: width),
-                          Positioned(
-                            left: 50,
-                            right: 50,
-                            bottom: 60,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Color.fromRGBO(255,255,255, 0.5),
-                                  borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10),
-                                      topRight: Radius.circular(10)
-                                  )
-                              ),
-                              child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: "Up to",
-                                      style: textStyle.copyWith(
-                                        fontSize: 20,
-                                        color: AppColors.black,
-                                        fontWeight: FontWeight.bold
-                                      )
-                                    ),
-                                    TextSpan(
-                                      text: " 20% ",
-                                      style: textStyle.copyWith(
-                                        fontSize: 20,
-                                        color: Colors.pink,
-                                        fontWeight: FontWeight.bold
-                                      )
-                                    ),
-                                    TextSpan(
-                                      text: "OFF + Free Green Tea Moisturizer (₹263) on ₹263",
-                                      style: textStyle.copyWith(
-                                        fontSize: 20,
-                                        color: AppColors.black,
-                                        fontWeight: FontWeight.bold
-                                      )
-                                    )
-                                  ]
-                                )
-                              )
-                            ),
-                          )
-                        ]
-                      ),
+                      SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -886,23 +529,11 @@ class _ProductsDataState extends State<ProductsData> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Stack(
-                                              children: [
-                                                InkWell(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      isFavorite =! isFavorite;
-                                                    });
-                                                  },
-                                                  child: isFavorite ? Icon(Icons.favorite, color: Colors.red) : Icon(Icons.favorite_border, color: Colors.black),
-                                                ),
-                                                Center(
-                                                  child: Hero(
-                                                      tag: 'product5',
-                                                      child: Image.asset("assets/images/productsdata/nail-polish7.png",width: width/5)
-                                                  ),
-                                                ),
-                                              ]
+                                          Center(
+                                            child: Hero(
+                                                tag: 'product5',
+                                                child: Image.asset("assets/images/productsdata/nail-polish7.png",width: width/5)
+                                            ),
                                           ),
                                           ColorAndSize(),
                                           SizedBox(height: 10),
@@ -929,38 +560,6 @@ class _ProductsDataState extends State<ProductsData> {
                                           SizedBox(height: 10),
                                           Row(
                                             children: [
-                                              SizedBox(
-                                                height: 24,
-                                                width: 50,
-                                                child: DecoratedBox(
-                                                    decoration: BoxDecoration(
-                                                        gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                        borderRadius: round.copyWith()
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      children: [
-                                                        Text(
-                                                          "4.4",
-                                                          style: textStyle.copyWith(),
-                                                        ),
-                                                        Image.asset("assets/images/productsdata/star.png",width: 10,height: 10)
-                                                      ],
-                                                    )
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Text(
-                                                "178",
-                                                style: textStyle.copyWith(
-                                                  color: AppColors.black,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
                                               Text(
                                                 "₹263",
                                                 style: textStyle.copyWith(
@@ -978,39 +577,7 @@ class _ProductsDataState extends State<ProductsData> {
                                                     decoration: TextDecoration.lineThrough
                                                 ),
                                               ),
-                                              Expanded(child: Container()),
-                                              Text(
-                                                "10% off",
-                                                style: textStyle.copyWith(
-                                                  color: Colors.red,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
                                             ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          SizedBox(
-                                              height: 30,
-                                              child: DecoratedBox(
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                    borderRadius: round.copyWith()
-                                                ),
-                                                child: ElevatedButton(
-                                                  onPressed: () {},
-                                                  style: ElevatedButton.styleFrom(
-                                                      elevation: 10,
-                                                      primary: Colors.transparent,
-                                                      shape: StadiumBorder()
-                                                  ),
-                                                  child: Text('+ ADD TO CART',
-                                                    textAlign: TextAlign.center,
-                                                    style: textStyle.copyWith(
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
                                           ),
                                         ],
                                       ),
@@ -1042,21 +609,9 @@ class _ProductsDataState extends State<ProductsData> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Stack(
-                                              children: [
-                                                InkWell(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      isFavorite =! isFavorite;
-                                                    });
-                                                  },
-                                                  child: isFavorite ? Icon(Icons.favorite, color: Colors.red) : Icon(Icons.favorite_border, color: Colors.black),
-                                                ),
-                                                Hero(
-                                                    tag: 'product6',
-                                                    child: Center(child: Image.asset("assets/images/productsdata/nail-polish8.png",width: width/3))
-                                                ),
-                                              ]
+                                          Hero(
+                                              tag: 'product6',
+                                              child: Center(child: Image.asset("assets/images/productsdata/nail-polish8.png",width: width/3))
                                           ),
                                           SizedBox(height: 5),
                                           ColorAndSize(),
@@ -1084,38 +639,6 @@ class _ProductsDataState extends State<ProductsData> {
                                           SizedBox(height: 10),
                                           Row(
                                             children: [
-                                              SizedBox(
-                                                height: 24,
-                                                width: 50,
-                                                child: DecoratedBox(
-                                                    decoration: BoxDecoration(
-                                                        gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                        borderRadius: round.copyWith()
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      children: [
-                                                        Text(
-                                                          "4.4",
-                                                          style: textStyle.copyWith(),
-                                                        ),
-                                                        Image.asset("assets/images/productsdata/star.png",width: 10,height: 10)
-                                                      ],
-                                                    )
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Text(
-                                                "178",
-                                                style: textStyle.copyWith(
-                                                  color: AppColors.black,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
                                               Text(
                                                 "₹263",
                                                 style: textStyle.copyWith(
@@ -1133,40 +656,9 @@ class _ProductsDataState extends State<ProductsData> {
                                                     decoration: TextDecoration.lineThrough
                                                 ),
                                               ),
-                                              Expanded(child: Container()),
-                                              Text(
-                                                "10% off",
-                                                style: textStyle.copyWith(
-                                                  color: Colors.red,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
                                             ],
                                           ),
-                                          SizedBox(height: 10),
-                                          SizedBox(
-                                              height: 30,
-                                              child: DecoratedBox(
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                                    borderRadius: round.copyWith()
-                                                ),
-                                                child: ElevatedButton(
-                                                  onPressed: () {},
-                                                  style: ElevatedButton.styleFrom(
-                                                      elevation: 10,
-                                                      primary: Colors.transparent,
-                                                      shape: StadiumBorder()
-                                                  ),
-                                                  child: Text('+ ADD TO CART',
-                                                    textAlign: TextAlign.center,
-                                                    style: textStyle.copyWith(
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                          ),
+                                          SizedBox(height: 4),
                                         ],
                                       ),
                                     ),

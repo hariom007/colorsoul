@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'Distributers/distributers.dart';
 import '../../Values/appColors.dart';
+import 'Notes/notes.dart';
 import 'Products/products.dart';
 import '../../locater.dart';
 import 'Home/home.dart';
@@ -58,6 +59,9 @@ class _DashboardState extends State<Dashboard> {
                 )
               ),
             ),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddNotes()));
+            }
           ),
           SpeedDialChild(
             child: Padding(
@@ -76,7 +80,7 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Tasks()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ToDo()));
             }
           ),
           SpeedDialChild(

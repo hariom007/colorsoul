@@ -98,22 +98,18 @@ class _ProductsState extends State<Products> {
                   SizedBox(height: height*0.062),
                   Padding(
                     padding: EdgeInsets.only(left: 20,right: 20),
-                    child: Row(
-                      children: [
-                        Image.asset("assets/images/locater/menu.png",width: 16),
-                        SizedBox(width: 37),
-                        Image.asset("assets/images/Colorsoul_final-022(Traced).png",height: 22),
-                        Expanded(
-                            child: Container()
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Product List",
+                        style: textStyle.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold
                         ),
-                        InkWell(
-                            onTap: (){},
-                            child: Image.asset("assets/images/locater/cart.png",height: 20)
-                        )
-                      ],
-                    ),
+                      ),
+                    )
                   ),
-                  SizedBox(height: height*0.03),
+                  SizedBox(height: height*0.02),
                   Container(
                     height: 50,
                     width: width-30,
@@ -135,7 +131,7 @@ class _ProductsState extends State<Products> {
                                 cursorColor: AppColors.black,
                                 cursorHeight: 24,
                                 decoration: InputDecoration(
-                                    hintText: "Search Location",
+                                    hintText: "Search Product",
                                     hintStyle: textStyle.copyWith(
                                         color: AppColors.black
                                     ),
@@ -169,7 +165,7 @@ class _ProductsState extends State<Products> {
                                         primary: Colors.transparent,
                                         shape: StadiumBorder()
                                     ),
-                                    child: Image.asset("assets/images/products/search1.png",width: 24,)
+                                    child: Image.asset("assets/images/products/search1.png",width: 20)
                                 ),
                               )
                           )
@@ -178,25 +174,6 @@ class _ProductsState extends State<Products> {
                     ),
                   ),
                   SizedBox(height: height*0.03),
-                  Padding(
-                    padding: EdgeInsets.only(left: 20,right: 20),
-                    child: Row(
-                      children: [
-                        Image.asset("assets/images/products/design1.png",height: 25),
-                        SizedBox(width: 5),
-                        Text(
-                          "BEST SELLERS",
-                          style: textStyle.copyWith(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        Image.asset("assets/images/products/design2.png",height: 25),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
                   Expanded(
                     child: Container(
                         padding: EdgeInsets.only(left: 10,right: 10),
