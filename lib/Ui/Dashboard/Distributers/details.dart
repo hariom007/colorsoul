@@ -1,13 +1,7 @@
-import 'dart:async';
-
 import 'package:colorsoul/Values/components.dart';
-import 'package:colorsoul/Model/location.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import 'Values/appColors.dart';
-import 'Provider/location_card.dart';
+import '../../../Values/appColors.dart';
 
 class Details extends StatefulWidget {
   @override
@@ -49,16 +43,27 @@ class _DetailsState extends State<Details> {
         appBar: AppBar(
           backgroundColor: AppColors.black,
           leading: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Image.asset("assets/images/locater/menu.png"),
+            padding: EdgeInsets.all(20),
+            child: InkWell(
+              onTap: (){
+                Navigator.pop(context);
+              },
+              child: Image.asset("assets/images/tasks/back.png")
+            ),
           ),
-          title: Image.asset("assets/images/Colorsoul_final-022(Traced).png",height: 22),
+          title: Text(
+            "Be Shoppers Stop",
+            style: textStyle.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 24
+            ),
+          ),
           actions: [
             Padding(
               padding: const EdgeInsets.all(18.0),
               child: InkWell(
                   onTap: (){},
-                  child: Image.asset("assets/images/locater/cart.png",height: 20)
+                  child: Image.asset("assets/images/details/menu1.png",height: 20)
               ),
             )
           ],
@@ -95,38 +100,18 @@ class _DetailsState extends State<Details> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(20),
-                    child: Column(
+                    child: Row(
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Be Shoppers Stop",
-                              style: textStyle.copyWith(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold
-                              ),
-                            ),
-                            Expanded(child: Container()),
-                            InkWell(
-                              child: Image.asset("assets/images/details/menu1.png",height: 20,width: 20,)
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Image.asset("assets/images/details/location5.png",height: 20,width: 20),
-                            SizedBox(width: 10),
-                            Flexible(
-                              child: Text(
-                                'Silicon Shoppers, F4, 1st Floor, Udhna Main Road, udhna, Surat, Gujarat - 394210 (India)',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: textStyle.copyWith(),
-                              ),
-                            )
-                          ],
-                        ),
+                        Image.asset("assets/images/details/location5.png",height: 20,width: 20),
+                        SizedBox(width: 10),
+                        Flexible(
+                          child: Text(
+                            'Silicon Shoppers, F4, 1st Floor, Udhna Main Road, udhna, Surat, Gujarat - 394210 (India)',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: textStyle.copyWith(),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -152,7 +137,7 @@ class _DetailsState extends State<Details> {
                         Row(
                           children: [
                             Text(
-                              "Today",
+                              "Person Name",
                               style: textStyle.copyWith(
                                   color: AppColors.black,
                                   fontSize: 15
@@ -160,7 +145,7 @@ class _DetailsState extends State<Details> {
                             ),
                             Expanded(child: Container()),
                             Text(
-                              "Open Until 9:00 PM",
+                              "Sagar Sham",
                               style: textStyle.copyWith(
                                   color: AppColors.black,
                                   fontWeight: FontWeight.bold,
@@ -194,7 +179,7 @@ class _DetailsState extends State<Details> {
                         Row(
                           children: [
                             Text(
-                              "Distance",
+                              "Tel.",
                               style: textStyle.copyWith(
                                   color: AppColors.black,
                                   fontSize: 15
@@ -202,37 +187,7 @@ class _DetailsState extends State<Details> {
                             ),
                             Expanded(child: Container()),
                             Text(
-                              "3.6 Km Away",
-                              style: textStyle.copyWith(
-                                  color: AppColors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Text(
-                          "Working Hours",
-                          style: textStyle.copyWith(
-                              color: AppColors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Text(
-                              "Monday",
-                              style: textStyle.copyWith(
-                                  color: AppColors.black,
-                                  fontSize: 15
-                              ),
-                            ),
-                            Expanded(child: Container()),
-                            Text(
-                              "10:00 AM - 9:00 PM",
+                              "0261 66622616",
                               style: textStyle.copyWith(
                                   color: AppColors.black,
                                   fontWeight: FontWeight.bold,
@@ -245,7 +200,7 @@ class _DetailsState extends State<Details> {
                         Row(
                           children: [
                             Text(
-                              "Tuesday",
+                              "Store Timings",
                               style: textStyle.copyWith(
                                   color: AppColors.black,
                                   fontSize: 15
@@ -253,7 +208,7 @@ class _DetailsState extends State<Details> {
                             ),
                             Expanded(child: Container()),
                             Text(
-                              "10:00 AM - 9:00 PM",
+                              "9:00 AM - 10:00 PM",
                               style: textStyle.copyWith(
                                   color: AppColors.black,
                                   fontWeight: FontWeight.bold,
@@ -266,7 +221,7 @@ class _DetailsState extends State<Details> {
                         Row(
                           children: [
                             Text(
-                              "Wednesday",
+                              "Bussiness Type",
                               style: textStyle.copyWith(
                                   color: AppColors.black,
                                   fontSize: 15
@@ -274,91 +229,7 @@ class _DetailsState extends State<Details> {
                             ),
                             Expanded(child: Container()),
                             Text(
-                              "10:00 AM - 9:00 PM",
-                              style: textStyle.copyWith(
-                                  color: AppColors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Text(
-                              "Thursday",
-                              style: textStyle.copyWith(
-                                  color: AppColors.black,
-                                  fontSize: 15
-                              ),
-                            ),
-                            Expanded(child: Container()),
-                            Text(
-                              "10:00 AM - 9:00 PM",
-                              style: textStyle.copyWith(
-                                  color: AppColors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Text(
-                              "Friday",
-                              style: textStyle.copyWith(
-                                  color: AppColors.black,
-                                  fontSize: 15
-                              ),
-                            ),
-                            Expanded(child: Container()),
-                            Text(
-                              "10:00 AM - 9:00 PM",
-                              style: textStyle.copyWith(
-                                  color: AppColors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Text(
-                              "Saturday",
-                              style: textStyle.copyWith(
-                                  color: AppColors.black,
-                                  fontSize: 15
-                              ),
-                            ),
-                            Expanded(child: Container()),
-                            Text(
-                              "10:00 AM - 9:00 PM",
-                              style: textStyle.copyWith(
-                                  color: AppColors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Text(
-                              "Sunday",
-                              style: textStyle.copyWith(
-                                  color: AppColors.black,
-                                  fontSize: 15
-                              ),
-                            ),
-                            Expanded(child: Container()),
-                            Text(
-                              "Off",
+                              "Cosmetic Shop",
                               style: textStyle.copyWith(
                                   color: AppColors.black,
                                   fontWeight: FontWeight.bold,
@@ -382,6 +253,110 @@ class _DetailsState extends State<Details> {
                             Card(
                               elevation: 10,
                               child: Image.asset("assets/images/details/image3.png",width: width/4)
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Stack(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(40, 10, 20, 10),
+                                width: width/1.2,
+                                height: 110,
+                                decoration: BoxDecoration(
+                                  borderRadius: round.copyWith(),
+                                  border: Border.all(
+                                      color: AppColors.black
+                                  )
+                                ),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Good Storage",
+                                        style: textStyle.copyWith(
+                                          color: AppColors.black,
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                      Text(
+                                        "sit amet, consectetur adipiscing elit. Tellus odio tincidunt lacus lorem mi arcu quisque risus. Etiam malesuada justo sem donec malesuada et. ",
+                                        style: textStyle.copyWith(
+                                          color: AppColors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Container(
+                                height: 40,
+                                width: 50,
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                    borderRadius: round2.copyWith()
+                                ),
+                                child: Image.asset("assets/images/locater/message.png"),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Stack(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(40, 10, 20, 10),
+                                width: width/1.2,
+                                height: 110,
+                                decoration: BoxDecoration(
+                                    borderRadius: round.copyWith(),
+                                    border: Border.all(
+                                        color: AppColors.black
+                                    )
+                                ),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Good Storage",
+                                        style: textStyle.copyWith(
+                                            color: AppColors.black,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                      Text(
+                                        "sit amet, consectetur adipiscing elit. Tellus odio tincidunt lacus lorem mi arcu quisque risus. Etiam malesuada justo sem donec malesuada et. ",
+                                        style: textStyle.copyWith(
+                                          color: AppColors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Container(
+                                height: 40,
+                                width: 50,
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                    borderRadius: round2.copyWith()
+                                ),
+                                child: Image.asset("assets/images/locater/message.png"),
+                              ),
                             ),
                           ],
                         ),

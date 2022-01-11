@@ -8,4 +8,15 @@ abstract class AppColors{
   static const grey4 = Color(0xFFDBDBDB);
   static const grey5 = Color(0xFFC9C9C9);
   static const black = Color(0xFF000000);
+  static const pink1 = Color(0xFFF7ACD2);
+  static const pink2 = Color(0xFFFF86EC);
+  static const green1 = Color(0xFFD5FF7C);
+  static const green2 = Color(0xFF76FFAD);
+  static const blue4 = Color(0xFF8DF8FF);
+  static const blue1 = Color(0xFFAEFFF5);
+  static const blue2 = Color(0xFFADC9FF);
+  static const blue3 = Color(0xFF7B78FF);
+  static const purple = Color(0xFFAC79FF);
+  static const gold = Color(0xFFFFED90);
+  static const orange = Color(0xFFFFCB7C);
 }

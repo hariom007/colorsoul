@@ -4,7 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import '../Values/appColors.dart';
 import '../Values/components.dart';
 import '../Model/location.dart';
-import '../details.dart';
+import '../Ui/Dashboard/Distributers/details.dart';
 
 class LocationCard extends StatelessWidget {
   final Location location;
@@ -194,6 +194,85 @@ class LocationCard1 extends StatelessWidget {
               },
             ),
           )
+      ),
+    );
+  }
+}
+
+class LocationCard2 extends StatelessWidget {
+  final Location2 location2;
+
+  LocationCard2({Key key, @required this.location2}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10),
+      child: Slidable(
+        actionExtentRatio: 0.12,
+        actionPane: SlidableDrawerActionPane(),
+        actions: [
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: AppColors.black,
+            ),
+            child: Center(
+                child: Image.asset("assets/images/tasks/progress.png",width: 20,height: 20,color: AppColors.white)
+            ),
+          )
+        ],
+        secondaryActions: [
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: AppColors.black,
+            ),
+            child: Center(
+                child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+            ),
+          )
+        ],
+        child: Card(
+            elevation: 10,
+            shape: RoundedRectangleBorder(
+                borderRadius: round2.copyWith()
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(top: 10,bottom: 10),
+              child: ListTile(
+                title: Text(
+                  location2.title,
+                  style: textStyle.copyWith(
+                      fontSize: 18,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: height*0.012),
+                    Text(
+                      location2.add,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textStyle.copyWith(
+                        fontSize: 14,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                trailing: Icon(Icons.star,color: Colors.orange),
+              ),
+            )
+        ),
       ),
     );
   }

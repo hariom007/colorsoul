@@ -62,3 +62,27 @@ class LocationModel1{
     ),
   ];
 }
+
+class Location2 {
+  final String title;
+  final String add;
+
+  Location2({this.title, this.add});
+}
+
+class LocationModel2{
+  static final location2 = [
+    Location2(
+      title: 'Catch Up Meeting',
+      add: '9:30 AM - 12:00 PM',
+    ),
+    Location2(
+      title: 'Create New Meet',
+      add: '1:00 PM - 2:00 PM',
+    ),
+    Location2(
+      title: 'Add To Work',
+      add: '2:30 PM - 4:00 PM',
+    ),
+  ];
+}

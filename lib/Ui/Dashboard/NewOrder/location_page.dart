@@ -3,7 +3,7 @@ import 'package:colorsoul/Provider/location_card.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/currentlocation.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
-import 'package:colorsoul/details.dart';
+import 'package:colorsoul/Ui/Dashboard/Distributers/details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'dart:async';

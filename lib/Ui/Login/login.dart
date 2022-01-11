@@ -70,7 +70,7 @@ class _LoginState extends State<Login> {
                         ]
                       ),
                       child: TextFormField(
-                        // controller: t1,
+                        controller: t1,
                         style: textStyle.copyWith(
                           color: AppColors.black
                         ),
@@ -119,7 +119,7 @@ class _LoginState extends State<Login> {
                         ]
                       ),
                       child: TextFormField(
-                          // controller: t2,
+                          controller: t2,
                           obscureText: true,
                           style: textStyle.copyWith(
                             color: AppColors.black

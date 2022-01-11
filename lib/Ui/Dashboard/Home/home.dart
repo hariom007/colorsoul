@@ -1,7 +1,11 @@
+import 'package:colorsoul/Ui/Dashboard/Home/ToDoTask/to_do_task.dart';
+import 'package:colorsoul/Ui/Dashboard/Home/TotalNotes/totalnotes.dart';
 import 'package:colorsoul/Ui/Dashboard/Home/alert.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+
+import 'Total_task/total_tasks.dart';
 
 class Home extends StatefulWidget {
  @override
@@ -29,72 +33,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    return WillPopScope(
-      onWillPop: () async {
-        final value = await showDialog<bool>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              insetPadding: EdgeInsets.all(0),
-              contentPadding: EdgeInsets.all(0),
-              backgroundColor: Colors.transparent,
-              content: Container(
-                height: 100,
-                width: width/1.2,
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: round1.copyWith()
-                ),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(20, 14, 20, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Are you sure you want to exit?',
-                        style: textStyle.copyWith(
-                          fontSize: 16,
-                          color: AppColors.black
-                        ),
-                      ),
-                      SizedBox(height: 13),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            child: Text(
-                              'No',
-                              style: textStyle.copyWith(
-                                color: AppColors.black
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop(false);
-                            },
-                          ),
-                          TextButton(
-                            child: Text(
-                              'Yes, exit',
-                              style: textStyle.copyWith(
-                                color: AppColors.black
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop(true);
-                            },
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }
-        );
-        return value == true;
-      },
-      child: Scaffold(
+    return Scaffold(
           backgroundColor: Colors.black,
           body:  NotificationListener<OverscrollIndicatorNotification>(
             onNotification: (OverscrollIndicatorNotification overscroll) {
@@ -163,116 +102,131 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2,AppColors.grey2]),
-                              borderRadius: round1,
-                              boxShadow: [new BoxShadow(
-                                color: Color.fromRGBO(255, 255, 255, 0.15),
-                                offset: Offset(0, 15),
-                                blurRadius: 20,
-                              )]
-                          ),
-                          child: Column(
-                            children: [
-                              SizedBox(height: height*0.03),
-                              Image.asset("assets/images/home/TT.png",width: 50),
-                              SizedBox(height: height*0.015),
-                              Text(
-                                "Total Task",
-                                style: textStyle.copyWith(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black
-                                )
-                              ),
-                              Text(
-                                "110",
-                                style: textStyle.copyWith(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => TotalTasks()));
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2,AppColors.grey2]),
+                                borderRadius: round1,
+                                boxShadow: [new BoxShadow(
+                                  color: Color.fromRGBO(255, 255, 255, 0.15),
+                                  offset: Offset(0, 15),
+                                  blurRadius: 20,
+                                )]
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(height: height*0.03),
+                                Image.asset("assets/images/home/TT.png",width: 50),
+                                SizedBox(height: height*0.015),
+                                Text(
+                                  "Total Task",
+                                  style: textStyle.copyWith(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black
+                                  )
                                 ),
-                              ),
-                              SizedBox(height: height*0.015),
-                            ],
-                          )
+                                Text(
+                                  "110",
+                                  style: textStyle.copyWith(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                                SizedBox(height: height*0.015),
+                              ],
+                            )
+                          ),
                         ),
                       ),
                       SizedBox(width: 10),
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2,AppColors.grey2]),
-                              borderRadius: round1,
-                              boxShadow: [new BoxShadow(
-                                color: Color.fromRGBO(255, 255, 255, 0.15),
-                                offset: Offset(0, 15),
-                                blurRadius: 20,
-                              )]
-                          ),
-                          child: Column(
-                            children: [
-                              SizedBox(height: height*0.03,),
-                              Image.asset("assets/images/home/TDT.png",width: 50),
-                              SizedBox(height: height*0.015),
-                              Text(
-                                  "To Do Task",
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ToDoTasks()));
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2,AppColors.grey2]),
+                                borderRadius: round1,
+                                boxShadow: [new BoxShadow(
+                                  color: Color.fromRGBO(255, 255, 255, 0.15),
+                                  offset: Offset(0, 15),
+                                  blurRadius: 20,
+                                )]
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(height: height*0.03,),
+                                Image.asset("assets/images/home/TDT.png",width: 50),
+                                SizedBox(height: height*0.015),
+                                Text(
+                                    "To Do Task",
+                                    style: textStyle.copyWith(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black
+                                    )
+                                ),
+                                Text(
+                                  "35",
                                   style: textStyle.copyWith(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold
                                   )
-                              ),
-                              Text(
-                                "35",
-                                style: textStyle.copyWith(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold
-                                )
-                              ),
-                              SizedBox(height: height*0.015),
-                            ],
-                          )
+                                ),
+                                SizedBox(height: height*0.015),
+                              ],
+                            )
+                          ),
                         ),
                       ),
                       SizedBox(width: 10),
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2,AppColors.grey2]),
-                              borderRadius: round1,
-                              boxShadow: [new BoxShadow(
-                                color: Color.fromRGBO(255, 255, 255, 0.15),
-                                offset: Offset(0, 15),
-                                blurRadius: 20,
-                              )]
-                          ),
-                          child: Column(
-                            children: [
-                              SizedBox(height: height*0.03),
-                              Image.asset("assets/images/home/TN.png",width: 46),
-                              SizedBox(height: height*0.015),
-                              Text(
-                                  "Notes",
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => TotalNotes()));
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2,AppColors.grey2]),
+                                borderRadius: round1,
+                                boxShadow: [new BoxShadow(
+                                  color: Color.fromRGBO(255, 255, 255, 0.15),
+                                  offset: Offset(0, 15),
+                                  blurRadius: 20,
+                                )]
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(height: height*0.03),
+                                Image.asset("assets/images/home/TN.png",width: 46),
+                                SizedBox(height: height*0.015),
+                                Text(
+                                    "Notes",
+                                    style: textStyle.copyWith(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black
+                                    )
+                                ),
+                                Text(
+                                  "10",
                                   style: textStyle.copyWith(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold
                                   )
-                              ),
-                              Text(
-                                "10",
-                                style: textStyle.copyWith(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold
-                                )
-                              ),
-                              SizedBox(height: height*0.015),
-                            ],
-                          )
+                                ),
+                                SizedBox(height: height*0.015),
+                              ],
+                            )
+                          ),
                         ),
                       ),
                     ],
@@ -484,7 +438,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
             )
           ),
         ),
-      ),
     );
   }
 
