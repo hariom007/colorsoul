@@ -1,13 +1,17 @@
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CurrentLocation extends StatefulWidget {
-  const CurrentLocation({Key key}) : super(key: key);
 
-  @override
+  CurrentLocation({this.position});
+  Position position;
+
+   @override
   _CurrentLocationState createState() => _CurrentLocationState();
+
 }
 
 class _CurrentLocationState extends State<CurrentLocation> {
@@ -29,7 +33,8 @@ class _CurrentLocationState extends State<CurrentLocation> {
       _markers.add(
           Marker(
               markerId: MarkerId('1'),
-              position: LatLng(21.172160, 72.838998),
+              // position: LatLng(21.172160, 72.838998),
+              position: LatLng(widget.position.latitude, widget.position.longitude),
               icon: mapMarker
           )
       );
@@ -171,7 +176,7 @@ class _CurrentLocationState extends State<CurrentLocation> {
             onMapCreated: _onMapCreated,
             markers: _markers,
             initialCameraPosition: CameraPosition(
-              target:  LatLng(21.172160, 72.838998),
+              target:  LatLng(widget.position.latitude, widget.position.longitude),
               zoom: 18
             ),
           )

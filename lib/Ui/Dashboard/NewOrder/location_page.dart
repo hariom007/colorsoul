@@ -3,9 +3,9 @@ import 'package:colorsoul/Provider/location_card.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/currentlocation.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
-import 'package:colorsoul/Ui/Dashboard/Distributers/details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_webservice/places.dart';
@@ -22,6 +22,8 @@ class _LocationPageState extends State<LocationPage> {
   String kGoogleApiKey = "AIzaSyDeCzP76hpVKZ9zTTJCnyDTYDsQpfRUJO4";
   // String kGoogleApiKey = "AIzaSyDMFjsFu-RTGRYCHsGV10Cl2UzP22FRkGU";
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
+  // Position _currentPosition;
+  TextEditingController addressController=TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -111,8 +113,11 @@ class _LocationPageState extends State<LocationPage> {
                     thickness: 2,
                   ),
                   InkWell(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentLocation()));
+                    onTap: () async {
+                      Position position = await getGeoLocationPosition();
+                      print(position.latitude);
+                      print(position.longitude);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentLocation(position: position)));
                     },
                     child: Container(
                       height: 80,
@@ -207,5 +212,48 @@ class _LocationPageState extends State<LocationPage> {
     }
   }
 
+  Future<Position> getGeoLocationPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+
+      return Future.error('Location services are disabled.');
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+
+      if (permission == LocationPermission.denied) {
+        print("Location permissions are denied. !!");
+        // Fluttertoast.showToast(
+        //     msg: "Location permissions are denied. !!",
+        //     toastLength: Toast.LENGTH_SHORT,
+        //     gravity: ToastGravity.BOTTOM,
+        //     timeInSecForIosWeb: 1,
+        //     backgroundColor: Colors.red,
+        //     textColor: Colors.white,
+        //     fontSize: 16.0
+        // );
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      print("Location permissions are permanently denied, we cannot request permissions. !!");
+      // Fluttertoast.showToast(
+      //     msg: "Location permissions are permanently denied, we cannot request permissions. !!",
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     gravity: ToastGravity.BOTTOM,
+      //     timeInSecForIosWeb: 1,
+      //     backgroundColor: Colors.red,
+      //     textColor: Colors.white,
+      //     fontSize: 16.0
+      // );
+      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+    }
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  }
 }
 
