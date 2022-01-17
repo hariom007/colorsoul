@@ -53,8 +53,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                 SizedBox(height: height*0.05),
                 ListTile(
                   leading: CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage("assets/images/home/person.png")
+                    radius: 30,
+                    backgroundImage: AssetImage("assets/images/home/person.png")
                   ),
                   title: Text(
                     "Hi Amit",
