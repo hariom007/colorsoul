@@ -1,6 +1,5 @@
 import 'package:colorsoul/Ui/Login/login.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../Values/appColors.dart';
 import '../../Values/components.dart';
