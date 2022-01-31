@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:colorsoul/Values/components.dart';
 import 'package:colorsoul/Ui/Pin/forgotpin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_auth/auth_strings.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../Values/appColors.dart';
@@ -9,8 +14,8 @@ import '../Dashboard/dashboard.dart';
 
 class Pin extends StatefulWidget {
 
-  String userPin;
-  Pin({Key key,this.userPin}) : super(key: key);
+  String userPin,userName;
+  Pin({Key key,this.userPin,this.userName}) : super(key: key);
 
   @override
   _PinState createState() => _PinState();
@@ -20,6 +25,65 @@ class _PinState extends State<Pin> {
 
   final key = new GlobalKey<ScaffoldState>();
   TextEditingController pinController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _authenticate();
+
+  }
+
+  final LocalAuthentication auth = LocalAuthentication();
+  bool _authorized = true;
+  bool isLoading = false;
+
+  Future<void> _authenticate() async {
+    bool authenticated = false;
+
+    setState(() {
+      _authorized = false;
+      isLoading = true;
+    });
+
+    List<BiometricType> availableBiometrics = await auth.getAvailableBiometrics();
+
+    if (Platform.isIOS) {
+      if (availableBiometrics.contains(BiometricType.face)) {
+        // Face ID.
+      } else if (availableBiometrics.contains(BiometricType.fingerprint)) {
+        // Touch ID.
+      }
+    }
+
+    const iosStrings = const IOSAuthMessages(
+        cancelButton: 'cancel',
+        goToSettingsButton: 'settings',
+        goToSettingsDescription: 'Please set up your Touch ID.',
+        lockOut: 'Please Re-enable your Touch ID');
+
+    authenticated = await auth.authenticateWithBiometrics(
+      localizedReason: 'Please authenticate to Login your Account',
+      iOSAuthStrings: iosStrings,
+      useErrorDialogs: true,
+      stickyAuth: true,
+    );
+
+    if(authenticated == true){
+      setState(() {
+        _authorized = true;
+      });
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard()));
+
+    }
+    setState(() {
+      isLoading = false;
+    });
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +106,17 @@ class _PinState extends State<Pin> {
             overscroll.disallowGlow();
             return;
           },
-          child: SingleChildScrollView(
+          child:
+          isLoading == true
+              ?
+              Center(
+                child: SpinKitThreeBounce(
+                  color: AppColors.white,
+                  size: 25.0,
+                ),
+              )
+          :
+          SingleChildScrollView(
             physics: NeverScrollableScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.only(top:45,right: 30,left: 30),

@@ -56,7 +56,7 @@ class _splashState extends State<splash> {
     );
   }
 
-  String userName,password,userId,userPin;
+  String userName,password,userId,userPin,name,email,number,image,address;
 
   getUserData() async {
 
@@ -64,11 +64,15 @@ class _splashState extends State<splash> {
     userPin = sharedPreferences.get("pin");
     userName = sharedPreferences.get("number");
     password = sharedPreferences.get("password");
-    userId = sharedPreferences.get("userId");
+    name = sharedPreferences.get("name");
+    email = sharedPreferences.get("email");
+    number = sharedPreferences.get("number");
+    image = sharedPreferences.get("image");
+    address = sharedPreferences.get("address");
 
     if(userPin != null){
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Pin(
-        userPin: userPin,
+        userPin: userPin,userName: userName,
       )));
     }
     else{

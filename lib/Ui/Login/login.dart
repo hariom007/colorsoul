@@ -47,7 +47,12 @@ class _LoginState extends State<Login> {
       sharedPreferences.setString('password', '${passwordController.text}');
 
       var body = _authProvider.loginData;
-      sharedPreferences.setString('userId', '${body['sales_id']}');
+      sharedPreferences.setString('userId', '${body['uid']}');
+      sharedPreferences.setString('name', '${body['name']}');
+      sharedPreferences.setString('mobile', '${body['mobile']}');
+      sharedPreferences.setString('email', '${body['email']}');
+      sharedPreferences.setString('address', '${body['address']}');
+      sharedPreferences.setString('image', '${body['image']}');
 
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForgotPin()));
 

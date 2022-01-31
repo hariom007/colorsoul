@@ -40,6 +40,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<key>NSFaceIDUsageDescription</key>
+    <string>App authenticating using face id.</string>
 	<false/>
 </dict>
 </plist>
