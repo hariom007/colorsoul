@@ -42,38 +42,71 @@ class splash extends StatefulWidget {
 }
 
 class _splashState extends State<splash> {
+
+  AuthProvider _authProvider;
+
   @override
   void initState()
   {
+
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     super.initState();
-    Timer(
-        Duration(seconds: 3),
-            () {
+    getUserData();
 
-              getUserData();
-
-            }
-    );
   }
 
-  String userName,password,userId,userPin,name,email,number,image,address;
+  loginMethod() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    userName = sharedPreferences.get("number");
+    password = sharedPreferences.get("password");
+
+    var data = {
+      "username": "$userName",
+      "password": "$password"
+    };
+
+    await _authProvider.loginApi(data,'/login');
+    if(_authProvider.isSuccess == true){
+
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+      var body = _authProvider.loginData;
+      sharedPreferences.setString('userId', '${body['uid']}');
+      sharedPreferences.setString('name', '${body['name']}');
+      sharedPreferences.setString('mobile', '${body['mobile']}');
+      sharedPreferences.setString('email', '${body['email']}');
+      sharedPreferences.setString('address', '${body['address']}');
+      sharedPreferences.setString('image', '${body['image']}');
+
+      userPin = sharedPreferences.get("pin");
+      userName = sharedPreferences.get("number");
+      password = sharedPreferences.get("password");
+      name = sharedPreferences.get("name");
+      bool authValue = sharedPreferences.getBool("authValue");
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Pin(
+        userPin: userPin,userName: userName,authValue: authValue,name: name
+      )));
+
+    }
+    else{
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+    }
+
+  }
+
+
+  String userName,password,userPin,name;
 
   getUserData() async {
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    userPin = sharedPreferences.get("pin");
-    userName = sharedPreferences.get("number");
-    password = sharedPreferences.get("password");
-    name = sharedPreferences.get("name");
-    email = sharedPreferences.get("email");
-    number = sharedPreferences.get("number");
-    image = sharedPreferences.get("image");
-    address = sharedPreferences.get("address");
+    userName = sharedPreferences.get("pin");
 
-    if(userPin != null){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Pin(
-        userPin: userPin,userName: userName,
-      )));
+    if(userName != null){
+      loginMethod();
     }
     else{
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
@@ -85,6 +118,9 @@ class _splashState extends State<splash> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _authProvider = Provider.of<AuthProvider>(context, listen: true);
+
     return Scaffold(
         backgroundColor: Colors.black,
         body: Stack(children: [
@@ -97,184 +133,3 @@ class _splashState extends State<splash> {
     );
   }
 }
-
-// class MyHomePage extends StatefulWidget {
-//   @override
-//   _MyHomePageState createState() => _MyHomePageState();
-// }
-//
-// class _MyHomePageState extends State<MyHomePage> {
-//   int currentPage = 0;
-//   PageController _controller;
-//
-//   @override
-//   void initState(){
-//     _controller = PageController(initialPage: 0);
-//     super.initState();
-//   }
-//
-//   @override
-//   void dispose()
-//   {
-//     _controller.dispose();
-//     super.dispose();
-//   }
-//
-//   List<Map<String,String>> SplashData = [
-//     {
-//       "text": "Track Your Work And Get \n Results.",
-//       "image": 'assets/images/Group668.png'
-//     },
-//     {
-//       "text": "Stay Organized With \n Team.",
-//       "image": 'assets/images/Group669.png'
-//     },
-//     {
-//       "text": "Manage Your Daily \n Todo.",
-//       "image": 'assets/images/Group670.png'
-//     }
-//   ];
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     var width = MediaQuery.of(context).size.width;
-//     var height = MediaQuery.of(context).size.height;
-//     return Scaffold(
-//       backgroundColor: Colors.black,
-//       body:  Container(
-//         width: width,
-//         height: height,
-//         decoration: BoxDecoration(
-//          image: DecorationImage(
-//           image: AssetImage("assets/images/Rectangle17.png"),
-//           fit: BoxFit.fill,
-//         )
-//       ),
-//       child: NotificationListener<OverscrollIndicatorNotification>(
-//           onNotification: (OverscrollIndicatorNotification overscroll) {
-//             overscroll.disallowGlow();
-//             return;
-//           },
-//           child: SingleChildScrollView(
-//           padding: EdgeInsets.only(left: 10,right: 10),
-//             child: Column(
-//               children: [
-//                 SizedBox(height: height*0.03),
-//                 Container(
-//                     alignment: Alignment.topRight,
-//                     child: TextButton(
-//                       child: Text(
-//                         "<< Skip >>",
-//                         style: TextStyle(
-//                             color: Colors.black,
-//                             fontFamily: "Roboto-Regular"
-//                         ),
-//                       ),
-//                       onPressed: (){
-//                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
-//                       },
-//                     )
-//                 ),
-//                 SizedBox(height: height*0.03),
-//                 Container(
-//                   height: height*0.6,
-//                   child: PageView.builder(
-//                       controller: _controller,
-//                       onPageChanged: (value) {
-//                         setState(() {
-//                           currentPage = value;
-//                         });
-//                       },
-//                       itemCount: SplashData.length,
-//                       itemBuilder: (context,index) => SplashContent(
-//                       image: SplashData[index]["image"],
-//                       text: SplashData[index]["text"]
-//                     )
-//                   ),
-//                 ),
-//                 SizedBox(height: height*0.05),
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: List.generate(
-//                       SplashData.length,
-//                           (index) => buildDot(index: index)
-//                   ),
-//                 ),
-//                 SizedBox(height: height*0.1),
-//                 Container(
-//                   height: 60,
-//                   width: width-80,
-//                   decoration: BoxDecoration(
-//                         gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [Colors.black,Color(0xFF3C3939), Colors.black,Colors.black,Colors.black]),
-//                         borderRadius: round.copyWith()
-//                     ),
-//                     child: ElevatedButton(
-//                       onPressed: () {
-//                         if(currentPage == SplashData.length -1){
-//                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
-//                         }
-//                         _controller.nextPage(duration: Duration(milliseconds: 400), curve: Curves.easeIn);
-//                       },
-//                       style: ElevatedButton.styleFrom(
-//                           elevation: 14,
-//                           primary: Colors.transparent,
-//                           shape: StadiumBorder(),
-//                       ),
-//                       child: Text(currentPage == SplashData.length  - 1 ? 'Continue' : 'Next',
-//                           style: TextStyle(
-//                             fontSize: 16,
-//                             fontWeight: FontWeight.bold,
-//                             fontFamily: "Roboto-Regular"
-//                           ),
-//                       ),
-//                     ),
-//                   )
-//               ],
-//             )
-//         ),
-//       ),
-//      )
-//     );
-//   }
-//
-//   AnimatedContainer buildDot({int index}) {
-//     return AnimatedContainer(
-//       duration: Duration(milliseconds: 200),
-//       margin: EdgeInsets.only(right: 10),
-//       height: 10,
-//       width: 10,
-//       decoration: BoxDecoration(
-//         gradient: currentPage == index ? LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [Colors.white,Colors.black,Colors.black]) : LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [Colors.white,Colors.grey]),
-//         borderRadius: BorderRadius.circular(6)
-//       ),
-//     );
-//   }
-// }
-//
-// class SplashContent extends StatelessWidget {
-//   SplashContent({Key key, this.text, this.image}) : super(key: key);
-//
-//   final String text,image;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     var width = MediaQuery.of(context).size.width;
-//     var height = MediaQuery.of(context).size.height;
-//     return Column(
-//         children: [
-//           SizedBox(height: height*0.1),
-//           Image.asset(image,width: width,height: height*0.34,),
-//           SizedBox(height: height*0.08),
-//           Text(
-//             text,
-//             textAlign: TextAlign.center,
-//             style: TextStyle(
-//                 fontWeight: FontWeight.bold,
-//                 fontSize: 20,
-//                 fontFamily: "Roboto-Regular"
-//             ),
-//           ),
-//         ]
-//     );
-//   }
-// }

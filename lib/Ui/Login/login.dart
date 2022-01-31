@@ -53,6 +53,7 @@ class _LoginState extends State<Login> {
       sharedPreferences.setString('email', '${body['email']}');
       sharedPreferences.setString('address', '${body['address']}');
       sharedPreferences.setString('image', '${body['image']}');
+      sharedPreferences.setBool('authValue', authValue);
 
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForgotPin()));
 
@@ -72,6 +73,8 @@ class _LoginState extends State<Login> {
   bool isEmail(String input) => RegExp(
       "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]"
   ).hasMatch(input);
+
+  bool authValue = false;
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +202,34 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                     SizedBox(height: height*0.02),
-                    CheckBox(),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Checkbox(
+                          side: BorderSide(
+                              color: AppColors.black
+                          ),
+                          //shape: StadiumBorder(),
+                          activeColor: Colors.grey,
+                          checkColor: AppColors.black,
+                          value: authValue,
+                          onChanged: (bool value) {
+                            setState(() {
+                              authValue = value;
+                            });
+                          },
+                        ),
+                        Text(
+                            "Enables biometric access to Login",
+                            style: textStyle.copyWith(
+                                color: AppColors.black,
+                                fontWeight: FontWeight.bold
+                            )
+                        )
+                      ],
+                    ),
+
                     TextButton(
                         onPressed: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context) => Forgot()));
@@ -261,45 +291,6 @@ class _LoginState extends State<Login> {
           ),
         )
       )
-    );
-  }
-}
-
-class CheckBox extends StatefulWidget {
-  @override
-  _CheckBoxState createState() => _CheckBoxState();
-}
-
-class _CheckBoxState extends State<CheckBox> {
-  bool value = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Checkbox(
-          side: BorderSide(
-            color: AppColors.black
-          ),
-          //shape: StadiumBorder(),
-          activeColor: Colors.grey,
-          checkColor: AppColors.black,
-          value: this.value,
-          onChanged: (bool value) {
-            setState(() {
-              this.value = value;
-            });
-          },
-        ),
-        Text(
-            "Enables biometric access to Login",
-            style: textStyle.copyWith(
-              color: AppColors.black,
-              fontWeight: FontWeight.bold
-            )
-        )
-      ],
     );
   }
 }

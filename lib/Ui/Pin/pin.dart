@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:colorsoul/Ui/Login/login.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:colorsoul/Ui/Pin/forgotpin.dart';
 import 'package:flutter/material.dart';
@@ -8,14 +9,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/auth_strings.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Values/appColors.dart';
 import '../Dashboard/dashboard.dart';
 
 class Pin extends StatefulWidget {
 
-  String userPin,userName;
-  Pin({Key key,this.userPin,this.userName}) : super(key: key);
+  String userPin,userName,name;
+  bool authValue;
+  Pin({Key key,this.userPin,this.userName,this.authValue,this.name}) : super(key: key);
 
   @override
   _PinState createState() => _PinState();
@@ -31,7 +34,9 @@ class _PinState extends State<Pin> {
     // TODO: implement initState
     super.initState();
 
-    _authenticate();
+    if(widget.authValue == true){
+      _authenticate();
+    }
 
   }
 
@@ -40,6 +45,7 @@ class _PinState extends State<Pin> {
   bool isLoading = false;
 
   Future<void> _authenticate() async {
+
     bool authenticated = false;
 
     setState(() {
@@ -126,7 +132,7 @@ class _PinState extends State<Pin> {
                   Image.asset('assets/images/Colorsoul_final-022(Traced).png',width: width/1.8),
                   SizedBox(height: height*0.1),
                   Text(
-                    "Hi Amit",
+                    "Hi ${widget.name}",
                     style: textStyle.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 24
@@ -173,8 +179,13 @@ class _PinState extends State<Pin> {
                   ),
                   SizedBox(height: height*0.19),
                   TextButton(
-                      onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPin()));
+                      onPressed: () async {
+
+                        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                        sharedPreferences.clear();
+
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+
                       },
                       child: Text(
                           "Unlock/Forgot Login PIN?",
