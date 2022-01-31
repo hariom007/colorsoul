@@ -8,7 +8,9 @@ import '../../Values/appColors.dart';
 import '../Dashboard/dashboard.dart';
 
 class Pin extends StatefulWidget {
-  const Pin({Key key}) : super(key: key);
+
+  String userPin;
+  Pin({Key key,this.userPin}) : super(key: key);
 
   @override
   _PinState createState() => _PinState();
@@ -16,9 +18,8 @@ class Pin extends StatefulWidget {
 
 class _PinState extends State<Pin> {
 
-  final String pin = "0000";
   final key = new GlobalKey<ScaffoldState>();
-  TextEditingController t1 = TextEditingController();
+  TextEditingController pinController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +64,7 @@ class _PinState extends State<Pin> {
                     child: PinCodeTextField(
                       blinkDuration: Duration(milliseconds: 1000),
                       blinkWhenObscuring: true,
-                      controller: t1,
+                      controller: pinController,
                       pinTheme: PinTheme(
                         shape: PinCodeFieldShape.box,
                         borderRadius: round2.copyWith(),
@@ -115,7 +116,7 @@ class _PinState extends State<Pin> {
                     decoration: decoration.copyWith(),
                     child: ElevatedButton(
                       onPressed: () {
-                        if(t1.text.length==0)
+                        if(pinController.text.length==0)
                         {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -130,13 +131,13 @@ class _PinState extends State<Pin> {
                             )
                           );
                         }
-                        else if(t1.text == pin)
+                        else if(pinController.text == widget.userPin)
                         {
-                          Navigator.pop(context);
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard()));
                         }
                         else
                         {
+                          print(widget.userPin);
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 duration: Duration(milliseconds: 1000),

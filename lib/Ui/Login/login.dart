@@ -1,10 +1,15 @@
+import 'package:colorsoul/Provider/auth_provider.dart';
+import 'package:colorsoul/Ui/Pin/forgotpin.dart';
 import 'package:colorsoul/Values/appColors.dart';
-import 'package:colorsoul/Ui/Dashboard/dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Values/components.dart';
 import '../Forgot/forgot.dart';
 import '../Pin/pin.dart';
+import 'package:provider/provider.dart';
+
 
 class Login extends StatefulWidget {
   @override
@@ -14,13 +19,62 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final _formkey = GlobalKey<FormState>();
 
-  TextEditingController t1 = new TextEditingController(text: "abc@gmail.com");
-  TextEditingController t2 = new TextEditingController(text: "12345");
+  TextEditingController numberController = new TextEditingController();
+  TextEditingController passwordController = new TextEditingController();
+
+  AuthProvider _authProvider;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+  }
+
+  loginMethod() async {
+
+    var data = {
+      "username": "${numberController.text}",
+      "password": "${passwordController.text}"
+    };
+
+    await _authProvider.loginApi(data,'/login');
+    if(_authProvider.isSuccess == true){
+
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      sharedPreferences.setString('number', '${numberController.text}');
+      sharedPreferences.setString('password', '${passwordController.text}');
+
+      var body = _authProvider.loginData;
+      sharedPreferences.setString('userId', '${body['sales_id']}');
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForgotPin()));
+
+    }
+
+  }
+
+  bool isPhone(String input) {
+    if(input.length != 10){
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+
+  bool isEmail(String input) => RegExp(
+      "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]"
+  ).hasMatch(input);
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _authProvider = Provider.of<AuthProvider>(context, listen: true);
+
     return Scaffold(
         backgroundColor: Colors.black,
         body:Container(
@@ -70,7 +124,7 @@ class _LoginState extends State<Login> {
                         ]
                       ),
                       child: TextFormField(
-                        controller: t1,
+                        controller: numberController,
                         style: textStyle.copyWith(
                           color: AppColors.black
                         ),
@@ -78,20 +132,15 @@ class _LoginState extends State<Login> {
                         textAlign: TextAlign.center,
                         decoration: fieldStyle3.copyWith(
                           errorStyle: TextStyle(height: 0),
-                          hintText: "Email / username",
+                          hintText: "Email / Number",
                           hintStyle: textStyle.copyWith(
                               color: AppColors.black
                           ),
                           isDense: true,
                         ),
                         validator: (String value) {
-                          if(value.isEmpty)
-                          {
-                            return "";
-                          }
-                          else if(!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value))
-                          {
-                            return "Please enter a valid Email";
+                          if (!isEmail(value) && !isPhone(value)) {
+                            return '';
                           }
                           return null;
                         }
@@ -119,7 +168,7 @@ class _LoginState extends State<Login> {
                         ]
                       ),
                       child: TextFormField(
-                          controller: t2,
+                          controller: passwordController,
                           obscureText: true,
                           style: textStyle.copyWith(
                             color: AppColors.black
@@ -158,45 +207,48 @@ class _LoginState extends State<Login> {
                           )
                         )
                     ),
-                    Container(
-                      height: 50,
-                      width: width-80,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                          borderRadius: round.copyWith(),
-                          boxShadow: [new BoxShadow(
-                            color: Color.fromRGBO(0,0,0, 0.2),
-                            offset: Offset(0, 6),
-                            blurRadius: 3,
-                          )
-                        ]
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if(_formkey.currentState.validate())
-                          {
-                            // Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => Pin()));
-                          }
-                          else
-                          {
-                            print("Error");
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          elevation: 14,
-                          primary: Colors.transparent,
-                          shape: StadiumBorder(),
-                        ),
-                        child: Text('Login',
-                            style: textStyle.copyWith(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.white
+
+                    _authProvider.isLoaded == false
+                        ?
+                      SpinKitThreeBounce(
+                        color: AppColors.black,
+                        size: 25.0,
+                      )
+                        :
+                      Container(
+                        height: 50,
+                        width: width-80,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                            borderRadius: round.copyWith(),
+                            boxShadow: [new BoxShadow(
+                              color: Color.fromRGBO(0,0,0, 0.2),
+                              offset: Offset(0, 6),
+                              blurRadius: 3,
                             )
+                          ]
                         ),
-                      ),
-                    )
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if(_formkey.currentState.validate())
+                            {
+                              loginMethod();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            elevation: 14,
+                            primary: Colors.transparent,
+                            shape: StadiumBorder(),
+                          ),
+                          child: Text('Login',
+                              style: textStyle.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.white
+                              )
+                          ),
+                        ),
+                      )
                   ],
                 ),
               ),

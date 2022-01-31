@@ -1,7 +1,11 @@
 import 'dart:async';
 //import 'package:colorsoul/components.dart';
+import 'package:colorsoul/Provider/auth_provider.dart';
+import 'package:colorsoul/Ui/Pin/pin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'appColors.dart';
 import 'Ui/Login/login.dart';
 
@@ -17,10 +21,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Colorsoul',
-      home: splash(),
+    return MultiProvider(
+      providers: [
+
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Colorsoul',
+        home: splash(),
+      ),
     );
   }
 }
@@ -36,9 +47,34 @@ class _splashState extends State<splash> {
   {
     super.initState();
     Timer(
-        Duration(milliseconds: 1500),
-            () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()))
+        Duration(seconds: 3),
+            () {
+
+              getUserData();
+
+            }
     );
+  }
+
+  String userName,password,userId,userPin;
+
+  getUserData() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    userPin = sharedPreferences.get("pin");
+    userName = sharedPreferences.get("number");
+    password = sharedPreferences.get("password");
+    userId = sharedPreferences.get("userId");
+
+    if(userPin != null){
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Pin(
+        userPin: userPin,
+      )));
+    }
+    else{
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+    }
+
   }
 
   @override
