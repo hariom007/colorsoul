@@ -71,7 +71,7 @@ class ProductModel {
   String clProductUpdatedDate;
   String clCategoryName;
   String clSubcategoryName;
-  List<Color> colors;
+  List<ApiColor> colors;
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
     clProductId: json["cl_product_id"],
@@ -105,7 +105,7 @@ class ProductModel {
     clProductUpdatedDate: json["cl_product_updated_date"],
     clCategoryName: json["cl_category_name"],
     clSubcategoryName: json["cl_subcategory_name"],
-    colors: List<Color>.from(json["colors"].map((x) => Color.fromJson(x))),
+    colors: List<ApiColor>.from(json["colors"].map((x) => ApiColor.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -196,8 +196,8 @@ class ClProductImg {
   };
 }
 
-class Color {
-  Color({
+class ApiColor {
+  ApiColor({
     this.clColorId,
     this.clColorCode,
     this.hexCode,
@@ -209,7 +209,7 @@ class Color {
   String hexCode;
   String skuCode;
 
-  factory Color.fromJson(Map<String, dynamic> json) => Color(
+  factory ApiColor.fromJson(Map<String, dynamic> json) => ApiColor(
     clColorId: json["cl_color_id"],
     clColorCode: json["cl_color_code"],
     hexCode: json["HexCode"],

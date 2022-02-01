@@ -230,8 +230,18 @@ class _ProductsDataState extends State<ProductsData> {
                         child: InkWell(
                           onTap: (){
                             setState(() {
-                              //print("${productData.clProductImg[0].hPath}"+"${productData.clProductImg[0].imageName}");
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => ProductInfo(name: 'product1',imgname: "assets/images/productsdata/nail-polish7.png")));
+
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => ProductInfo(
+                                  name: productData.clProductName,
+                                  colors: productData.colors,
+                                images: productData.clProductImg,
+                                shortDecs: productData.clProductSortDesc,
+                                longDesc: productData.clProductDesc,
+                                specification: productData.pattributes,
+                              )
+                              ));
+
+
                             });
                           },
                           child: Container(
