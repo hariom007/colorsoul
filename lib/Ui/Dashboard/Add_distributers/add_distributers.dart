@@ -40,7 +40,7 @@ class _AddDistributersState extends State<AddDistributers> {
   TextEditingController _personMobileController = new TextEditingController();
   TextEditingController _personTelephoneController = new TextEditingController();
 
-  String address,latitude,logitude,pincode;
+  String address,city,state,latitude,logitude,pincode;
 
   TimeOfDay time;
   DateTime _selectedstarttime = DateTime.now();
@@ -83,6 +83,8 @@ class _AddDistributersState extends State<AddDistributers> {
   String imageUrl;
 
   sendImage() async {
+
+    _distributorProvider.isLoaded == false;
 
     Map<String, String> headers = {
       "Accept": "application/json",
@@ -132,6 +134,8 @@ class _AddDistributersState extends State<AddDistributers> {
       "business_type":"${businessTypeController.text}",
       "gst_no":"${businessGSTController.text}",
       "address":"$address",
+      "city":"$city",
+      "state":"$state",
       "pincode":"$pincode",
       "latitude":"$latitude",
       "longitude":"$logitude",
@@ -536,9 +540,11 @@ class _AddDistributersState extends State<AddDistributers> {
 
                                               var fullAddress = value.split("/");
                                               address = fullAddress[0];
-                                              pincode = "${fullAddress[1]}";
-                                              latitude = fullAddress[2];
-                                              logitude = fullAddress[3];
+                                              city = fullAddress[1];
+                                              state = fullAddress[2];
+                                              pincode = "${fullAddress[3]}";
+                                              latitude = fullAddress[4];
+                                              logitude = fullAddress[5];
 
                                               setState(() {
                                                 isvisible = true;

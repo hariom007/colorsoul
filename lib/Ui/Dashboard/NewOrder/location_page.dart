@@ -88,7 +88,7 @@ class _LocationPageState extends State<LocationPage> {
     var fullAddress = await Geocoder.local.findAddressesFromCoordinates(coordinates);
     var first = fullAddress.first;
 
-    String finalAddress = "${first.addressLine}, ${first.locality}/${first.postalCode}/${coordinates.latitude}/${coordinates.longitude}";
+    String finalAddress = "${first.addressLine},${first.locality}/${first.subAdminArea}/${first.adminArea}/${first.postalCode}/${coordinates.latitude}/${coordinates.longitude}";
 
     Navigator.pop(context,"$finalAddress");
     Navigator.pop(context,"$finalAddress");
@@ -309,7 +309,7 @@ class _LocationPageState extends State<LocationPage> {
       var fullAddress = await Geocoder.local.findAddressesFromCoordinates(coordinates);
       var first = fullAddress.first;
 
-      String finalAddress = "${first.addressLine}, ${first.locality}/${first.postalCode}/${coordinates.latitude}/${coordinates.longitude}";
+      String finalAddress = "${first.addressLine},${first.locality}/${first.subAdminArea}/${first.adminArea}/${first.postalCode}/${coordinates.latitude}/${coordinates.longitude}";
       Navigator.pop(context,"$finalAddress");
       Navigator.pop(context,"$finalAddress");
 
