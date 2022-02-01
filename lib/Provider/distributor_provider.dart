@@ -19,8 +19,6 @@ class DistributorProvider with ChangeNotifier
     await ApiHandler.get(url).then((value){
       List<DistributorModel> list;
 
-      print(value);
-
       if(value["st"] == "success")
       {
         isSuccess = true;
@@ -105,7 +103,6 @@ class DistributorProvider with ChangeNotifier
     await ApiHandler.post(data,url).then((value){
       List<DistributorModel> list;
 
-      print(value);
 
       if(value["st"] == "success")
       {

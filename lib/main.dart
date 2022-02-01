@@ -2,6 +2,7 @@ import 'dart:async';
 //import 'package:colorsoul/components.dart';
 import 'package:colorsoul/Provider/auth_provider.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
+import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Ui/Pin/pin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ class _MyAppState extends State<MyApp> {
 
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => DistributorProvider()),
+        ChangeNotifierProvider(create: (context) => ProductProvider()),
 
       ],
       child: MaterialApp(

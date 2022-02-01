@@ -1,12 +1,20 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Products/productsfilter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hexcolor/hexcolor.dart';
+import 'package:provider/provider.dart';
 import '../../../Values/appColors.dart';
 import '../../../Values/colorselect.dart';
 import '../../../Values/components.dart';
 import 'productinfo.dart';
 
 class ProductsData extends StatefulWidget {
-  const ProductsData({Key key}) : super(key: key);
+
+  String categoryId;
+  ProductsData({Key key,this.categoryId}) : super(key: key);
 
   @override
   _ProductsDataState createState() => _ProductsDataState();
@@ -16,10 +24,35 @@ class _ProductsDataState extends State<ProductsData> {
   String value = '1';
   bool isFavorite = false;
 
+  ProductProvider _productProvider;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _productProvider = Provider.of<ProductProvider>(context, listen: false);
+    getProductCategory();
+
+  }
+
+  int page = 1;
+  getProductCategory() async {
+    var data ={
+      "search_term":"",
+      "cat_id":"${widget.categoryId}"
+    };
+    await _productProvider.getProducts(data,'/getProduct/$page');
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _productProvider = Provider.of<ProductProvider>(context, listen: true);
+
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -169,510 +202,228 @@ class _ProductsDataState extends State<ProductsData> {
                   overscroll.disallowGlow();
                   return;
                 },
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
+                child:
+                _productProvider.isLoaded == false
+                    ?
+                Center(
+                    child: SpinKitThreeBounce(
+                      color: AppColors.black,
+                      size: 25.0,
+                    )
+                )
+                    :
+                GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
+                        childAspectRatio: 3/4.6
+                    ),
+                    shrinkWrap: true,
+                    itemCount: _productProvider.productList.length,
+                    padding: EdgeInsets.only(right: 10,left: 10,bottom: 20),
+                    itemBuilder: (context, index){
+                      var productData = _productProvider.productList[index];
+                      return Card(
+                        color: Colors.transparent,
+                        elevation: 20,
+                        child: InkWell(
+                          onTap: (){
+                            setState(() {
+                              //print("${productData.clProductImg[0].hPath}"+"${productData.clProductImg[0].imageName}");
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => ProductInfo(name: 'product1',imgname: "assets/images/productsdata/nail-polish7.png")));
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: round1.copyWith()
+                            ),
                             child: Padding(
-                              padding: EdgeInsets.only(left: 10,right: 5),
-                              child: Card(
-                                color: Colors.transparent,
-                                elevation: 20,
-                                child: InkWell(
-                                  onTap: (){
-                                    setState(() {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductInfo(name: 'product1',imgname: "assets/images/productsdata/nail-polish7.png")));
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: AppColors.white,
-                                        borderRadius: round1.copyWith()
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Center(
-                                            child: Hero(
-                                              tag: 'product1',
-                                              child: Image.asset("assets/images/productsdata/nail-polish7.png",width: width/5)
-                                            ),
-                                          ),
-                                          ColorAndSize(),
-                                          SizedBox(height: 10),
-                                          Text(
-                                            "GEL NAIL POLISH",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 2),
-                                          Text(
-                                            "Lorem ipsum dolor sit amet.",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "₹263",
-                                                style: textStyle.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: AppColors.black,
-                                                  fontSize: 20
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Center(
+                                    child: Hero(
+                                        tag: '${productData.clProductId}',
+                                        child:
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(6),
+                                          child: CachedNetworkImage(
+                                              imageUrl: "${productData.clProductImg[0].hPath}"+"${productData.clProductImg[0].imageName}",
+                                              placeholder: (context, url) => Container(
+                                                width: MediaQuery.of(context).size.width,
+                                                height: 140,
+                                                child: Center(
+                                                    child: SpinKitThreeBounce(
+                                                      color: AppColors.black,
+                                                      size: 25.0,
+                                                    )
                                                 ),
                                               ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                "₹720",
-                                                style: textStyle.copyWith(
-                                                  color: Colors.grey,
-                                                  fontSize: 16,
-                                                  decoration: TextDecoration.lineThrough
-                                                ),
-                                              ),
-                                            ],
+                                              errorWidget: (context, url, error) => Icon(Icons.error),
+                                              width: 140,
+                                              height: 140,
                                           ),
-                                        ],
-                                      ),
+                                        ),
                                     ),
                                   ),
-                                ),
+                                  SizedBox(height: 10),
+
+                                  Row(
+                                    children: [
+
+                                      productData.colors.length >= 3
+                                          ?
+                                      Row(
+                                        children: [
+
+                                          Container(
+                                            padding: EdgeInsets.all(2.5),
+                                            height: 18,
+                                            width: 18,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: HexColor("${productData.colors[0].hexCode}"),
+                                            ),
+                                          ),
+
+                                          SizedBox(width: 6),
+
+                                          Container(
+                                            padding: EdgeInsets.all(2.5),
+                                            height: 18,
+                                            width: 18,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: HexColor("${productData.colors[1].hexCode}"),
+                                            ),
+                                          ),
+
+                                          SizedBox(width: 6),
+
+                                          Container(
+                                            padding: EdgeInsets.all(2.5),
+                                            height: 18,
+                                            width: 18,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: HexColor("${productData.colors[2].hexCode}"),
+                                            ),
+                                          ),
+
+                                        ],
+                                      )
+                                          :
+                                      productData.colors.length == 2
+                                          ?
+                                      Row(
+                                        children: [
+
+                                          Container(
+                                            padding: EdgeInsets.all(2.5),
+                                            height: 18,
+                                            width: 18,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: HexColor("${productData.colors[0].hexCode}"),
+                                            ),
+                                          ),
+
+                                          SizedBox(width: 6),
+
+                                          Container(
+                                            padding: EdgeInsets.all(2.5),
+                                            height: 18,
+                                            width: 18,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: HexColor("${productData.colors[1].hexCode}"),
+                                            ),
+                                          ),
+
+
+                                        ],
+                                      )
+                                          :
+                                      productData.colors.length == 1
+                                          ?
+                                      Row(
+                                        children: [
+
+                                          Container(
+                                            padding: EdgeInsets.all(2.5),
+                                            height: 18,
+                                            width: 18,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: HexColor("${productData.colors[0].hexCode}"),
+                                            ),
+                                          ),
+
+                                        ],
+                                      )
+                                          :
+                                      SizedBox(),
+
+                                      SizedBox(width: 10),
+
+                                      productData.colors.length > 3
+                                          ?
+                                      Text(
+                                        "+${productData.colors.length - 3}",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: textStyle.copyWith(
+                                            color: AppColors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14
+                                        ),
+                                      )
+                                          :
+                                          SizedBox()
+
+                                    ],
+                                  ),
+
+
+                                  SizedBox(height: 10),
+
+                                  Text(
+                                    "${productData.clProductName.toUpperCase()}",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: textStyle.copyWith(
+                                        color: AppColors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14
+                                    ),
+                                  ),
+
+                                  Html(
+                                    shrinkWrap: true,
+                                    data: '${productData.clProductSortDesc}',
+                                    style: {
+                                      '#': Style(
+                                        fontSize: FontSize(14),
+                                        maxLines: 2,
+                                        color: AppColors.black,
+                                        textOverflow: TextOverflow.ellipsis,
+                                          fontFamily: "Roboto-Regular"
+                                      ),
+                                    },
+                                  ),
+
+                                ],
                               ),
                             ),
                           ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 5,right: 10),
-                              child: Card(
-                                color: Colors.transparent,
-                                elevation: 20,
-                                child: InkWell(
-                                  onTap: (){
-                                    setState(() {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductInfo(name: 'product2',imgname: "assets/images/productsdata/nail-polish8.png")));
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: AppColors.white,
-                                        borderRadius: round1.copyWith()
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Hero(
-                                            tag: 'product2',
-                                            child: Center(child: Image.asset("assets/images/productsdata/nail-polish8.png",width: width/3))
-                                          ),
-                                          SizedBox(height: 5),
-                                          ColorAndSize(),
-                                          SizedBox(height: 10),
-                                          Text(
-                                            "TANNING",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 2),
-                                          Text(
-                                            "Lorem ipsum dolor sit amet.",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "₹263",
-                                                style: textStyle.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors.black,
-                                                    fontSize: 20
-                                                ),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                "₹720",
-                                                style: textStyle.copyWith(
-                                                    color: Colors.grey,
-                                                    fontSize: 16,
-                                                    decoration: TextDecoration.lineThrough
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 4),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 10,right: 5),
-                              child: Card(
-                                color: Colors.transparent,
-                                elevation: 20,
-                                child: InkWell(
-                                  onTap: (){
-                                    setState(() {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductInfo(name: 'product3',imgname: "assets/images/productsdata/nail-polish7.png")));
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: AppColors.white,
-                                        borderRadius: round1.copyWith()
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Center(
-                                            child: Hero(
-                                                tag: 'product3',
-                                                child: Image.asset("assets/images/productsdata/nail-polish7.png",width: width/5)
-                                            ),
-                                          ),
-                                          ColorAndSize(),
-                                          SizedBox(height: 10),
-                                          Text(
-                                            "GEL NAIL POLISH",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 2),
-                                          Text(
-                                            "Lorem ipsum dolor sit amet.",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "₹263",
-                                                style: textStyle.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors.black,
-                                                    fontSize: 20
-                                                ),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                "₹720",
-                                                style: textStyle.copyWith(
-                                                    color: Colors.grey,
-                                                    fontSize: 16,
-                                                    decoration: TextDecoration.lineThrough
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 5,right: 10),
-                              child: Card(
-                                color: Colors.transparent,
-                                elevation: 20,
-                                child: InkWell(
-                                  onTap: (){
-                                    setState(() {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductInfo(name: 'product4',imgname: "assets/images/productsdata/nail-polish8.png")));
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: AppColors.white,
-                                        borderRadius: round1.copyWith()
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Hero(
-                                              tag: 'product4',
-                                              child: Center(child: Image.asset("assets/images/productsdata/nail-polish8.png",width: width/3))
-                                          ),
-                                          SizedBox(height: 5),
-                                          ColorAndSize(),
-                                          SizedBox(height: 10),
-                                          Text(
-                                            "TANNING",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 2),
-                                          Text(
-                                            "Lorem ipsum dolor sit amet.",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "₹263",
-                                                style: textStyle.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors.black,
-                                                    fontSize: 20
-                                                ),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                "₹720",
-                                                style: textStyle.copyWith(
-                                                    color: Colors.grey,
-                                                    fontSize: 16,
-                                                    decoration: TextDecoration.lineThrough
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 4),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 10,right: 5),
-                              child: Card(
-                                color: Colors.transparent,
-                                elevation: 20,
-                                child: InkWell(
-                                  onTap: (){
-                                    setState(() {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductInfo(name: 'product5',imgname: "assets/images/productsdata/nail-polish7.png")));
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: AppColors.white,
-                                        borderRadius: round1.copyWith()
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Center(
-                                            child: Hero(
-                                                tag: 'product5',
-                                                child: Image.asset("assets/images/productsdata/nail-polish7.png",width: width/5)
-                                            ),
-                                          ),
-                                          ColorAndSize(),
-                                          SizedBox(height: 10),
-                                          Text(
-                                            "GEL NAIL POLISH",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 2),
-                                          Text(
-                                            "Lorem ipsum dolor sit amet.",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "₹263",
-                                                style: textStyle.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors.black,
-                                                    fontSize: 20
-                                                ),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                "₹720",
-                                                style: textStyle.copyWith(
-                                                    color: Colors.grey,
-                                                    fontSize: 16,
-                                                    decoration: TextDecoration.lineThrough
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 5,right: 10),
-                              child: Card(
-                                color: Colors.transparent,
-                                elevation: 20,
-                                child: InkWell(
-                                  onTap: (){
-                                    setState(() {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductInfo(name: 'product6',imgname: "assets/images/productsdata/nail-polish8.png")));
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: AppColors.white,
-                                        borderRadius: round1.copyWith()
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Hero(
-                                              tag: 'product6',
-                                              child: Center(child: Image.asset("assets/images/productsdata/nail-polish8.png",width: width/3))
-                                          ),
-                                          SizedBox(height: 5),
-                                          ColorAndSize(),
-                                          SizedBox(height: 10),
-                                          Text(
-                                            "TANNING",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 2),
-                                          Text(
-                                            "Lorem ipsum dolor sit amet.",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontSize: 14
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "₹263",
-                                                style: textStyle.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors.black,
-                                                    fontSize: 20
-                                                ),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                "₹720",
-                                                style: textStyle.copyWith(
-                                                    color: Colors.grey,
-                                                    fontSize: 16,
-                                                    decoration: TextDecoration.lineThrough
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 4),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                    ],
-                  ),
+                        ),
+                      );
+                    }
                 ),
+
               ),
             ),
           ],
