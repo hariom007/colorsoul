@@ -82,7 +82,7 @@ class _ProductsDataState extends State<ProductsData> {
                           cursorColor: AppColors.black,
                           cursorHeight: 24,
                           decoration: InputDecoration(
-                              hintText: "Regular Nail Polish",
+                              hintText: "Search Product",
                               hintStyle: textStyle.copyWith(
                                   color: AppColors.black
                               ),
