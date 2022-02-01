@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
@@ -7,6 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
 
 class AddDistributers extends StatefulWidget {
   @override
@@ -14,11 +20,21 @@ class AddDistributers extends StatefulWidget {
 }
 
 class _AddDistributersState extends State<AddDistributers> {
-  TextEditingController _textEditingController1 = new TextEditingController();
-  TextEditingController _textEditingController2 = new TextEditingController();
+  TextEditingController businessNameController = new TextEditingController();
+  TextEditingController businessTypeController = new TextEditingController();
+  TextEditingController businessGSTController = new TextEditingController();
+  TextEditingController _openTimeController = new TextEditingController();
+  TextEditingController _closeTimeController = new TextEditingController();
+
+  TextEditingController _personNameController = new TextEditingController();
+  TextEditingController _personMobileController = new TextEditingController();
+  TextEditingController _personTelephoneController = new TextEditingController();
+
+  String address,latitude,logitude,pincode;
+
   TimeOfDay time;
   DateTime _selectedstarttime = DateTime.now();
-  bool isvisible = true;
+  bool isvisible = false;
   int selectValue = 1;
 
   File _image;
@@ -42,10 +58,81 @@ class _AddDistributersState extends State<AddDistributers> {
     });
   }
 
+  DistributorProvider _distributorProvider;
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
     time = TimeOfDay.now();
+    _distributorProvider = Provider.of<DistributorProvider>(context, listen: false);
+  }
+
+  String imageUrl;
+
+  sendImage() async {
+
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "4ccda7514adc0f13595a585205fb9761"
+    };
+
+    final uri = 'https://colorsoul.koffeekodes.com/admin/Api/imageUpload';
+    var request = http.MultipartRequest('POST', Uri.parse(uri));
+    request.headers.addAll(headers);
+
+    if(_image != null){
+      request.fields['folder'] = selectValue == 1 ? "distributor" : "retailer";
+      request.files.add(await http.MultipartFile.fromPath('file', _image.path));
+
+      request.send().then((response) async {
+        var res = await response.stream.bytesToString();
+        print(res);
+        var body = json.decode(res);
+
+        if (response.statusCode == 200 && body['st'] == "success") {
+          imageUrl = body['file'];
+          addDistributor();
+        }
+        else{
+          print("Image Upload Error");
+        }
+
+      });
+
+    }
+    else{
+      addDistributor();
+    }
+
+  }
+
+  addDistributor() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.getString("userId");
+
+    var data = {
+      "uid":"$userId",
+      "type": selectValue == 1 ? "Distributor" : "Retailer",
+      "parent_id":"",
+      "business_name":"${businessNameController.text}",
+      "business_type":"${businessTypeController.text}",
+      "gst_no":"${businessGSTController.text}",
+      "address":"$address",
+      "pincode":"$pincode",
+      "latitude":"$latitude",
+      "longitude":"$logitude",
+      "name":"${_personNameController.text}",
+      "mobile":"${_personMobileController.text}",
+      "telephone":"${_personTelephoneController.text}",
+      "open_time":"${_openTimeController.text}",
+      "close_time":"${_closeTimeController.text}",
+      "image":"$imageUrl"
+    };
+
+    _distributorProvider.distributorList.clear();
+    await _distributorProvider.insertDistributor(data,'/createDistributorRetailer');
+
   }
 
   @override
@@ -227,6 +314,7 @@ class _AddDistributersState extends State<AddDistributers> {
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
+                                    controller: businessNameController,
                                     style: textStyle.copyWith(
                                         fontSize: 16,
                                         color: Colors.black
@@ -248,6 +336,29 @@ class _AddDistributersState extends State<AddDistributers> {
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
+                                    controller: businessTypeController,
+                                    style: textStyle.copyWith(
+                                        fontSize: 16,
+                                        color: Colors.black
+                                    ),
+                                    cursorHeight: 22,
+                                    cursorColor: Colors.grey,
+                                    decoration: fieldStyle1.copyWith(
+                                        isDense: true
+                                    ),
+                                  ),
+                                  SizedBox(height: height*0.02),
+                                  Text(
+                                    "Business GST No",
+                                    style: textStyle.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16
+                                    ),
+                                  ),
+                                  SizedBox(height: height*0.01),
+                                  TextFormField(
+                                    controller: businessTypeController,
                                     style: textStyle.copyWith(
                                         fontSize: 16,
                                         color: Colors.black
@@ -272,8 +383,23 @@ class _AddDistributersState extends State<AddDistributers> {
                                       style: textStyle.copyWith(
                                           color: AppColors.black
                                       ),
-                                      onTap: () {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => LocationPage()));
+                                      onTap: () async {
+
+                                        final value = await Navigator.push(context, MaterialPageRoute(builder: (context) => LocationPage()));
+                                        if(value != null){
+                                          print(value);
+
+                                          var fullAddress = value.split("/");
+                                          address = fullAddress[0];
+                                          pincode = fullAddress[1];
+                                          latitude = fullAddress[2];
+                                          logitude = fullAddress[3];
+
+                                          setState(() {
+                                            isvisible = true;
+                                          });
+                                        }
+
                                       },
                                       cursorColor: AppColors.black,
                                       cursorHeight: 22,
@@ -293,40 +419,18 @@ class _AddDistributersState extends State<AddDistributers> {
                                   Visibility(
                                     visible: isvisible,
                                     child: Padding(
-                                      padding: EdgeInsets.only(left: 20,right: 20),
+                                      padding: EdgeInsets.only(left: 10,right: 10),
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(height: height*0.02),
                                           Row(
                                             children: [
-                                              Text(
-                                                "Chandanvan society",
-                                                style: textStyle.copyWith(
-                                                    color: AppColors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18
-                                                ),
-                                              ),
-                                              Expanded(child: Container()),
-                                              InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      isvisible = false;
-                                                    });
-                                                  },
-                                                  child: Image.asset("assets/images/productsdata/cancel.png",width: 10,height: 10)
-                                              )
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          Row(
-                                            children: [
                                               Image.asset("assets/images/locater/location4.png",width: 20,height: 20),
-                                              SizedBox(width: 10),
-                                              Flexible(
+                                              SizedBox(width: 20),
+                                              Expanded(
                                                 child: Text(
-                                                  "Silicon Shoppers, F4, 1st Floor, Udhna Main Road, udhna, Surat, Gujarat - 394210 (India)",
+                                                  "$address",
                                                   maxLines: 2,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: textStyle.copyWith(
@@ -335,6 +439,19 @@ class _AddDistributersState extends State<AddDistributers> {
                                                       height: 1.4
                                                   ),
                                                 ),
+                                              ),
+                                              SizedBox(width: 20),
+                                              InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      isvisible = false;
+                                                      address = null;
+                                                      logitude = null;
+                                                      latitude = null;
+                                                      pincode = null;
+                                                    });
+                                                  },
+                                                  child: Image.asset("assets/images/productsdata/cancel.png",width: 10,height: 10)
                                               )
                                             ],
                                           ),
@@ -353,6 +470,7 @@ class _AddDistributersState extends State<AddDistributers> {
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
+                                    controller: _personNameController,
                                     style: textStyle.copyWith(
                                         fontSize: 16,
                                         color: Colors.black
@@ -374,6 +492,7 @@ class _AddDistributersState extends State<AddDistributers> {
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
+                                    controller: _personMobileController,
                                     keyboardType: TextInputType.number,
                                     style: textStyle.copyWith(
                                         fontSize: 16,
@@ -396,6 +515,7 @@ class _AddDistributersState extends State<AddDistributers> {
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
+                                    controller: _personTelephoneController,
                                     keyboardType: TextInputType.number,
                                     style: textStyle.copyWith(
                                         fontSize: 16,
@@ -411,47 +531,49 @@ class _AddDistributersState extends State<AddDistributers> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Time",
-                                            style: textStyle.copyWith(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-                                          SizedBox(
-                                            height: height*0.08,
-                                            width: width/2.4,
-                                            child: TextField(
-                                              decoration: fieldStyle1.copyWith(
-                                                  prefixIcon: new IconButton(
-                                                    icon: new Image.asset('assets/images/tasks/clock.png',width: 20,height: 20),
-                                                    onPressed: null,
-                                                  ),
-                                                  hintText: "Open Time",
-                                                  hintStyle: textStyle.copyWith(
-                                                      color: Colors.black
-                                                  ),
-                                                  isDense: true
-                                              ),
-                                              textAlign: TextAlign.center,
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Time",
                                               style: textStyle.copyWith(
-                                                  fontSize: 14,
-                                                  color: Colors.black
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16
                                               ),
-                                              focusNode: AlwaysDisabledFocusNode(),
-                                              controller: _textEditingController1,
-                                              onTap: () {
-                                                _pickTime();
-                                              },
                                             ),
-                                          ),
-                                        ],
+                                            SizedBox(height: 10),
+                                            SizedBox(
+                                              height: height*0.08,
+                                              child: TextField(
+                                                decoration: fieldStyle1.copyWith(
+                                                    prefixIcon: new IconButton(
+                                                      icon: new Image.asset('assets/images/tasks/clock.png',width: 20,height: 20),
+                                                      onPressed: null,
+                                                    ),
+                                                    hintText: "Open Time",
+                                                    hintStyle: textStyle.copyWith(
+                                                        color: Colors.black
+                                                    ),
+                                                    isDense: true
+                                                ),
+                                                textAlign: TextAlign.center,
+                                                style: textStyle.copyWith(
+                                                    fontSize: 14,
+                                                    color: Colors.black
+                                                ),
+                                                focusNode: AlwaysDisabledFocusNode(),
+                                                controller: _openTimeController,
+                                                onTap: () {
+                                                  _pickTime();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
+                                      SizedBox(width: 10),
                                       Text(
                                         "To",
                                         style: textStyle.copyWith(
@@ -459,47 +581,49 @@ class _AddDistributersState extends State<AddDistributers> {
                                           fontWeight: FontWeight.bold
                                         ),
                                       ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "",
-                                          ),
-                                          SizedBox(height: 10),
-                                          SizedBox(
-                                            height: height*0.08,
-                                            width: width/2.4,
-                                            child: TextField(
-                                              decoration: fieldStyle1.copyWith(
-                                                  prefixIcon: new IconButton(
-                                                    icon: new Image.asset('assets/images/tasks/clock.png',width: 20,height: 20),
-                                                    onPressed: null,
-                                                  ),
-                                                  hintText: "Close Time",
-                                                  hintStyle: textStyle.copyWith(
-                                                      color: Colors.black
-                                                  ),
-                                                  isDense: true
-                                              ),
-                                              textAlign: TextAlign.center,
-                                              style: textStyle.copyWith(
-                                                  fontSize: 14,
-                                                  color: Colors.black
-                                              ),
-                                              focusNode: AlwaysDisabledFocusNode(),
-                                              controller: _textEditingController2,
-                                              onTap: () {
-                                                _pickTime();
-                                              },
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "",
                                             ),
-                                          ),
-                                        ],
+                                            SizedBox(height: 10),
+                                            SizedBox(
+                                              height: height*0.08,
+                                              child: TextField(
+                                                decoration: fieldStyle1.copyWith(
+                                                    prefixIcon: new IconButton(
+                                                      icon: new Image.asset('assets/images/tasks/clock.png',width: 20,height: 20),
+                                                      onPressed: null,
+                                                    ),
+                                                    hintText: "Close Time",
+                                                    hintStyle: textStyle.copyWith(
+                                                        color: Colors.black
+                                                    ),
+                                                    isDense: true
+                                                ),
+                                                textAlign: TextAlign.center,
+                                                style: textStyle.copyWith(
+                                                    fontSize: 14,
+                                                    color: Colors.black
+                                                ),
+                                                focusNode: AlwaysDisabledFocusNode(),
+                                                controller: _closeTimeController,
+                                                onTap: () {
+                                                  _pickTime();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       )
                                     ],
                                   ),
                                   SizedBox(height: height*0.01),
                                   Text(
-                                    "Add Photos",
+                                    "Add Photo",
                                     style: textStyle.copyWith(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
@@ -512,27 +636,35 @@ class _AddDistributersState extends State<AddDistributers> {
                                       getImage(ImageSource.gallery);
                                     },
                                     child: Container(
-                                      height: _image==null ? 100 : 200,
-                                      width: _image==null ? 100 : 200,
+                                      width: MediaQuery.of(context).size.width,
                                       decoration: BoxDecoration(
                                         borderRadius: round.copyWith(),
                                         border: _image==null ? Border.all(
                                           color: AppColors.black
                                         ) : null
                                       ),
-                                      child: _image==null ? Column(
-                                        children: [
-                                          SizedBox(height: 20),
-                                          Image.asset("assets/images/distributors/scene1.png",width: 30,height: 30),
-                                          SizedBox(height: 10),
-                                          Text(
-                                            "Select Photo",
-                                            style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                            ),
-                                          )
-                                        ],
-                                      ) : Image.file(_image)
+                                      child: _image==null
+                                          ?
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 10),
+                                        child: Column(
+                                          children: [
+                                            Image.asset("assets/images/distributors/scene1.png",width: 30,height: 30),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              "Select Photo",
+                                              style: textStyle.copyWith(
+                                                color: AppColors.black,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                          :
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                          child: Image.file(_image,width: MediaQuery.of(context).size.width,fit: BoxFit.fill)
+                                      )
                                     ),
                                   )
                                 ],
@@ -570,13 +702,13 @@ class _AddDistributersState extends State<AddDistributers> {
 
     if(t != null)
     {
-      if(_textEditingController1.text.isEmpty)
+      if(_openTimeController.text.isEmpty)
       {
         setState(() {
           time = t;
           _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
           String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
-          _textEditingController1 = TextEditingController(text: "$starttime");
+          _openTimeController = TextEditingController(text: "$starttime");
         });
       }
       else
@@ -585,7 +717,7 @@ class _AddDistributersState extends State<AddDistributers> {
           time = t;
           _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
           String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
-          _textEditingController2 = TextEditingController(text: "$starttime");
+          _closeTimeController = TextEditingController(text: "$starttime");
         });
       }
     }

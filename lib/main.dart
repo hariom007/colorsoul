@@ -1,6 +1,7 @@
 import 'dart:async';
 //import 'package:colorsoul/components.dart';
 import 'package:colorsoul/Provider/auth_provider.dart';
+import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Ui/Pin/pin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
 
         ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => DistributorProvider()),
 
       ],
       child: MaterialApp(
@@ -66,6 +68,7 @@ class _splashState extends State<splash> {
       "username": "$userName",
       "password": "$password"
     };
+
 
     await _authProvider.loginApi(data,'/login');
     if(_authProvider.isSuccess == true){

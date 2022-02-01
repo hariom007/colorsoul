@@ -84,7 +84,7 @@ class ApiHandler {
 
   static Future<dynamic> get(url) async {
 
-      var baseUrl = Uri.http('162.0.210.138','/api$url');
+      var baseUrl = Uri.http('colorsoul.koffeekodes.com','/admin/Api$url');
 
       _setHeadersGet()=> {
         'Content-type': 'application/json',
@@ -95,6 +95,9 @@ class ApiHandler {
           baseUrl,
           headers: _setHeadersGet()
       );
+
+      print(json.decode(response.body));
+
 
       if (response.statusCode == 200) {
         return json.decode(response.body);
@@ -158,7 +161,7 @@ class ApiHandler {
 
   static Future<dynamic> getWithParams(url,params) async {
 
-      var baseUrl = Uri.http('162.0.210.138','/api$url',params);
+    var baseUrl = Uri.http('colorsoul.koffeekodes.com','/admin/Api$url');
 
       _setHeadersGet()=> {
         'Content-type': 'application/json',

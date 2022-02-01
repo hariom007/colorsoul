@@ -77,11 +77,12 @@ class _PinState extends State<Pin> {
     );
 
     if(authenticated == true){
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard()));
+
       setState(() {
         _authorized = true;
       });
-
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard()));
 
     }
     setState(() {

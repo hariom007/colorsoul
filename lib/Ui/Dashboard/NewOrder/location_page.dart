@@ -5,10 +5,13 @@ import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:geocoder/geocoder.dart';
+
 
 class LocationPage extends StatefulWidget {
   const LocationPage({Key key}) : super(key: key);
@@ -24,6 +27,69 @@ class _LocationPageState extends State<LocationPage> {
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
   // Position _currentPosition;
   TextEditingController addressController=TextEditingController();
+
+  Future<Position> getGeoLocationPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+
+      return Future.error('Location services are disabled.');
+    }
+
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+
+        Fluttertoast.showToast(
+            msg: "Location permissions are denied. !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+
+      Fluttertoast.showToast(
+          msg: "Location permissions are permanently denied, we cannot request permissions. !!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+  }
+
+  Future<void> getAddressFromLatLong(Position position)async {
+    final coordinates = new Coordinates(position.latitude, position.longitude);
+
+    var fullAddress = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    var first = fullAddress.first;
+
+    String finalAddress = "${first.addressLine}, ${first.locality}/${first.postalCode}/${coordinates.latitude}/${coordinates.longitude}";
+    Navigator.pop(context,"$finalAddress");
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,10 +180,10 @@ class _LocationPageState extends State<LocationPage> {
                   ),
                   InkWell(
                     onTap: () async {
+
                       Position position = await getGeoLocationPosition();
-                      print(position.latitude);
-                      print(position.longitude);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentLocation(position: position)));
+                      getAddressFromLatLong(position);
+
                     },
                     child: Container(
                       height: 80,
@@ -206,54 +272,16 @@ class _LocationPageState extends State<LocationPage> {
       PlacesDetailsResponse detail = await _places.getDetailsByPlaceId(p.placeId);
       final lat = detail.result.geometry.location.lat;
       final lng = detail.result.geometry.location.lng;
-      scaffold.showSnackBar(
-        SnackBar(content: Text("${p.description} - $lat/$lng")),
-      );
-    }
-  }
 
-  Future<Position> getGeoLocationPosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      await Geolocator.openLocationSettings();
+      final coordinates = new Coordinates(lat, lng);
 
-      return Future.error('Location services are disabled.');
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
+      var fullAddress = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      var first = fullAddress.first;
 
-      if (permission == LocationPermission.denied) {
-        print("Location permissions are denied. !!");
-        // Fluttertoast.showToast(
-        //     msg: "Location permissions are denied. !!",
-        //     toastLength: Toast.LENGTH_SHORT,
-        //     gravity: ToastGravity.BOTTOM,
-        //     timeInSecForIosWeb: 1,
-        //     backgroundColor: Colors.red,
-        //     textColor: Colors.white,
-        //     fontSize: 16.0
-        // );
-        return Future.error('Location permissions are denied');
-      }
-    }
+      String finalAddress = "${first.addressLine}, ${first.locality}/${first.postalCode}/${coordinates.latitude}/${coordinates.longitude}";
+      Navigator.pop(context,"$finalAddress");
 
-    if (permission == LocationPermission.deniedForever) {
-      print("Location permissions are permanently denied, we cannot request permissions. !!");
-      // Fluttertoast.showToast(
-      //     msg: "Location permissions are permanently denied, we cannot request permissions. !!",
-      //     toastLength: Toast.LENGTH_SHORT,
-      //     gravity: ToastGravity.BOTTOM,
-      //     timeInSecForIosWeb: 1,
-      //     backgroundColor: Colors.red,
-      //     textColor: Colors.white,
-      //     fontSize: 16.0
-      // );
-      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
     }
-    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 }
 
