@@ -5,6 +5,7 @@ import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
@@ -29,6 +30,7 @@ class _LocationPageState extends State<LocationPage> {
   TextEditingController addressController=TextEditingController();
 
   Future<Position> getGeoLocationPosition() async {
+
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -87,6 +89,8 @@ class _LocationPageState extends State<LocationPage> {
     var first = fullAddress.first;
 
     String finalAddress = "${first.addressLine}, ${first.locality}/${first.postalCode}/${coordinates.latitude}/${coordinates.longitude}";
+
+    Navigator.pop(context,"$finalAddress");
     Navigator.pop(context,"$finalAddress");
 
   }
@@ -181,6 +185,19 @@ class _LocationPageState extends State<LocationPage> {
                   InkWell(
                     onTap: () async {
 
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            backgroundColor: Colors.transparent,
+                            content: Center(
+                              child: SpinKitThreeBounce(
+                                color: AppColors.white,
+                                size: 25.0,
+                              ),
+                            ),
+                          )
+                      );
+
                       Position position = await getGeoLocationPosition();
                       getAddressFromLatLong(position);
 
@@ -240,6 +257,20 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   Future<void> _handlePressButton() async {
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          backgroundColor: Colors.transparent,
+          content: Center(
+            child: SpinKitThreeBounce(
+              color: AppColors.white,
+              size: 25.0,
+            ),
+          ),
+        )
+    );
+
     Prediction p = await PlacesAutocomplete.show(
       context: context,
       apiKey: kGoogleApiKey,
@@ -279,6 +310,7 @@ class _LocationPageState extends State<LocationPage> {
       var first = fullAddress.first;
 
       String finalAddress = "${first.addressLine}, ${first.locality}/${first.postalCode}/${coordinates.latitude}/${coordinates.longitude}";
+      Navigator.pop(context,"$finalAddress");
       Navigator.pop(context,"$finalAddress");
 
     }

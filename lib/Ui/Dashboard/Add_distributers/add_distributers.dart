@@ -5,7 +5,9 @@ import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
+import 'package:dropdown_below/dropdown_below.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -14,12 +16,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 
+class TypeModel{
+  String id;
+  String name;
+
+  TypeModel(this.id, this.name);
+}
+
 class AddDistributers extends StatefulWidget {
   @override
   _AddDistributersState createState() => _AddDistributersState();
 }
 
 class _AddDistributersState extends State<AddDistributers> {
+
   TextEditingController businessNameController = new TextEditingController();
   TextEditingController businessTypeController = new TextEditingController();
   TextEditingController businessGSTController = new TextEditingController();
@@ -65,6 +75,9 @@ class _AddDistributersState extends State<AddDistributers> {
     super.initState();
     time = TimeOfDay.now();
     _distributorProvider = Provider.of<DistributorProvider>(context, listen: false);
+
+    getDistributor();
+
   }
 
   String imageUrl;
@@ -114,7 +127,7 @@ class _AddDistributersState extends State<AddDistributers> {
     var data = {
       "uid":"$userId",
       "type": selectValue == 1 ? "Distributor" : "Retailer",
-      "parent_id":"",
+      "parent_id": selectValue == 1 ? "" : "$selectedDistributorId",
       "business_name":"${businessNameController.text}",
       "business_type":"${businessTypeController.text}",
       "gst_no":"${businessGSTController.text}",
@@ -132,6 +145,36 @@ class _AddDistributersState extends State<AddDistributers> {
 
     _distributorProvider.distributorList.clear();
     await _distributorProvider.insertDistributor(data,'/createDistributorRetailer');
+    if(_distributorProvider.isSuccess == true){
+      Navigator.pop(context,'Refresh');
+    }
+
+  }
+
+
+  String selectedDistributor,selectedDistributorId;
+
+  TypeModel distributorList;
+  List<TypeModel> distributor_List = <TypeModel>[];
+
+  getDistributor() async {
+
+    var data = {
+      "type":"Distributor"
+    };
+
+    _distributorProvider.onlyDistributorList.clear();
+    await _distributorProvider.getOnlyDistributor(data,'/getDistributorRetailerByType');
+    if(_distributorProvider.isSuccess == true){
+
+      var result  = _distributorProvider.onlyDistributorList;
+      var singleDistributor;
+
+      for (var abc in result) {
+        singleDistributor = TypeModel(abc.id,abc.name);
+        distributor_List.add(singleDistributor);
+      }
+    }
 
   }
 
@@ -139,10 +182,20 @@ class _AddDistributersState extends State<AddDistributers> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _distributorProvider = Provider.of<DistributorProvider>(context, listen: true);
+
     return Scaffold(
         bottomNavigationBar: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            _distributorProvider.isLoaded == false
+            ?
+            SpinKitThreeBounce(
+              color: AppColors.black,
+              size: 25.0,
+            )
+                :
             Container(
                 height: 70,
                 color: AppColors.white,
@@ -158,7 +211,7 @@ class _AddDistributersState extends State<AddDistributers> {
                         ),
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            sendImage();
                           },
                           style: ElevatedButton.styleFrom(
                               elevation: 10,
@@ -229,7 +282,18 @@ class _AddDistributersState extends State<AddDistributers> {
                               topLeft: Radius.circular(20)
                           )
                       ),
-                      child: Padding(
+                      child:
+
+                      _distributorProvider.isDistributorLoaded == false
+                          ?
+                      Center(
+                          child: SpinKitThreeBounce(
+                            color: AppColors.black,
+                            size: 25.0,
+                          )
+                      )
+                          :
+                      Padding(
                           padding: EdgeInsets.only(right: 20,left: 20),
                           child: NotificationListener<OverscrollIndicatorNotification>(
                             onNotification: (OverscrollIndicatorNotification overscroll) {
@@ -303,377 +367,459 @@ class _AddDistributersState extends State<AddDistributers> {
                                       ),
                                     ],
                                   ),
+
                                   SizedBox(height: height*0.02),
+
+
+                                  selectValue == 1
+                                      ?
+                                  SizedBox()
+                                  :
                                   Text(
-                                    "Distributor Business Name",
+                                    "Select Distributor",
                                     style: textStyle.copyWith(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16
                                     ),
                                   ),
+
+                                  selectValue == 1
+                                      ?
+                                  SizedBox()
+                                      :
                                   SizedBox(height: height*0.01),
-                                  TextFormField(
-                                    controller: businessNameController,
-                                    style: textStyle.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    cursorHeight: 22,
-                                    cursorColor: Colors.grey,
-                                    decoration: fieldStyle1.copyWith(
-                                        isDense: true
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.02),
-                                  Text(
-                                    "Business Type",
-                                    style: textStyle.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.01),
-                                  TextFormField(
-                                    controller: businessTypeController,
-                                    style: textStyle.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    cursorHeight: 22,
-                                    cursorColor: Colors.grey,
-                                    decoration: fieldStyle1.copyWith(
-                                        isDense: true
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.02),
-                                  Text(
-                                    "Business GST No",
-                                    style: textStyle.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.01),
-                                  TextFormField(
-                                    controller: businessTypeController,
-                                    style: textStyle.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    cursorHeight: 22,
-                                    cursorColor: Colors.grey,
-                                    decoration: fieldStyle1.copyWith(
-                                        isDense: true
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.02),
-                                  Text(
-                                    "Add Location",
-                                    style: textStyle.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.01),
-                                  TextFormField(
-                                      style: textStyle.copyWith(
-                                          color: AppColors.black
+
+                                  selectValue == 1
+                                      ?
+                                  SizedBox()
+                                      :
+                                  Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: AppColors.black
+                                        ),
+                                        borderRadius: round,
                                       ),
-                                      onTap: () async {
+                                      child: Listener(
+                                        onPointerDown: (_) {
+                                          FocusScope.of(context).requestFocus(new FocusNode());
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                                          child: DropdownBelow<TypeModel>(
+                                            itemWidth: width/1.3,
+                                            itemTextstyle:textStyle.copyWith(
+                                              fontSize: 16,
+                                              color: AppColors.black,
+                                            ),
+                                            boxTextstyle: textStyle.copyWith(
+                                              fontSize: 16,
+                                              color: AppColors.black,
+                                            ),
+                                            boxWidth: width,
+                                            boxHeight: 50,
+                                            icon: Image.asset('assets/images/locater/down.png',width: 14),
+                                            hint: Text('Select Distributor'),
+                                            value: distributorList,
+                                            onChanged: (TypeModel t){
 
-                                        final value = await Navigator.push(context, MaterialPageRoute(builder: (context) => LocationPage()));
-                                        if(value != null){
-                                          print(value);
+                                              setState(()  {
+                                                distributorList = t;
+                                                print(t.id);
+                                                selectedDistributorId = t.id;
+                                                selectedDistributor = t.name;
+                                              });
 
-                                          var fullAddress = value.split("/");
-                                          address = fullAddress[0];
-                                          pincode = fullAddress[1];
-                                          latitude = fullAddress[2];
-                                          logitude = fullAddress[3];
-
-                                          setState(() {
-                                            isvisible = true;
-                                          });
-                                        }
-
-                                      },
-                                      cursorColor: AppColors.black,
-                                      cursorHeight: 22,
-                                      readOnly: true,
-                                      decoration: fieldStyle1.copyWith(
-                                          hintText: "Search Location",
-                                          hintStyle: textStyle.copyWith(
-                                              color: AppColors.black
+                                            },
+                                            items: distributor_List.map((TypeModel t) {
+                                              return DropdownMenuItem<TypeModel>(
+                                                value: t,
+                                                child: Text(t.name),
+                                              );
+                                            }).toList(),
                                           ),
-                                          prefixIcon: new IconButton(
-                                            icon: new Image.asset('assets/images/locater/search.png',width: 20,height: 20),
-                                            onPressed: null,
-                                          ),
-                                          isDense: true
+                                        ),
                                       )
                                   ),
-                                  Visibility(
-                                    visible: isvisible,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(left: 10,right: 10),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: height*0.02),
-                                          Row(
-                                            children: [
-                                              Image.asset("assets/images/locater/location4.png",width: 20,height: 20),
-                                              SizedBox(width: 20),
-                                              Expanded(
-                                                child: Text(
-                                                  "$address",
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: textStyle.copyWith(
-                                                      color: AppColors.black,
-                                                      fontWeight: FontWeight.bold,
-                                                      height: 1.4
-                                                  ),
-                                                ),
+
+                                  selectValue == 1
+                                      ?
+                                  SizedBox()
+                                      :
+                                  SizedBox(height: height*0.02),
+
+                                      Text(
+                                        "Distributor Business Name",
+                                        style: textStyle.copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.01),
+                                      TextFormField(
+                                        controller: businessNameController,
+                                        style: textStyle.copyWith(
+                                            fontSize: 16,
+                                            color: Colors.black
+                                        ),
+                                        cursorHeight: 22,
+                                        cursorColor: Colors.grey,
+                                        decoration: fieldStyle1.copyWith(
+                                            isDense: true
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.02),
+                                      Text(
+                                        "Business Type",
+                                        style: textStyle.copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.01),
+                                      TextFormField(
+                                        controller: businessTypeController,
+                                        style: textStyle.copyWith(
+                                            fontSize: 16,
+                                            color: Colors.black
+                                        ),
+                                        cursorHeight: 22,
+                                        cursorColor: Colors.grey,
+                                        decoration: fieldStyle1.copyWith(
+                                            isDense: true
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.02),
+                                      Text(
+                                        "Business GST No",
+                                        style: textStyle.copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.01),
+                                      TextFormField(
+                                        controller: businessGSTController,
+                                        style: textStyle.copyWith(
+                                            fontSize: 16,
+                                            color: Colors.black
+                                        ),
+                                        cursorHeight: 22,
+                                        cursorColor: Colors.grey,
+                                        decoration: fieldStyle1.copyWith(
+                                            isDense: true
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.02),
+                                      Text(
+                                        "Add Location",
+                                        style: textStyle.copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.01),
+                                      TextFormField(
+                                          style: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          onTap: () async {
+
+                                            final value = await Navigator.push(context, MaterialPageRoute(builder: (context) => LocationPage()));
+                                            if(value != null){
+                                              print(value);
+
+                                              var fullAddress = value.split("/");
+                                              address = fullAddress[0];
+                                              pincode = "${fullAddress[1]}";
+                                              latitude = fullAddress[2];
+                                              logitude = fullAddress[3];
+
+                                              setState(() {
+                                                isvisible = true;
+                                              });
+                                            }
+
+                                          },
+                                          cursorColor: AppColors.black,
+                                          cursorHeight: 22,
+                                          readOnly: true,
+                                          decoration: fieldStyle1.copyWith(
+                                              hintText: "Search Location",
+                                              hintStyle: textStyle.copyWith(
+                                                  color: AppColors.black
                                               ),
-                                              SizedBox(width: 20),
-                                              InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      isvisible = false;
-                                                      address = null;
-                                                      logitude = null;
-                                                      latitude = null;
-                                                      pincode = null;
-                                                    });
-                                                  },
-                                                  child: Image.asset("assets/images/productsdata/cancel.png",width: 10,height: 10)
-                                              )
+                                              prefixIcon: new IconButton(
+                                                icon: new Image.asset('assets/images/locater/search.png',width: 20,height: 20),
+                                                onPressed: null,
+                                              ),
+                                              isDense: true
+                                          )
+                                      ),
+                                      Visibility(
+                                        visible: isvisible,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 10,right: 10),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(height: height*0.02),
+                                              Row(
+                                                children: [
+                                                  Image.asset("assets/images/locater/location4.png",width: 20,height: 20),
+                                                  SizedBox(width: 20),
+                                                  Expanded(
+                                                    child: Text(
+                                                      "$address",
+                                                      maxLines: 2,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: textStyle.copyWith(
+                                                          color: AppColors.black,
+                                                          fontWeight: FontWeight.bold,
+                                                          height: 1.4
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 20),
+                                                  InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          isvisible = false;
+                                                          address = null;
+                                                          logitude = null;
+                                                          latitude = null;
+                                                          pincode = null;
+                                                        });
+                                                      },
+                                                      child: Image.asset("assets/images/productsdata/cancel.png",width: 10,height: 10)
+                                                  )
+                                                ],
+                                              ),
                                             ],
                                           ),
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.02),
+                                      Text(
+                                        "Person Name",
+                                        style: textStyle.copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.01),
+                                      TextFormField(
+                                        controller: _personNameController,
+                                        style: textStyle.copyWith(
+                                            fontSize: 16,
+                                            color: Colors.black
+                                        ),
+                                        cursorHeight: 22,
+                                        cursorColor: Colors.grey,
+                                        decoration: fieldStyle1.copyWith(
+                                            isDense: true
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.01),
+                                      Text(
+                                        "Mobile Number",
+                                        style: textStyle.copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.01),
+                                      TextFormField(
+                                        controller: _personMobileController,
+                                        keyboardType: TextInputType.number,
+                                        style: textStyle.copyWith(
+                                            fontSize: 16,
+                                            color: Colors.black
+                                        ),
+                                        cursorHeight: 22,
+                                        cursorColor: Colors.grey,
+                                        decoration: fieldStyle1.copyWith(
+                                            isDense: true
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.02),
+                                      Text(
+                                        "Telephone Number",
+                                        style: textStyle.copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.01),
+                                      TextFormField(
+                                        controller: _personTelephoneController,
+                                        keyboardType: TextInputType.number,
+                                        style: textStyle.copyWith(
+                                            fontSize: 16,
+                                            color: Colors.black
+                                        ),
+                                        cursorHeight: 22,
+                                        cursorColor: Colors.grey,
+                                        decoration: fieldStyle1.copyWith(
+                                            isDense: true
+                                        ),
+                                      ),
+                                      SizedBox(height: height*0.02),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Time",
+                                                  style: textStyle.copyWith(
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16
+                                                  ),
+                                                ),
+                                                SizedBox(height: 10),
+                                                SizedBox(
+                                                  height: height*0.08,
+                                                  child: TextField(
+                                                    decoration: fieldStyle1.copyWith(
+                                                        prefixIcon: new IconButton(
+                                                          icon: new Image.asset('assets/images/tasks/clock.png',width: 20,height: 20),
+                                                          onPressed: null,
+                                                        ),
+                                                        hintText: "Open Time",
+                                                        hintStyle: textStyle.copyWith(
+                                                            color: Colors.black
+                                                        ),
+                                                        isDense: true
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    style: textStyle.copyWith(
+                                                        fontSize: 14,
+                                                        color: Colors.black
+                                                    ),
+                                                    focusNode: AlwaysDisabledFocusNode(),
+                                                    controller: _openTimeController,
+                                                    onTap: () {
+                                                      _pickTime();
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            "To",
+                                            style: textStyle.copyWith(
+                                              color: AppColors.black,
+                                              fontWeight: FontWeight.bold
+                                            ),
+                                          ),
+                                          SizedBox(width: 10),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "",
+                                                ),
+                                                SizedBox(height: 10),
+                                                SizedBox(
+                                                  height: height*0.08,
+                                                  child: TextField(
+                                                    decoration: fieldStyle1.copyWith(
+                                                        prefixIcon: new IconButton(
+                                                          icon: new Image.asset('assets/images/tasks/clock.png',width: 20,height: 20),
+                                                          onPressed: null,
+                                                        ),
+                                                        hintText: "Close Time",
+                                                        hintStyle: textStyle.copyWith(
+                                                            color: Colors.black
+                                                        ),
+                                                        isDense: true
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    style: textStyle.copyWith(
+                                                        fontSize: 14,
+                                                        color: Colors.black
+                                                    ),
+                                                    focusNode: AlwaysDisabledFocusNode(),
+                                                    controller: _closeTimeController,
+                                                    onTap: () {
+                                                      _pickTime();
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
                                         ],
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.02),
-                                  Text(
-                                    "Person Name",
-                                    style: textStyle.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.01),
-                                  TextFormField(
-                                    controller: _personNameController,
-                                    style: textStyle.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    cursorHeight: 22,
-                                    cursorColor: Colors.grey,
-                                    decoration: fieldStyle1.copyWith(
-                                        isDense: true
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.01),
-                                  Text(
-                                    "Mobile Number",
-                                    style: textStyle.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.01),
-                                  TextFormField(
-                                    controller: _personMobileController,
-                                    keyboardType: TextInputType.number,
-                                    style: textStyle.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    cursorHeight: 22,
-                                    cursorColor: Colors.grey,
-                                    decoration: fieldStyle1.copyWith(
-                                        isDense: true
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.02),
-                                  Text(
-                                    "Telephone Number",
-                                    style: textStyle.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.01),
-                                  TextFormField(
-                                    controller: _personTelephoneController,
-                                    keyboardType: TextInputType.number,
-                                    style: textStyle.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    cursorHeight: 22,
-                                    cursorColor: Colors.grey,
-                                    decoration: fieldStyle1.copyWith(
-                                        isDense: true
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.02),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Time",
-                                              style: textStyle.copyWith(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16
-                                              ),
-                                            ),
-                                            SizedBox(height: 10),
-                                            SizedBox(
-                                              height: height*0.08,
-                                              child: TextField(
-                                                decoration: fieldStyle1.copyWith(
-                                                    prefixIcon: new IconButton(
-                                                      icon: new Image.asset('assets/images/tasks/clock.png',width: 20,height: 20),
-                                                      onPressed: null,
-                                                    ),
-                                                    hintText: "Open Time",
-                                                    hintStyle: textStyle.copyWith(
-                                                        color: Colors.black
-                                                    ),
-                                                    isDense: true
-                                                ),
-                                                textAlign: TextAlign.center,
-                                                style: textStyle.copyWith(
-                                                    fontSize: 14,
-                                                    color: Colors.black
-                                                ),
-                                                focusNode: AlwaysDisabledFocusNode(),
-                                                controller: _openTimeController,
-                                                onTap: () {
-                                                  _pickTime();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
+                                      SizedBox(height: height*0.01),
                                       Text(
-                                        "To",
+                                        "Add Photo",
                                         style: textStyle.copyWith(
-                                          color: AppColors.black,
-                                          fontWeight: FontWeight.bold
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
                                         ),
                                       ),
-                                      SizedBox(width: 10),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "",
+                                      SizedBox(height: height*0.01),
+                                      InkWell(
+                                        onTap: () {
+                                          getImage(ImageSource.gallery);
+                                        },
+                                        child: Container(
+                                          width: MediaQuery.of(context).size.width,
+                                          decoration: BoxDecoration(
+                                            borderRadius: round.copyWith(),
+                                            border: _image==null ? Border.all(
+                                              color: AppColors.black
+                                            ) : null
+                                          ),
+                                          child: _image==null
+                                              ?
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 10),
+                                            child: Column(
+                                              children: [
+                                                Image.asset("assets/images/distributors/scene1.png",width: 30,height: 30),
+                                                SizedBox(height: 10),
+                                                Text(
+                                                  "Select Photo",
+                                                  style: textStyle.copyWith(
+                                                    color: AppColors.black,
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                            SizedBox(height: 10),
-                                            SizedBox(
-                                              height: height*0.08,
-                                              child: TextField(
-                                                decoration: fieldStyle1.copyWith(
-                                                    prefixIcon: new IconButton(
-                                                      icon: new Image.asset('assets/images/tasks/clock.png',width: 20,height: 20),
-                                                      onPressed: null,
-                                                    ),
-                                                    hintText: "Close Time",
-                                                    hintStyle: textStyle.copyWith(
-                                                        color: Colors.black
-                                                    ),
-                                                    isDense: true
-                                                ),
-                                                textAlign: TextAlign.center,
-                                                style: textStyle.copyWith(
-                                                    fontSize: 14,
-                                                    color: Colors.black
-                                                ),
-                                                focusNode: AlwaysDisabledFocusNode(),
-                                                controller: _closeTimeController,
-                                                onTap: () {
-                                                  _pickTime();
-                                                },
-                                              ),
-                                            ),
-                                          ],
+                                          )
+                                              :
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                              child: Image.file(_image,width: MediaQuery.of(context).size.width,fit: BoxFit.fill)
+                                          )
                                         ),
                                       )
                                     ],
                                   ),
-                                  SizedBox(height: height*0.01),
-                                  Text(
-                                    "Add Photo",
-                                    style: textStyle.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
-                                    ),
-                                  ),
-                                  SizedBox(height: height*0.01),
-                                  InkWell(
-                                    onTap: () {
-                                      getImage(ImageSource.gallery);
-                                    },
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      decoration: BoxDecoration(
-                                        borderRadius: round.copyWith(),
-                                        border: _image==null ? Border.all(
-                                          color: AppColors.black
-                                        ) : null
-                                      ),
-                                      child: _image==null
-                                          ?
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 10),
-                                        child: Column(
-                                          children: [
-                                            Image.asset("assets/images/distributors/scene1.png",width: 30,height: 30),
-                                            SizedBox(height: 10),
-                                            Text(
-                                              "Select Photo",
-                                              style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                          :
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                          child: Image.file(_image,width: MediaQuery.of(context).size.width,fit: BoxFit.fill)
-                                      )
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          )
-                      ),
+                                ),
+                              )
+                          ),
+
                     )
-                )
+                    )
               ],
             )
         )
