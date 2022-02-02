@@ -4,6 +4,12 @@ import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 
 class ConfirmOrder extends StatefulWidget {
+
+  List productList = [];
+  String retailerId,address,orderDate,totalAmount;
+
+  ConfirmOrder({Key key,this.productList,this.retailerId,this.address,this.totalAmount,this.orderDate}) : super(key: key);
+
   @override
   _ConfirmOrderState createState() => _ConfirmOrderState();
 }
@@ -129,7 +135,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                   ),
                                   SizedBox(height: 30),
                                   Text(
-                                    "₹1500.00",
+                                    "₹ ${widget.totalAmount}",
                                     style: textStyle.copyWith(
                                       color: AppColors.black,
                                       fontSize: 34,
@@ -145,13 +151,12 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
-                                  Text(
+                                  /*Text(
                                     "Delivery Date : December 18, 2021",
                                     style: textStyle.copyWith(
                                       color: AppColors.black,
                                     ),
-                                  ),
-                                  SizedBox(height: 20),
+                                  ),*/
                                   Divider(
                                     height: 20,
                                     color: Color.fromRGBO(185, 185, 185, 0.75),
@@ -200,110 +205,59 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                     color: Color.fromRGBO(185, 185, 185, 0.75),
                                     thickness: 1.2
                                   ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "Gelnp25dcv0",
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
+
+                                  ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    padding: EdgeInsets.only(top: 10),
+                                    itemCount: widget.productList.length,
+                                    shrinkWrap: true,
+                                    itemBuilder:(context, index){
+                                      var productData = widget.productList[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(bottom: 20),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                "${productData['sku']}",
+                                                style: textStyle.copyWith(
+                                                  color: AppColors.black,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 80,
+                                              child: Text(
+                                                "${productData['qty']}",
+                                                textAlign: TextAlign.center,
+                                                style: textStyle.copyWith(
+                                                  color: AppColors.black,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 80,
+                                              child: Text(
+                                                "${productData['amount']}",
+                                                textAlign: TextAlign.center,
+                                                style: textStyle.copyWith(
+                                                  color: AppColors.black,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "02",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "₹250.00",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                      );
+                                    },
                                   ),
-                                  SizedBox(height: 20),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "Gelnp25dcv0",
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "02",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "₹250.00",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 20),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "Gelnp25dcv0",
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "02",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "₹250.00",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+
                                   Divider(
                                     height: 20,
                                     color: Color.fromRGBO(185, 185, 185, 0.75),
                                     thickness: 1.2
                                   ),
                                   SizedBox(height: 10),
+
                                   Padding(
                                     padding: EdgeInsets.only(right: 10),
                                     child: Column(
@@ -318,7 +272,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                             ),
                                             Expanded(child: Container()),
                                             Text(
-                                              "₹1500.00",
+                                              "₹ ${widget.totalAmount}",
                                               style: textStyle.copyWith(
                                                 color: AppColors.black,
                                                 fontSize: 16,
@@ -327,7 +281,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                             )
                                           ],
                                         ),
-                                        SizedBox(height: 15),
+                                        /*SizedBox(height: 15),
                                         Row(
                                           children: [
                                             Text(
@@ -346,7 +300,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                               ),
                                             )
                                           ],
-                                        ),
+                                        ),*/
                                         SizedBox(height: 15),
                                         Row(
                                           children: [
@@ -391,7 +345,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                         ),
                                         Expanded(child: Container()),
                                         Text(
-                                          "₹1300.00",
+                                          "₹ ${widget.totalAmount}",
                                           style: textStyle.copyWith(
                                               color: AppColors.black,
                                               fontSize: 22,

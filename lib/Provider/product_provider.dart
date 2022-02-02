@@ -106,4 +106,52 @@ class ProductProvider with ChangeNotifier
   }
 
 
+  List<ProductModel> searchProductList = [];
+  getSearchProducts(data,url) async
+  {
+
+    isLoaded = false;
+    searchProductList.clear();
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+      List<ProductModel> list;
+
+      if(value["st"] == "success")
+      {
+        isSuccess = true;
+
+        var items = value["data"];
+
+        List client = items as List;
+        list  = client.map<ProductModel>((json) => ProductModel.fromJson(json)).toList();
+        searchProductList.addAll(list);
+
+        notifyListeners();
+      }
+      else
+      {
+        isSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Product Get List Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+
 }
