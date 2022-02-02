@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmOrder extends StatefulWidget {
 
@@ -15,18 +19,76 @@ class ConfirmOrder extends StatefulWidget {
 }
 
 class _ConfirmOrderState extends State<ConfirmOrder> {
+
+
+  TextEditingController noteController = TextEditingController();
+  OrderProvider _orderProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _orderProvider = Provider.of<OrderProvider>(context, listen: false);
+  }
+
+  createOrder() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      "id":"",
+      "uid":"$userId",
+      "retailer_id":"${widget.retailerId}",
+      "address":"${widget.address}",
+      "order_date":"${widget.orderDate}",
+      "items": widget.productList,
+      "total":"${widget.totalAmount}",
+      "note":"${noteController.text}"
+    };
+
+    //print(data);
+
+    _orderProvider.insertOrder(data, "/createOrders");
+    if(_orderProvider.isSuccess == true){
+
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return SimpleCustomAlert();
+          }
+      );
+
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _orderProvider = Provider.of<OrderProvider>(context, listen: true);
+
     return Scaffold(
         bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+
               Container(
                   height: 70,
                   color: AppColors.white,
-                  child: Padding(
+                  child:
+                  _orderProvider.isLoaded == false
+                      ?
+                  Center(
+                      child: SpinKitThreeBounce(
+                        color: AppColors.black,
+                        size: 25.0,
+                      )
+                  )
+                      :
+                  Padding(
                     padding: EdgeInsets.all(10),
                     child:SizedBox(
                         height: 50,
@@ -38,13 +100,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                           ),
                           child: ElevatedButton(
                             onPressed: () {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return SimpleCustomAlert();
-                                }
-                              );
+
+                              createOrder();
+
                             },
                             style: ElevatedButton.styleFrom(
                                 elevation: 10,
@@ -63,6 +121,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                     ),
                   )
               )
+
             ]
         ),
         backgroundColor: Colors.white,
@@ -369,6 +428,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
+                                    controller: noteController,
                                     style: textStyle.copyWith(
                                       color: AppColors.black
                                     ),
@@ -404,7 +464,6 @@ class SimpleCustomAlert extends StatefulWidget {
 
 class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
 
-
   @override
   void initState()
   {
@@ -428,6 +487,7 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
       insetPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
       backgroundColor: Colors.transparent,
+
       content: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2]),
