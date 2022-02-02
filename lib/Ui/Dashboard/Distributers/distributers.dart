@@ -82,7 +82,7 @@ class _DistributorsState extends State<Distributors> {
                 Padding(
                   padding: EdgeInsets.all(20),
                   child: Text(
-                    "Distributors",
+                    "Distributors & Retailers",
                     style: textStyle.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.bold
@@ -249,11 +249,23 @@ class _DistributorsState extends State<Distributors> {
                                                 ],
                                               ),
                                               onTap: () {
+
                                                 Navigator.push(
                                                     context,
-                                                    MaterialPageRoute(builder: (context) => Details()
-                                                    )
+                                                    MaterialPageRoute(builder: (context) => Details(
+                                                      distributor_name: distributorData.businessName,
+                                                      distributor_address: distributorData.address,
+                                                      distributor_image: distributorData.image,
+                                                      latitude: distributorData.latitude,
+                                                      longitude: distributorData.longitude,
+                                                      person_name: distributorData.name,
+                                                      person_mobile: distributorData.mobile,
+                                                      person_tel: distributorData.telephone,
+                                                      business_type: distributorData.businessType,
+                                                      time: "${distributorData.openTime} - ${distributorData.closeTime}",
+                                                    ))
                                                 );
+
                                               },
                                             ),
                                           )

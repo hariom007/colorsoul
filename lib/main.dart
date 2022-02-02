@@ -4,6 +4,7 @@ import 'package:colorsoul/Provider/auth_provider.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Ui/Pin/pin.dart';
+import 'package:colorsoul/locater.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +36,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'Colorsoul',
         home: splash(),
+        //home: testClass(),
       ),
     );
   }

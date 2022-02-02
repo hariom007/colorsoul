@@ -85,10 +85,13 @@ class _PinState extends State<Pin> {
       });
 
     }
-    setState(() {
-      isLoading = false;
-    });
+    else{
 
+      setState(() {
+        isLoading = false;
+      });
+
+    }
 
   }
 
