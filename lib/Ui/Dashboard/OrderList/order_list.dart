@@ -1,8 +1,12 @@
+import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Products/productsfilter.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'order_details.dart';
 
@@ -15,10 +19,16 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
   TabController _tabController;
   int isSelected = 0;
 
+  OrderProvider _orderProvider;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _orderProvider = Provider.of<OrderProvider>(context, listen: false);
+
+    getOrders();
+
   }
 
   @override
@@ -27,10 +37,54 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
     _tabController.dispose();
   }
 
+  int page = 1;
+  getOrders() async {
+
+    setState(() {
+      _orderProvider.orderList.clear();
+      _orderProvider.incompleteOrderList.clear();
+      _orderProvider.completeOrderList.clear();
+    });
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":""
+    };
+    await _orderProvider.getAllOrders(data,'/getOrder/$page');
+
+
+    var data1 = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":"Pending"
+    };
+    await _orderProvider.getIncompleteOrders(data,'/getOrder/$page');
+
+
+    var data2 = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":"Delivered"
+    };
+    await _orderProvider.getCompleteOrders(data,'/getOrder/$page');
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _orderProvider = Provider.of<OrderProvider>(context, listen: true);
+
     return Scaffold(
       backgroundColor: Colors.black,
       body:  NotificationListener<OverscrollIndicatorNotification>(
@@ -240,7 +294,17 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                     ),
                     padding: EdgeInsets.only(left: 15,right: 15,bottom: 30),
                     width: width,
-                    child: TabBarView(
+                    child:
+                    _orderProvider.isLoaded == false
+                        ?
+                    Center(
+                        child: SpinKitThreeBounce(
+                          color: AppColors.black,
+                          size: 25.0,
+                        )
+                    )
+                        :
+                    TabBarView(
                       physics: NeverScrollableScrollPhysics(),
                       controller: _tabController,
                       children: [
