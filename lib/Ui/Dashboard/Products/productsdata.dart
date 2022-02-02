@@ -233,187 +233,202 @@ class _ProductsDataState extends State<ProductsData> {
                   return;
                 },
                 child:
-                _productProvider.isLoaded == false
-                    ?
-                Center(
-                    child: SpinKitThreeBounce(
-                      color: AppColors.black,
-                      size: 25.0,
-                    )
-                )
-                    :
-                GridView.builder(
-                  controller: _scrollViewController,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 8.0,
-                        childAspectRatio: 3/4.6
-                    ),
-                    shrinkWrap: true,
-                    itemCount: _productProvider.productList.length,
-                    padding: EdgeInsets.only(right: 10,left: 10,bottom: 20),
-                    itemBuilder: (context, index){
-                      var productData = _productProvider.productList[index];
-                      return Card(
-                        color: Colors.transparent,
-                        elevation: 20,
-                        child: InkWell(
-                          onTap: (){
-                            setState(() {
 
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => ProductInfo(
-                                  name: productData.clProductName,
-                                  colors: productData.colors,
-                                images: productData.clProductImg,
-                                shortDecs: productData.clProductSortDesc,
-                                longDesc: productData.clProductDesc,
-                                specification: productData.pattributes,
-                              )
-                              ));
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    GridView.builder(
+                      controller: _scrollViewController,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 8.0,
+                            mainAxisSpacing: 8.0,
+                            childAspectRatio: 3/4.6
+                        ),
+                        shrinkWrap: true,
+                        itemCount: _productProvider.productList.length,
+                        padding: EdgeInsets.only(right: 10,left: 10,bottom: 20),
+                        itemBuilder: (context, index){
+                          var productData = _productProvider.productList[index];
+                          return Card(
+                            color: Colors.transparent,
+                            elevation: 13,
+                            child: InkWell(
+                              onTap: (){
+                                setState(() {
+
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProductInfo(
+                                      name: productData.clProductName,
+                                      colors: productData.colors,
+                                    images: productData.clProductImg,
+                                    shortDecs: productData.clProductSortDesc,
+                                    longDesc: productData.clProductDesc,
+                                    specification: productData.pattributes,
+                                  )
+                                  ));
 
 
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: AppColors.white,
-                                borderRadius: round1.copyWith()
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Center(
-                                    child: Hero(
-                                        tag: '${productData.clProductId}',
-                                        child:
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(6),
-                                          child: CachedNetworkImage(
-                                              imageUrl: "${productData.clProductImg[0].hPath}"+"${productData.clProductImg[0].imageName}",
-                                              placeholder: (context, url) => Container(
-                                                width: MediaQuery.of(context).size.width,
-                                                height: 140,
-                                                child: Center(
-                                                    child: SpinKitThreeBounce(
-                                                      color: AppColors.black,
-                                                      size: 25.0,
-                                                    )
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: AppColors.white,
+                                    borderRadius: round1.copyWith()
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Center(
+                                        child: Hero(
+                                            tag: '${productData.clProductId}',
+                                            child:
+                                            ClipRRect(
+                                              borderRadius: BorderRadius.circular(6),
+                                              child: CachedNetworkImage(
+                                                  imageUrl: "${productData.clProductImg[0].hPath}"+"${productData.clProductImg[0].imageName}",
+                                                  placeholder: (context, url) => Container(
+                                                    width: MediaQuery.of(context).size.width,
+                                                    height: 140,
+                                                    child: Center(
+                                                        child: SpinKitThreeBounce(
+                                                          color: AppColors.black,
+                                                          size: 25.0,
+                                                        )
+                                                    ),
+                                                  ),
+                                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                                  width: 140,
+                                                  height: 140,
+                                              ),
+                                            ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+
+                                      Row(
+                                        children: [
+
+                                          productData.colors.length >= 3
+                                              ?
+                                          Row(
+                                            children: [
+
+                                              Container(
+                                                padding: EdgeInsets.all(2.5),
+                                                height: 18,
+                                                width: 18,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: HexColor("${productData.colors[0].hexCode}"),
                                                 ),
                                               ),
-                                              errorWidget: (context, url, error) => Icon(Icons.error),
-                                              width: 140,
-                                              height: 140,
-                                          ),
-                                        ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
 
-                                  Row(
-                                    children: [
+                                              SizedBox(width: 6),
 
-                                      productData.colors.length >= 3
-                                          ?
-                                      Row(
-                                        children: [
+                                              Container(
+                                                padding: EdgeInsets.all(2.5),
+                                                height: 18,
+                                                width: 18,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: HexColor("${productData.colors[1].hexCode}"),
+                                                ),
+                                              ),
 
-                                          Container(
-                                            padding: EdgeInsets.all(2.5),
-                                            height: 18,
-                                            width: 18,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: HexColor("${productData.colors[0].hexCode}"),
+                                              SizedBox(width: 6),
+
+                                              Container(
+                                                padding: EdgeInsets.all(2.5),
+                                                height: 18,
+                                                width: 18,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: HexColor("${productData.colors[2].hexCode}"),
+                                                ),
+                                              ),
+
+                                            ],
+                                          )
+                                              :
+                                          productData.colors.length == 2
+                                              ?
+                                          Row(
+                                            children: [
+
+                                              Container(
+                                                padding: EdgeInsets.all(2.5),
+                                                height: 18,
+                                                width: 18,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: HexColor("${productData.colors[0].hexCode}"),
+                                                ),
+                                              ),
+
+                                              SizedBox(width: 6),
+
+                                              Container(
+                                                padding: EdgeInsets.all(2.5),
+                                                height: 18,
+                                                width: 18,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: HexColor("${productData.colors[1].hexCode}"),
+                                                ),
+                                              ),
+
+
+                                            ],
+                                          )
+                                              :
+                                          productData.colors.length == 1
+                                              ?
+                                          Row(
+                                            children: [
+
+                                              Container(
+                                                padding: EdgeInsets.all(2.5),
+                                                height: 18,
+                                                width: 18,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: HexColor("${productData.colors[0].hexCode}"),
+                                                ),
+                                              ),
+
+                                            ],
+                                          )
+                                              :
+                                          SizedBox(),
+
+                                          SizedBox(width: 10),
+
+                                          productData.colors.length > 3
+                                              ?
+                                          Text(
+                                            "+${productData.colors.length - 3}",
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: textStyle.copyWith(
+                                                color: AppColors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14
                                             ),
-                                          ),
-
-                                          SizedBox(width: 6),
-
-                                          Container(
-                                            padding: EdgeInsets.all(2.5),
-                                            height: 18,
-                                            width: 18,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: HexColor("${productData.colors[1].hexCode}"),
-                                            ),
-                                          ),
-
-                                          SizedBox(width: 6),
-
-                                          Container(
-                                            padding: EdgeInsets.all(2.5),
-                                            height: 18,
-                                            width: 18,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: HexColor("${productData.colors[2].hexCode}"),
-                                            ),
-                                          ),
+                                          )
+                                              :
+                                              SizedBox()
 
                                         ],
-                                      )
-                                          :
-                                      productData.colors.length == 2
-                                          ?
-                                      Row(
-                                        children: [
-
-                                          Container(
-                                            padding: EdgeInsets.all(2.5),
-                                            height: 18,
-                                            width: 18,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: HexColor("${productData.colors[0].hexCode}"),
-                                            ),
-                                          ),
-
-                                          SizedBox(width: 6),
-
-                                          Container(
-                                            padding: EdgeInsets.all(2.5),
-                                            height: 18,
-                                            width: 18,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: HexColor("${productData.colors[1].hexCode}"),
-                                            ),
-                                          ),
+                                      ),
 
 
-                                        ],
-                                      )
-                                          :
-                                      productData.colors.length == 1
-                                          ?
-                                      Row(
-                                        children: [
+                                      SizedBox(height: 10),
 
-                                          Container(
-                                            padding: EdgeInsets.all(2.5),
-                                            height: 18,
-                                            width: 18,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: HexColor("${productData.colors[0].hexCode}"),
-                                            ),
-                                          ),
-
-                                        ],
-                                      )
-                                          :
-                                      SizedBox(),
-
-                                      SizedBox(width: 10),
-
-                                      productData.colors.length > 3
-                                          ?
                                       Text(
-                                        "+${productData.colors.length - 3}",
+                                        "${productData.clProductName.toUpperCase()}",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: textStyle.copyWith(
@@ -421,48 +436,43 @@ class _ProductsDataState extends State<ProductsData> {
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14
                                         ),
-                                      )
-                                          :
-                                          SizedBox()
+                                      ),
+
+                                      Html(
+                                        shrinkWrap: true,
+                                        data: '${productData.clProductSortDesc}',
+                                        style: {
+                                          '#': Style(
+                                            fontSize: FontSize(14),
+                                            maxLines: 2,
+                                            color: AppColors.black,
+                                            textOverflow: TextOverflow.ellipsis,
+                                              fontFamily: "Roboto-Regular"
+                                          ),
+                                        },
+                                      ),
 
                                     ],
                                   ),
-
-
-                                  SizedBox(height: 10),
-
-                                  Text(
-                                    "${productData.clProductName.toUpperCase()}",
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: textStyle.copyWith(
-                                        color: AppColors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14
-                                    ),
-                                  ),
-
-                                  Html(
-                                    shrinkWrap: true,
-                                    data: '${productData.clProductSortDesc}',
-                                    style: {
-                                      '#': Style(
-                                        fontSize: FontSize(14),
-                                        maxLines: 2,
-                                        color: AppColors.black,
-                                        textOverflow: TextOverflow.ellipsis,
-                                          fontFamily: "Roboto-Regular"
-                                      ),
-                                    },
-                                  ),
-
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      );
-                    }
+                          );
+                        }
+                    ),
+
+                    _productProvider.isLoaded == false
+                        ?
+                    Center(
+                        child: SpinKitThreeBounce(
+                          color: AppColors.black,
+                          size: 25.0,
+                        )
+                    )
+                        :
+                        SizedBox()
+
+                  ],
                 ),
 
               ),

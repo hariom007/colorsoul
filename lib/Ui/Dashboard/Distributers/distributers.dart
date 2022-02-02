@@ -4,6 +4,7 @@ import 'package:colorsoul/Ui/Dashboard/Distributers/feedback_page.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -40,19 +41,36 @@ class _DistributorsState extends State<Distributors> {
 
   DistributorProvider _distributorProvider;
 
+  ScrollController _scrollViewController =  ScrollController();
+  bool isScrollingDown = false;
+
   @override
   void initState() {
     super.initState();
 
     _distributorProvider = Provider.of<DistributorProvider>(context, listen: false);
+    _distributorProvider.distributorList.clear();
     getDistributor();
+
+    _scrollViewController.addListener(() {
+      if (_scrollViewController.position.userScrollDirection == ScrollDirection.reverse) {
+        if (!isScrollingDown) {
+
+          isScrollingDown = true;
+          setState(() {
+            page = page + 1;
+            getDistributor();
+          });
+        }
+      }
+    });
+
 
   }
 
   int page = 1;
   getDistributor() async {
 
-    _distributorProvider.distributorList.clear();
     await _distributorProvider.getDistributor('/getDistributorRetailer/$page');
 
   }
@@ -111,6 +129,7 @@ class _DistributorsState extends State<Distributors> {
                               children: [
 
                                 ListView.builder(
+                                  controller: _scrollViewController,
                                   padding: EdgeInsets.only(top: 10,bottom: 40),
                                   itemCount: _distributorProvider.distributorList.length,
                                   shrinkWrap: true,
