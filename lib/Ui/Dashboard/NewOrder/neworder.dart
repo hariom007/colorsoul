@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:colorsoul/Model/Product_Model.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
+import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/confirmorder.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
@@ -14,6 +15,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Values/appColors.dart';
 import '../../../Values/components.dart';
 
@@ -284,7 +286,7 @@ class _NewOrderState extends State<NewOrder> {
                                               children: [
                                                 Expanded(
                                                   child: Text(
-                                                    'Gel Nail Polish',
+                                                    "${productData.clProductName}",
                                                     style: textStyle.copyWith(
                                                         fontSize: 16,
                                                         color: Colors.black,
@@ -311,15 +313,21 @@ class _NewOrderState extends State<NewOrder> {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(height: 2),
-                                                Text(
-                                                  'Lorem ipsum dolor sit amet. ipsum dolor.',
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: textStyle.copyWith(
-                                                      fontSize: 12,
-                                                      color: Colors.black
-                                                  ),
+
+                                                Html(
+                                                  shrinkWrap: true,
+                                                  data: "${productData.clProductSortDesc}",
+                                                  style: {
+                                                    '#': Style(
+                                                        fontSize: FontSize(14),
+                                                        maxLines: 1,
+                                                        color: AppColors.black,
+                                                        textOverflow: TextOverflow.ellipsis,
+                                                        fontFamily: "Roboto-Regular"
+                                                    ),
+                                                  },
                                                 ),
+
                                                 SizedBox(height: 5),
                                               ],
                                             ),
@@ -735,7 +743,7 @@ class _NewOrderState extends State<NewOrder> {
                                           ),
                                           SizedBox(height: height*0.02),
                                           Text(
-                                            "Title",
+                                            "To Change Location Click Here",
                                             style: textStyle.copyWith(
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.bold,
@@ -831,7 +839,7 @@ class _NewOrderState extends State<NewOrder> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "Date",
+                                                "Tentative Order Date",
                                                 style: textStyle.copyWith(
                                                     color: Colors.black,
                                                     fontWeight: FontWeight.bold,

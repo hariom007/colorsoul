@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import '../../../Values/components.dart';
@@ -16,12 +17,15 @@ class _ProductsState extends State<Products> {
 
 
   ProductProvider _productProvider;
+  ScrollController _scrollViewController =  ScrollController();
+  bool isScrollingDown = false;
 
   @override
   void initState() {
     super.initState();
 
     _productProvider = Provider.of<ProductProvider>(context, listen: false);
+
     getProductCategory();
 
   }

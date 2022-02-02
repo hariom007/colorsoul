@@ -51,17 +51,61 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     _orderProvider.insertOrder(data, "/createOrders");
     if(_orderProvider.isSuccess == true){
 
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return SimpleCustomAlert();
-          }
-      );
+      getOrders();
 
     }
 
   }
+
+  int page = 1;
+  getOrders() async {
+
+    setState(() {
+      _orderProvider.orderList.clear();
+      _orderProvider.incompleteOrderList.clear();
+      _orderProvider.completeOrderList.clear();
+    });
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":""
+    };
+    await _orderProvider.getAllOrders(data,'/getOrder/$page');
+
+
+    var data1 = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":"Pending"
+    };
+    await _orderProvider.getIncompleteOrders(data1,'/getOrder/$page');
+
+
+    var data2 = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":"Delivered"
+    };
+    await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
+
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return SimpleCustomAlert();
+        }
+    );
+
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -469,7 +513,7 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
   {
     super.initState();
     Timer(
-        Duration(milliseconds: 2000),
+        Duration(milliseconds: 1000),
         () {
           Navigator.pop(context);
           Navigator.pop(context);

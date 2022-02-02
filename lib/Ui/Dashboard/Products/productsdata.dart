@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Products/productsfilter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -25,20 +26,37 @@ class _ProductsDataState extends State<ProductsData> {
   bool isFavorite = false;
 
   ProductProvider _productProvider;
+  ScrollController _scrollViewController =  ScrollController();
+  bool isScrollingDown = false;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
     _productProvider = Provider.of<ProductProvider>(context, listen: false);
-    getProductCategory();
+    _productProvider.productList.clear();
+    getProducts(searchController.text);
+
+    _scrollViewController.addListener(() {
+      if (_scrollViewController.position.userScrollDirection == ScrollDirection.reverse) {
+        if (!isScrollingDown) {
+
+          isScrollingDown = true;
+          setState(() {
+            page = page + 1;
+            getProducts(searchController.text);
+          });
+        }
+      }
+    });
 
   }
 
   int page = 1;
-  getProductCategory() async {
+  getProducts(String searchValue) async {
     var data ={
-      "search_term":"",
+      "search_term":searchValue,
       "cat_id":"${widget.categoryId}"
     };
     await _productProvider.getProducts(data,'/getProduct/$page');
@@ -81,6 +99,18 @@ class _ProductsDataState extends State<ProductsData> {
                       child: TextFormField(
                           cursorColor: AppColors.black,
                           cursorHeight: 24,
+                          controller: searchController,
+                          onChanged: (value){
+
+                            if(_productProvider.isLoaded == true){
+                              setState(() {
+                                _productProvider.productList.clear();
+                              });
+
+                              getProducts(searchController.text);
+                            }
+
+                          },
                           decoration: InputDecoration(
                               hintText: "Search Product",
                               hintStyle: textStyle.copyWith(
@@ -116,7 +146,7 @@ class _ProductsDataState extends State<ProductsData> {
                                     color: Colors.transparent,
                                   )
                               ),
-                              isDense: true
+                              isDense: true,
                           )
                       ),
                     ),
@@ -213,6 +243,7 @@ class _ProductsDataState extends State<ProductsData> {
                 )
                     :
                 GridView.builder(
+                  controller: _scrollViewController,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 8.0,
