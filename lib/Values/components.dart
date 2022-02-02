@@ -51,20 +51,40 @@ var fieldStyle = InputDecoration(
 );
 
 var fieldStyle1 = InputDecoration(
-  enabledBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(30),
-        bottomRight: Radius.circular(30),
-        topRight: Radius.circular(30)
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+          topRight: Radius.circular(30)
+      ),
     ),
-  ),
-  focusedBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(30),
-        bottomRight: Radius.circular(30),
-        topRight: Radius.circular(30)
+    focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+            topRight: Radius.circular(30)
+        ),
     ),
-  )
+    errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+            topRight: Radius.circular(30)
+        ),
+        borderSide: BorderSide(
+          color: Colors.red,
+        )
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+            topRight: Radius.circular(30)
+        ),
+        borderSide: BorderSide(
+          color: Colors.red,
+        )
+    )
 );
 
 var fieldStyle3 = InputDecoration(

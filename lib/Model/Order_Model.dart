@@ -25,6 +25,10 @@ class OrderModel {
     this.createdBy,
     this.updatedDate,
     this.updatedBy,
+    this.retailerName,
+    this.retailerBusinessName,
+    this.retailerAddress,
+    this.retailerMobile,
   });
 
   String id;
@@ -42,6 +46,10 @@ class OrderModel {
   String createdBy;
   String updatedDate;
   String updatedBy;
+  String retailerName;
+  String retailerBusinessName;
+  String retailerAddress;
+  String retailerMobile;
 
   factory OrderModel.fromJson(Map<String, dynamic> json) => OrderModel(
     id: json["id"],
@@ -59,6 +67,10 @@ class OrderModel {
     createdBy: json["created_by"],
     updatedDate: json["updated_date"],
     updatedBy: json["updated_by"],
+    retailerName: json["retailer_name"],
+    retailerBusinessName: json["retailer_business_name"],
+    retailerAddress: json["retailer_address"],
+    retailerMobile: json["retailer_mobile"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -77,6 +89,10 @@ class OrderModel {
     "created_by": createdBy,
     "updated_date": updatedDate,
     "updated_by": updatedBy,
+    "retailer_name": retailerName,
+    "retailer_business_name": retailerBusinessName,
+    "retailer_address": retailerAddress,
+    "retailer_mobile": retailerMobile,
   };
 }
 

@@ -5,6 +5,7 @@ import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -64,7 +65,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
       "to_date":"",
       "status":"Pending"
     };
-    await _orderProvider.getIncompleteOrders(data,'/getOrder/$page');
+    await _orderProvider.getIncompleteOrders(data1,'/getOrder/$page');
 
 
     var data2 = {
@@ -73,7 +74,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
       "to_date":"",
       "status":"Delivered"
     };
-    await _orderProvider.getCompleteOrders(data,'/getOrder/$page');
+    await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
 
   }
 
@@ -140,14 +141,6 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                       ),
                       indicatorPadding: EdgeInsets.only(left: 4,right: 4,bottom: 2),
                       indicatorColor: Colors.transparent,
-                      // indicator: decoration.copyWith(
-                      //   gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                      //   boxShadow: [new BoxShadow(
-                      //     color: Color.fromRGBO(255,255,255, 0.2),
-                      //     offset: Offset(0, 5),
-                      //     blurRadius: 4,
-                      //   )]
-                      // ),
                       controller: _tabController,
                       tabs: [
                         Tab(
@@ -174,7 +167,18 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                         blurRadius: 6,
                                       )]
                                   ),
-                                  child: Text('(06)',
+                                  child:
+                                  _orderProvider.isLoaded == false
+                                      ?
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: SpinKitThreeBounce(
+                                      color: AppColors.white,
+                                      size: 25.0,
+                                    ),
+                                  )
+                                      :
+                                  Text('(${_orderProvider.orderList.length})',
                                     textAlign: TextAlign.center,
                                     style: textStyle.copyWith(
                                         fontSize: 14,
@@ -217,7 +221,18 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                         blurRadius: 6,
                                       )]
                                   ),
-                                  child: Text('(04)',
+                                  child:
+                                  _orderProvider.isLoaded == false
+                                      ?
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: SpinKitThreeBounce(
+                                      color: AppColors.black,
+                                      size: 25.0,
+                                    ),
+                                  )
+                                      :
+                                  Text('(${_orderProvider.completeOrderList.length})',
                                     textAlign: TextAlign.center,
                                     style: textStyle.copyWith(
                                         fontSize: 14,
@@ -260,7 +275,18 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                         blurRadius: 6,
                                       )]
                                   ),
-                                  child: Text('(02)',
+                                  child:
+                                  _orderProvider.isLoaded == false
+                                      ?
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: SpinKitThreeBounce(
+                                      color: AppColors.black,
+                                      size: 25.0,
+                                    ),
+                                  )
+                                      :
+                                  Text('(${_orderProvider.incompleteOrderList.length})',
                                     textAlign: TextAlign.center,
                                     style: textStyle.copyWith(
                                         fontSize: 14,
@@ -308,123 +334,269 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                       physics: NeverScrollableScrollPhysics(),
                       controller: _tabController,
                       children: [
-                        SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              SizedBox(height: 20),
-                              Text(
-                                "19, December 2021",
-                                style: textStyle.copyWith(
-                                    color: AppColors.black,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              ListView.builder(
-                                padding: EdgeInsets.only(top: 10,bottom: 10),
-                                itemCount: 3,
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder:(context, index){
-                                  return buildCard(height,index);
-                                },
-                              ),
-                              Text(
-                                "20, December 2021",
-                                style: textStyle.copyWith(
-                                  color: AppColors.black,
-                                  fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              ListView.builder(
-                                padding: EdgeInsets.only(top: 10,bottom: 10),
-                                itemCount: 2,
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder:(context, index){
-                                  return buildCard(height,index);
-                                },
-                              ),
-                              Text(
-                                "21, December 2021",
-                                style: textStyle.copyWith(
-                                    color: AppColors.black,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              ListView.builder(
-                                padding: EdgeInsets.only(top: 10,bottom: 40),
-                                itemCount: 2,
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder:(context, index){
-                                  return buildCard(height,index);
-                                },
-                              ),
-                            ],
-                          ),
+
+                        ListView.builder(
+                          padding: EdgeInsets.only(top: 10,bottom: 30),
+                          itemCount: _orderProvider.orderList.length,
+                          shrinkWrap: true,
+                          itemBuilder:(context, index){
+                            var allOrder = _orderProvider.orderList[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Card(
+                                  elevation: 10,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: round1.copyWith()
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 5,bottom: 6),
+                                    child: ListTile(
+                                      title: Padding(
+                                        padding: EdgeInsets.only(top: 6),
+                                        child: Text(
+                                          '${allOrder.retailerBusinessName}',
+                                          style: textStyle.copyWith(
+                                              fontSize: 20,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      ),
+                                      subtitle: Column(
+                                        children: [
+                                          SizedBox(height: height*0.01,),
+                                          Text(
+                                            '${allOrder.address}',
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: textStyle.copyWith(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                                height: 1.4
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            "${DateFormat('dd, MMM yyyy').format(allOrder.orderDate)}",
+                                            style: textStyle.copyWith(
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
+                                          retailerBusinessName: allOrder.retailerBusinessName,
+                                          retailerAddress: allOrder.retailerAddress,
+                                          retailerMobile: allOrder.retailerMobile,
+                                          orderDate: "${DateFormat('dd, MMM yyyy').format(allOrder.orderDate)}",
+                                          orderAddress: allOrder.address,
+                                          products: allOrder.items,
+                                          totalAmount: allOrder.total,
+                                        )));
+                                      },
+                                    ),
+                                  )
+                              )
+                            );
+                          },
                         ),
-                        SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              SizedBox(height: 20),
-                              Text(
-                                "19, December 2021",
-                                style: textStyle.copyWith(
-                                    color: AppColors.black,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              ListView.builder(
-                                padding: EdgeInsets.only(top: 10,bottom: 10),
-                                itemCount: 2,
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder:(context, index){
-                                  return buildCard(height,index);
-                                },
-                              ),
-                              Text(
-                                "20, December 2021",
-                                style: textStyle.copyWith(
-                                    color: AppColors.black,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              ListView.builder(
-                                padding: EdgeInsets.only(top: 10,bottom: 10),
-                                itemCount: 2,
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder:(context, index){
-                                  return buildCard(height,index);
-                                },
-                              ),
-                            ],
-                          ),
+
+                        ListView.builder(
+                          padding: EdgeInsets.only(top: 10,bottom: 30),
+                          itemCount: _orderProvider.completeOrderList.length,
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemBuilder:(context, index){
+                            var completedOrder = _orderProvider.completeOrderList[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Card(
+                                  elevation: 10,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: round1.copyWith()
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 5,bottom: 6),
+                                    child: ListTile(
+                                      title: Padding(
+                                        padding: EdgeInsets.only(top: 6),
+                                        child: Text(
+                                          '${completedOrder.retailerBusinessName}',
+                                          style: textStyle.copyWith(
+                                              fontSize: 20,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      ),
+                                      subtitle: Column(
+                                        children: [
+                                          SizedBox(height: height*0.01,),
+                                          Text(
+                                            '${completedOrder.address}',
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: textStyle.copyWith(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                                height: 1.4
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            "${DateFormat('dd, MMM yyyy').format(completedOrder.orderDate)}",
+                                            style: textStyle.copyWith(
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {
+
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
+                                          retailerBusinessName: completedOrder.retailerBusinessName,
+                                          retailerAddress: completedOrder.retailerAddress,
+                                          retailerMobile: completedOrder.retailerMobile,
+                                          orderDate: "${DateFormat('dd, MMM yyyy').format(completedOrder.orderDate)}",
+                                          orderAddress: completedOrder.address,
+                                          products: completedOrder.items,
+                                          totalAmount: completedOrder.total,
+                                        )));
+
+                                      },
+                                    ),
+                                  )
+                              )
+                            );
+                          },
                         ),
-                        SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              SizedBox(height: 20),
-                              Text(
-                                "21, December 2021",
-                                style: textStyle.copyWith(
-                                    color: AppColors.black,
-                                    fontWeight: FontWeight.bold
+
+                        ListView.builder(
+                          padding: EdgeInsets.only(top: 10,bottom: 30),
+                          itemCount: _orderProvider.incompleteOrderList.length,
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemBuilder:(context, index){
+                            var incompleteOrder = _orderProvider.incompleteOrderList[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Slidable(
+                                actionPane: SlidableDrawerActionPane(),
+                                /*secondaryActions: [
+                                  Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: AppColors.black,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Incomplete\nOrder",
+                                        textAlign: TextAlign.center,
+                                        style: textStyle.copyWith(),
+                                      ),
+                                    ),
+                                  )
+                                ],*/
+                                secondaryActions: [
+                                  Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: AppColors.black,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Complete\nOrder",
+                                        textAlign: TextAlign.center,
+                                        style: textStyle.copyWith(),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                                child: Card(
+                                    elevation: 10,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: round1.copyWith()
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top: 5,bottom: 6),
+                                      child: ListTile(
+                                        title: Padding(
+                                          padding: EdgeInsets.only(top: 6),
+                                          child: Text(
+                                            '${incompleteOrder.retailerBusinessName}',
+                                            style: textStyle.copyWith(
+                                                fontSize: 20,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold
+                                            ),
+                                          ),
+                                        ),
+                                        subtitle: Column(
+                                          children: [
+                                            SizedBox(height: height*0.01,),
+                                            Text(
+                                              '${incompleteOrder.address}',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: textStyle.copyWith(
+                                                  fontSize: 14,
+                                                  color: Colors.black,
+                                                  height: 1.4
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              "${DateFormat('dd, MMM yyyy').format(incompleteOrder.orderDate)}",
+                                              style: textStyle.copyWith(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
+                                            retailerBusinessName: incompleteOrder.retailerBusinessName,
+                                            retailerAddress: incompleteOrder.retailerAddress,
+                                            retailerMobile: incompleteOrder.retailerMobile,
+                                            orderDate: "${DateFormat('dd, MMM yyyy').format(incompleteOrder.orderDate)}",
+                                            orderAddress: incompleteOrder.address,
+                                            products: incompleteOrder.items,
+                                            totalAmount: incompleteOrder.total,
+                                          )));
+
+                                        },
+                                      ),
+                                    )
                                 ),
                               ),
-                              ListView.builder(
-                                padding: EdgeInsets.only(top: 10,bottom: 10),
-                                itemCount: 2,
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder:(context, index){
-                                  return buildCard(height,index);
-                                },
-                              ),
-                            ],
-                          ),
-                        )
+                            );
+                          },
+                        ),
+
                       ],
                     ),
                   ),
@@ -436,108 +608,4 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
     );
   }
 
-  Widget buildCard(double height,int index) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 10),
-      child: Slidable(
-        actionPane: SlidableDrawerActionPane(),
-        actions: [
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: AppColors.black,
-            ),
-            child: Center(
-              child: Text(
-                "Complete\nOrder",
-                textAlign: TextAlign.center,
-                style: textStyle.copyWith(),
-              ),
-            ),
-          )
-        ],
-        secondaryActions: [
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: AppColors.black,
-            ),
-            child: Center(
-              child: Text(
-                "Incomplete\nOrder",
-                textAlign: TextAlign.center,
-                style: textStyle.copyWith(),
-              ),
-            ),
-          )
-        ],
-        child: Card(
-            elevation: 10,
-            shape: RoundedRectangleBorder(
-                borderRadius: round1.copyWith()
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(top: 5,bottom: 6),
-              child: ListTile(
-                title: Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Text(
-                    'Be Shoppers Stop',
-                    style: textStyle.copyWith(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-                subtitle: Column(
-                  children: [
-                    SizedBox(height: height*0.01,),
-                    Text(
-                      'Silicon Shoppers, F4, 1st Floor, Udhna Main Road, udhna, Surat, Gujarat - 394210 (India)',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: textStyle.copyWith(
-                          fontSize: 14,
-                          color: Colors.black,
-                          height: 1.4
-                      ),
-                    ),
-                  ],
-                ),
-                trailing: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '18, Dec 2021',
-                      style: textStyle.copyWith(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      '9:30 AM',
-                      overflow: TextOverflow.ellipsis,
-                      style: textStyle.copyWith(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails()));
-                },
-              ),
-            )
-        ),
-      ),
-    );
-  }
 }
