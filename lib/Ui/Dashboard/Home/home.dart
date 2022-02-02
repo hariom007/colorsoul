@@ -98,6 +98,23 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
 
   }
 
+  changeStatus(String orderId) async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      "uid":"$userId",
+      "id":"$orderId"
+    };
+    await _orderProvider.confirmOrder(data,'/changeOrderStatus');
+
+    if(_orderProvider.isConfirm == true){
+      getOrders();
+    }
+
+  }
+
 
   @override
   void dispose() {
@@ -715,18 +732,88 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                   )
                                 ],*/
                                   secondaryActions: [
-                                    Container(
-                                      width: 100,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: AppColors.black,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Complete\nOrder",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(),
+                                    InkWell(
+                                      onTap: (){
+
+                                        showDialog<bool>(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                insetPadding: EdgeInsets.all(0),
+                                                contentPadding: EdgeInsets.all(0),
+                                                backgroundColor: Colors.transparent,
+                                                content: Container(
+                                                  width: MediaQuery.of(context).size.width/1.2,
+                                                  decoration: BoxDecoration(
+                                                      color: AppColors.white,
+                                                      borderRadius: round1.copyWith()
+                                                  ),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.fromLTRB(20, 14, 20, 0),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Text(
+                                                          'Are you sure you want to Complete Order?',
+                                                          style: textStyle.copyWith(
+                                                              fontSize: 16,
+                                                              color: AppColors.black
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 13),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.end,
+                                                          children: [
+                                                            TextButton(
+                                                              child: Text(
+                                                                'No',
+                                                                style: textStyle.copyWith(
+                                                                    color: AppColors.black
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.of(context).pop(false);
+                                                              },
+                                                            ),
+                                                            TextButton(
+                                                              child: Text(
+                                                                'Yes, Confirm',
+                                                                style: textStyle.copyWith(
+                                                                    color: AppColors.black
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+
+                                                                Navigator.of(context).pop();
+                                                                changeStatus(incompleteOrder.id);
+
+                                                              },
+                                                            ),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                        );
+
+                                      },
+                                      child: Container(
+                                        width: 100,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(20),
+                                          color: AppColors.black,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Complete\nOrder",
+                                            textAlign: TextAlign.center,
+                                            style: textStyle.copyWith(),
+                                          ),
                                         ),
                                       ),
                                     )

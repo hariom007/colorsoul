@@ -108,7 +108,6 @@ class _AddDistributersState extends State<AddDistributers> {
 
         if (response.statusCode == 200 && body['st'] == "success") {
           imageUrl = body['file'];
-          addDistributor();
         }
         else{
           print("Image Upload Error");
@@ -117,9 +116,8 @@ class _AddDistributersState extends State<AddDistributers> {
       });
 
     }
-    else{
-      addDistributor();
-    }
+
+    addDistributor();
 
   }
 
