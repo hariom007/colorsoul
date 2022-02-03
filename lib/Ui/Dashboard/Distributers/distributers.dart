@@ -129,6 +129,10 @@ class _DistributorsState extends State<Distributors> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
 
+                                _distributorProvider.isLoaded == false
+                                    ?
+                                    SizedBox()
+                                    :
                                 Expanded(
                                   child: ListView.builder(
                                     controller: _scrollViewController,
@@ -298,11 +302,14 @@ class _DistributorsState extends State<Distributors> {
 
                                 _distributorProvider.isLoaded == false
                                     ?
-                                Center(
-                                    child: SpinKitThreeBounce(
-                                      color: AppColors.black,
-                                      size: 25.0,
-                                    )
+                                Container(
+                                  height: 100,
+                                  child: Center(
+                                      child: SpinKitThreeBounce(
+                                        color: AppColors.black,
+                                        size: 25.0,
+                                      )
+                                  ),
                                 )
                                     :
                                     SizedBox()

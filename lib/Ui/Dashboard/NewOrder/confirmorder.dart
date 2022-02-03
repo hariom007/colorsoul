@@ -384,26 +384,6 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                             )
                                           ],
                                         ),
-                                        /*SizedBox(height: 15),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Discount",
-                                              style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                              ),
-                                            ),
-                                            Expanded(child: Container()),
-                                            Text(
-                                              "- ₹200.00",
-                                              style: textStyle.copyWith(
-                                                  color: Color.fromRGBO(0, 169, 145, 1),
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold
-                                              ),
-                                            )
-                                          ],
-                                        ),*/
                                         SizedBox(height: 15),
                                         Row(
                                           children: [
