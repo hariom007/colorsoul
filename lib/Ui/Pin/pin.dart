@@ -1,14 +1,24 @@
+import 'dart:io';
+
+import 'package:colorsoul/Ui/Login/login.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:colorsoul/Ui/Pin/forgotpin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_auth/auth_strings.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Values/appColors.dart';
 import '../Dashboard/dashboard.dart';
 
 class Pin extends StatefulWidget {
-  const Pin({Key key}) : super(key: key);
+
+  String userPin,userName,name;
+  bool authValue;
+  Pin({Key key,this.userPin,this.userName,this.authValue,this.name}) : super(key: key);
 
   @override
   _PinState createState() => _PinState();
@@ -16,9 +26,74 @@ class Pin extends StatefulWidget {
 
 class _PinState extends State<Pin> {
 
-  final String pin = "0000";
   final key = new GlobalKey<ScaffoldState>();
-  TextEditingController t1 = TextEditingController();
+  TextEditingController pinController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    if(widget.authValue == true){
+      _authenticate();
+    }
+
+  }
+
+  final LocalAuthentication auth = LocalAuthentication();
+  bool _authorized = true;
+  bool isLoading = false;
+
+  Future<void> _authenticate() async {
+
+    bool authenticated = false;
+
+    setState(() {
+      _authorized = false;
+      isLoading = true;
+    });
+
+    List<BiometricType> availableBiometrics = await auth.getAvailableBiometrics();
+
+    if (Platform.isIOS) {
+      if (availableBiometrics.contains(BiometricType.face)) {
+        // Face ID.
+      } else if (availableBiometrics.contains(BiometricType.fingerprint)) {
+        // Touch ID.
+      }
+    }
+
+    const iosStrings = const IOSAuthMessages(
+        cancelButton: 'cancel',
+        goToSettingsButton: 'settings',
+        goToSettingsDescription: 'Please set up your Touch ID.',
+        lockOut: 'Please Re-enable your Touch ID');
+
+    authenticated = await auth.authenticateWithBiometrics(
+      localizedReason: 'Please authenticate to Login your Account',
+      iOSAuthStrings: iosStrings,
+      useErrorDialogs: true,
+      stickyAuth: true,
+    );
+
+    if(authenticated == true){
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard()));
+
+      setState(() {
+        _authorized = true;
+      });
+
+    }
+    else{
+
+      setState(() {
+        isLoading = false;
+      });
+
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +116,17 @@ class _PinState extends State<Pin> {
             overscroll.disallowGlow();
             return;
           },
-          child: SingleChildScrollView(
+          child:
+          isLoading == true
+              ?
+              Center(
+                child: SpinKitThreeBounce(
+                  color: AppColors.white,
+                  size: 25.0,
+                ),
+              )
+          :
+          SingleChildScrollView(
             physics: NeverScrollableScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.only(top:45,right: 30,left: 30),
@@ -51,7 +136,7 @@ class _PinState extends State<Pin> {
                   Image.asset('assets/images/Colorsoul_final-022(Traced).png',width: width/1.8),
                   SizedBox(height: height*0.1),
                   Text(
-                    "Hi Amit",
+                    "Hi ${widget.name}",
                     style: textStyle.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 24
@@ -63,7 +148,7 @@ class _PinState extends State<Pin> {
                     child: PinCodeTextField(
                       blinkDuration: Duration(milliseconds: 1000),
                       blinkWhenObscuring: true,
-                      controller: t1,
+                      controller: pinController,
                       pinTheme: PinTheme(
                         shape: PinCodeFieldShape.box,
                         borderRadius: round2.copyWith(),
@@ -98,8 +183,13 @@ class _PinState extends State<Pin> {
                   ),
                   SizedBox(height: height*0.19),
                   TextButton(
-                      onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPin()));
+                      onPressed: () async {
+
+                        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                        sharedPreferences.clear();
+
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+
                       },
                       child: Text(
                           "Unlock/Forgot Login PIN?",
@@ -115,7 +205,7 @@ class _PinState extends State<Pin> {
                     decoration: decoration.copyWith(),
                     child: ElevatedButton(
                       onPressed: () {
-                        if(t1.text.length==0)
+                        if(pinController.text.length==0)
                         {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -130,13 +220,13 @@ class _PinState extends State<Pin> {
                             )
                           );
                         }
-                        else if(t1.text == pin)
+                        else if(pinController.text == widget.userPin)
                         {
-                          Navigator.pop(context);
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard()));
                         }
                         else
                         {
+                          print(widget.userPin);
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 duration: Duration(milliseconds: 1000),

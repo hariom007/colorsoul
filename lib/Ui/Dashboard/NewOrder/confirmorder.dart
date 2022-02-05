@@ -1,26 +1,138 @@
 import 'dart:async';
+import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmOrder extends StatefulWidget {
+
+  List productList = [];
+  String retailerId,address,orderDate,totalAmount;
+
+  ConfirmOrder({Key key,this.productList,this.retailerId,this.address,this.totalAmount,this.orderDate}) : super(key: key);
+
   @override
   _ConfirmOrderState createState() => _ConfirmOrderState();
 }
 
 class _ConfirmOrderState extends State<ConfirmOrder> {
+
+
+  TextEditingController noteController = TextEditingController();
+  OrderProvider _orderProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _orderProvider = Provider.of<OrderProvider>(context, listen: false);
+  }
+
+  createOrder() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      "id":"",
+      "uid":"$userId",
+      "retailer_id":"${widget.retailerId}",
+      "address":"${widget.address}",
+      "order_date":"${widget.orderDate}",
+      "items": widget.productList,
+      "total":"${widget.totalAmount}",
+      "note":"${noteController.text}"
+    };
+
+    //print(data);
+
+    _orderProvider.insertOrder(data, "/createOrders");
+    if(_orderProvider.isSuccess == true){
+
+      getOrders();
+
+    }
+
+  }
+
+  int page = 1;
+  getOrders() async {
+
+    setState(() {
+      _orderProvider.orderList.clear();
+      _orderProvider.incompleteOrderList.clear();
+      _orderProvider.completeOrderList.clear();
+    });
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":""
+    };
+    await _orderProvider.getAllOrders(data,'/getOrder/$page');
+
+
+    var data1 = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":"Pending"
+    };
+    await _orderProvider.getIncompleteOrders(data1,'/getOrder/$page');
+
+
+    var data2 = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":"Delivered"
+    };
+    await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
+
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return SimpleCustomAlert();
+        }
+    );
+
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _orderProvider = Provider.of<OrderProvider>(context, listen: true);
+
     return Scaffold(
         bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+
               Container(
                   height: 70,
                   color: AppColors.white,
-                  child: Padding(
+                  child:
+                  _orderProvider.isLoaded == false
+                      ?
+                  Center(
+                      child: SpinKitThreeBounce(
+                        color: AppColors.black,
+                        size: 25.0,
+                      )
+                  )
+                      :
+                  Padding(
                     padding: EdgeInsets.all(10),
                     child:SizedBox(
                         height: 50,
@@ -32,13 +144,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                           ),
                           child: ElevatedButton(
                             onPressed: () {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return SimpleCustomAlert();
-                                }
-                              );
+
+                              createOrder();
+
                             },
                             style: ElevatedButton.styleFrom(
                                 elevation: 10,
@@ -57,6 +165,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                     ),
                   )
               )
+
             ]
         ),
         backgroundColor: Colors.white,
@@ -129,7 +238,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                   ),
                                   SizedBox(height: 30),
                                   Text(
-                                    "₹1500.00",
+                                    "₹ ${widget.totalAmount}",
                                     style: textStyle.copyWith(
                                       color: AppColors.black,
                                       fontSize: 34,
@@ -145,13 +254,12 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
-                                  Text(
+                                  /*Text(
                                     "Delivery Date : December 18, 2021",
                                     style: textStyle.copyWith(
                                       color: AppColors.black,
                                     ),
-                                  ),
-                                  SizedBox(height: 20),
+                                  ),*/
                                   Divider(
                                     height: 20,
                                     color: Color.fromRGBO(185, 185, 185, 0.75),
@@ -200,110 +308,59 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                     color: Color.fromRGBO(185, 185, 185, 0.75),
                                     thickness: 1.2
                                   ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "Gelnp25dcv0",
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
+
+                                  ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    padding: EdgeInsets.only(top: 10),
+                                    itemCount: widget.productList.length,
+                                    shrinkWrap: true,
+                                    itemBuilder:(context, index){
+                                      var productData = widget.productList[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(bottom: 20),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                "${productData['sku']}",
+                                                style: textStyle.copyWith(
+                                                  color: AppColors.black,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 80,
+                                              child: Text(
+                                                "${productData['qty']}",
+                                                textAlign: TextAlign.center,
+                                                style: textStyle.copyWith(
+                                                  color: AppColors.black,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 80,
+                                              child: Text(
+                                                "${productData['amount']}",
+                                                textAlign: TextAlign.center,
+                                                style: textStyle.copyWith(
+                                                  color: AppColors.black,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "02",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "₹250.00",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                      );
+                                    },
                                   ),
-                                  SizedBox(height: 20),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "Gelnp25dcv0",
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "02",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "₹250.00",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 20),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "Gelnp25dcv0",
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "02",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          "₹250.00",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+
                                   Divider(
                                     height: 20,
                                     color: Color.fromRGBO(185, 185, 185, 0.75),
                                     thickness: 1.2
                                   ),
                                   SizedBox(height: 10),
+
                                   Padding(
                                     padding: EdgeInsets.only(right: 10),
                                     child: Column(
@@ -318,31 +375,11 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                             ),
                                             Expanded(child: Container()),
                                             Text(
-                                              "₹1500.00",
+                                              "₹ ${widget.totalAmount}",
                                               style: textStyle.copyWith(
                                                 color: AppColors.black,
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(height: 15),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Discount",
-                                              style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                              ),
-                                            ),
-                                            Expanded(child: Container()),
-                                            Text(
-                                              "- ₹200.00",
-                                              style: textStyle.copyWith(
-                                                  color: Color.fromRGBO(0, 169, 145, 1),
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold
                                               ),
                                             )
                                           ],
@@ -391,7 +428,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                         ),
                                         Expanded(child: Container()),
                                         Text(
-                                          "₹1300.00",
+                                          "₹ ${widget.totalAmount}",
                                           style: textStyle.copyWith(
                                               color: AppColors.black,
                                               fontSize: 22,
@@ -415,6 +452,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
+                                    controller: noteController,
                                     style: textStyle.copyWith(
                                       color: AppColors.black
                                     ),
@@ -450,13 +488,12 @@ class SimpleCustomAlert extends StatefulWidget {
 
 class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
 
-
   @override
   void initState()
   {
     super.initState();
     Timer(
-        Duration(milliseconds: 2000),
+        Duration(milliseconds: 1000),
         () {
           Navigator.pop(context);
           Navigator.pop(context);
@@ -474,6 +511,7 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
       insetPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
       backgroundColor: Colors.transparent,
+
       content: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2]),

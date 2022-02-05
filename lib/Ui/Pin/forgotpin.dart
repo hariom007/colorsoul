@@ -1,12 +1,12 @@
+import 'package:colorsoul/Ui/Dashboard/dashboard.dart';
 import 'package:colorsoul/Ui/Login/login.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Values/appColors.dart';
 import '../../Values/components.dart';
 
 class ForgotPin extends StatefulWidget {
-  const ForgotPin({Key key}) : super(key: key);
 
   @override
   _ForgotPinState createState() => _ForgotPinState();
@@ -14,8 +14,17 @@ class ForgotPin extends StatefulWidget {
 
 class _ForgotPinState extends State<ForgotPin> {
   final key = new GlobalKey<ScaffoldState>();
-  TextEditingController t1 = TextEditingController();
-  TextEditingController t2 = TextEditingController();
+  TextEditingController pinController = TextEditingController();
+  TextEditingController confirmPinController = TextEditingController();
+
+  setPinMethod() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString('pin', '${pinController.text}');
+
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard()));
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +80,7 @@ class _ForgotPinState extends State<ForgotPin> {
                         child: PinCodeTextField(
                           blinkDuration: Duration(milliseconds: 1000),
                           blinkWhenObscuring: true,
-                          controller: t1,
+                          controller: pinController,
                           pinTheme: PinTheme(
                               shape: PinCodeFieldShape.box,
                               borderRadius: round2.copyWith(),
@@ -116,7 +125,7 @@ class _ForgotPinState extends State<ForgotPin> {
                         child: PinCodeTextField(
                           blinkDuration: Duration(milliseconds: 1000),
                           blinkWhenObscuring: true,
-                          controller: t2,
+                          controller: confirmPinController,
                           pinTheme: PinTheme(
                               shape: PinCodeFieldShape.box,
                               borderRadius: round2.copyWith(),
@@ -150,7 +159,7 @@ class _ForgotPinState extends State<ForgotPin> {
                         decoration: decoration.copyWith(),
                         child: ElevatedButton(
                           onPressed: () {
-                            if(t1.text.length==0)
+                            if(pinController.text.length==0)
                             {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -165,7 +174,7 @@ class _ForgotPinState extends State<ForgotPin> {
                                 )
                               );
                             }
-                            else if(t2.text.length==0)
+                            else if(confirmPinController.text.length==0)
                             {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -180,44 +189,18 @@ class _ForgotPinState extends State<ForgotPin> {
                                 )
                               );
                             }
-                            else if(t1.text == t2.text)
+                            else if(pinController.text == confirmPinController.text)
                             {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  duration: Duration(milliseconds: 1000),
-                                  content: Text(
-                                    'Pin Reset Successful',
-                                    style: textStyle.copyWith(),
-                                  ),
-                                )
-                              );
+                              setPinMethod();
                             }
-                            else if(t1.text != t2.text)
+                            else if(pinController.text != confirmPinController.text)
                             {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   duration: Duration(milliseconds: 1000),
                                   backgroundColor: AppColors.white,
                                   content: Text(
-                                    "Pin Dosen't Match",
-                                    style: textStyle.copyWith(
-                                        color: AppColors.black
-                                    ),
-                                  ),
-                                )
-                              );
-                            }
-                            else
-                            {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  duration: Duration(milliseconds: 1000),
-                                  backgroundColor: AppColors.white,
-                                  content: Text(
-                                    "Invalid Pin",
+                                    "Pin Doesn't Match",
                                     style: textStyle.copyWith(
                                         color: AppColors.black
                                     ),
