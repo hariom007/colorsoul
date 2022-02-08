@@ -11,7 +11,8 @@
         android:label="colorsoul"
         android:icon="@mipmap/ic_launcher">
        <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyDeCzP76hpVKZ9zTTJCnyDTYDsQpfRUJO4"/>
+           android:value="AIzaSyDMFjsFu-RTGRYCHsGV10Cl2UzP22FRkGU"/>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

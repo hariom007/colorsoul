@@ -21,8 +21,9 @@ import 'package:http/http.dart' as http;
 class TypeModel{
   String id;
   String name;
+  String business_name;
 
-  TypeModel(this.id, this.name);
+  TypeModel(this.id, this.name,this.business_name);
 }
 
 class AddDistributers extends StatefulWidget {
@@ -172,10 +173,11 @@ class _AddDistributersState extends State<AddDistributers> {
     if(_distributorProvider.isSuccess == true){
 
       var result  = _distributorProvider.onlyDistributorList;
+
       var singleDistributor;
 
       for (var abc in result) {
-        singleDistributor = TypeModel(abc.id,abc.name);
+        singleDistributor = TypeModel(abc.id,abc.name,abc.businessName);
         distributor_List.add(singleDistributor);
       }
     }
@@ -461,6 +463,7 @@ class _AddDistributersState extends State<AddDistributers> {
                                             padding: const EdgeInsets.symmetric(horizontal: 20),
                                             child: DropdownBelow<TypeModel>(
                                               itemWidth: width/1.3,
+                                              isDense: true,
                                               itemTextstyle:textStyle.copyWith(
                                                 fontSize: 16,
                                                 color: AppColors.black,
@@ -487,7 +490,9 @@ class _AddDistributersState extends State<AddDistributers> {
                                               items: distributor_List.map((TypeModel t) {
                                                 return DropdownMenuItem<TypeModel>(
                                                   value: t,
-                                                  child: Text(t.name),
+                                                  child: Text(
+                                                      t.name == '' ? t.business_name : t.name
+                                                  ),
                                                 );
                                               }).toList(),
                                             ),

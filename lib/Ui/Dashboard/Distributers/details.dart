@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:colorsoul/Ui/Dashboard/Edit_Distributor/edit_distributor.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -8,10 +9,10 @@ import '../../../Values/appColors.dart';
 class Details extends StatefulWidget {
 
   String distributor_name,distributor_address,distributor_image,latitude,longitude,
-      person_name,person_mobile,person_tel,time,business_type;
+      person_name,person_mobile,person_tel,time,business_type,opentime,closetime,type,id;
 
   Details({Key key, this.distributor_name,this.distributor_address,this.distributor_image,this.latitude,this.longitude,
-    this.person_name,this.person_mobile,this.person_tel,this.time,this.business_type
+    this.person_name,this.person_mobile,this.person_tel,this.time,this.business_type,this.opentime,this.closetime,this.type,this.id
   }) : super(key: key);
 
   @override
@@ -72,8 +73,36 @@ class _DetailsState extends State<Details> {
             Padding(
               padding: const EdgeInsets.all(18.0),
               child: InkWell(
-                  onTap: (){},
-                  child: Image.asset("assets/images/details/menu1.png",height: 20)
+                onTap: (){
+                  var lat = widget.latitude;
+                  var lon = widget.longitude;
+
+                  if(widget.latitude == '' || widget.longitude == ''){
+                    lat = '19.0760';
+                    lon = '72.8777';
+                  }
+
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => EditDistributers(
+                        distributor_name: "${widget.distributor_name}",
+                        distributor_address: "${widget.distributor_address}",
+                        distributor_image: "${widget.distributor_image}",
+                        latitude: lat,
+                        longitude: lon,
+                        person_name: "${widget.person_name}",
+                        person_mobile: "${widget.person_mobile}",
+                        person_tel: "${widget.person_tel}",
+                        business_type: "${widget.business_type}",
+                        opentime: "${widget.opentime}",
+                        closetime: "${widget.closetime}",
+                        type: "${widget.type}",
+                        id: "${widget.id}",
+                      ))
+                  );
+                },
+                  child: Icon(Icons.edit,color: AppColors.white,size: 23,)
               ),
             )
           ],
@@ -102,7 +131,12 @@ class _DetailsState extends State<Details> {
                     onMapCreated: _onMapCreated,
                     markers: _markers,
                     initialCameraPosition: CameraPosition(
-                        target: LatLng(double.parse(widget.latitude), double.parse(widget.longitude)),
+                        target: LatLng(
+                            double.parse(widget.latitude),
+                            double.parse(widget.longitude)
+                            // double.parse(widget.latitude) == null ? 19.0760 : double.parse(widget.latitude),
+                            // double.parse(widget.longitude) == null ? 72.8777 : double.parse(widget.longitude)
+                        ),
                         zoom: 15
                     ),
                   ),

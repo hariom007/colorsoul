@@ -23,7 +23,7 @@ class LocationPage extends StatefulWidget {
 
 class _LocationPageState extends State<LocationPage> {
 
-  String kGoogleApiKey = "AIzaSyDeCzP76hpVKZ9zTTJCnyDTYDsQpfRUJO4";
+  String kGoogleApiKey = "AIzaSyDMFjsFu-RTGRYCHsGV10Cl2UzP22FRkGU";
   // String kGoogleApiKey = "AIzaSyDMFjsFu-RTGRYCHsGV10Cl2UzP22FRkGU";
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
   // Position _currentPosition;
@@ -288,7 +288,9 @@ class _LocationPageState extends State<LocationPage> {
           ),
         ),
       ),
-      components: [Component(Component.country, "in")],
+      components: [
+        Component(Component.country, "in"),
+      ],
     );
     displayPrediction(p, homeScaffoldKey.currentState);
   }

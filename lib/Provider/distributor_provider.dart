@@ -10,6 +10,7 @@ class DistributorProvider with ChangeNotifier
   bool isSuccess = false;
 
   List<DistributorModel> distributorList = [];
+
   getDistributor(url) async
   {
 
@@ -24,6 +25,8 @@ class DistributorProvider with ChangeNotifier
         isSuccess = true;
 
         var items = value["data"];
+
+        print(items);
 
         List client = items as List;
         list  = client.map<DistributorModel>((json) => DistributorModel.fromJson(json)).toList();

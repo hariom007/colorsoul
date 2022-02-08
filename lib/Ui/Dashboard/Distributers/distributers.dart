@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Distributers/feedback_page.dart';
+import 'package:colorsoul/Ui/Dashboard/Edit_Distributor/edit_distributor.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
@@ -212,6 +213,38 @@ class _DistributorsState extends State<Distributors> {
                                                           {
                                                             Navigator.push(context, MaterialPageRoute(builder: (context) => FeedbackPage()));
                                                           }
+                                                          if(index==4)
+                                                          {
+                                                            var lat = distributorData.latitude;
+                                                            var lon = distributorData.longitude;
+
+                                                            if(distributorData.latitude == '' || distributorData.longitude == ''){
+                                                              lat = '19.0760';
+                                                              lon = '72.8777';
+                                                            }
+
+
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(builder: (context) => EditDistributers(
+                                                                  distributor_name: distributorData.businessName,
+                                                                  distributor_address: distributorData.address,
+                                                                  distributor_image: distributorData.image,
+                                                                  latitude: lat,
+                                                                  longitude: lon,
+                                                                  person_name: distributorData.name,
+                                                                  person_mobile: distributorData.mobile,
+                                                                  person_tel: distributorData.telephone,
+                                                                  business_type: distributorData.businessType,
+                                                                  opentime: "${distributorData.openTime}",
+                                                                  closetime: "${distributorData.closeTime}",
+                                                                  type: "${distributorData.type}",
+                                                                  id: distributorData.id,
+                                                                ))
+                                                            );
+
+                                                          }
+
                                                         },
                                                         child: Image.asset("assets/images/details/menu1.png",width: 24,height: 24,color: AppColors.black),
                                                         itemBuilder: (context) => [
@@ -268,12 +301,36 @@ class _DistributorsState extends State<Distributors> {
                                                                 ),
                                                               ],
                                                             ),
-                                                          )
+                                                          ),
+                                                          PopupMenuItem(
+                                                            value: 4,
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(Icons.edit,color: AppColors.black,size: 21,),
+                                                                SizedBox(width: 10),
+                                                                Text(
+                                                                  "Edit",
+                                                                  style: textStyle.copyWith(
+                                                                      color: AppColors.black,
+                                                                      fontWeight: FontWeight.bold
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
                                                         ]
                                                     )
                                                   ],
                                                 ),
                                                 onTap: () {
+
+                                                  var lat = distributorData.latitude;
+                                                  var lon = distributorData.longitude;
+
+                                                  if(distributorData.latitude == '' || distributorData.longitude == ''){
+                                                    lat = '19.0760';
+                                                    lon = '72.8777';
+                                                  }
 
                                                   Navigator.push(
                                                       context,
@@ -281,13 +338,17 @@ class _DistributorsState extends State<Distributors> {
                                                         distributor_name: distributorData.businessName,
                                                         distributor_address: distributorData.address,
                                                         distributor_image: distributorData.image,
-                                                        latitude: distributorData.latitude,
-                                                        longitude: distributorData.longitude,
+                                                        latitude: lat,
+                                                        longitude: lon,
                                                         person_name: distributorData.name,
                                                         person_mobile: distributorData.mobile,
                                                         person_tel: distributorData.telephone,
                                                         business_type: distributorData.businessType,
                                                         time: "${distributorData.openTime} - ${distributorData.closeTime}",
+                                                        opentime: "${distributorData.openTime}",
+                                                        closetime: "${distributorData.closeTime}",
+                                                        type: "${distributorData.type}",
+                                                        id: "${distributorData.id}",
                                                       ))
                                                   );
 
