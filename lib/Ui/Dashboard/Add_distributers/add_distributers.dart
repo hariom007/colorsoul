@@ -7,6 +7,7 @@ import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:dropdown_below/dropdown_below.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -38,6 +39,8 @@ class _AddDistributersState extends State<AddDistributers> {
   TextEditingController businessGSTController = new TextEditingController();
   TextEditingController _openTimeController = new TextEditingController();
   TextEditingController _closeTimeController = new TextEditingController();
+  TextEditingController _addressNoController = new TextEditingController();
+  TextEditingController _addressController = new TextEditingController();
 
   TextEditingController _personNameController = new TextEditingController();
   TextEditingController _personMobileController = new TextEditingController();
@@ -135,6 +138,11 @@ class _AddDistributersState extends State<AddDistributers> {
       "business_type":"${businessTypeController.text}",
       "gst_no":"${businessGSTController.text}",
       "address":"$address",
+      "home_address":
+      _addressNoController.text != "" ?
+      "${_addressNoController.text},${_addressController.text}"
+      :
+          "${_addressController.text}",
       "city":"$city",
       "state":"$state",
       "pincode":"$pincode",
@@ -596,7 +604,58 @@ class _AddDistributersState extends State<AddDistributers> {
                                           ),
                                         ),
                                         SizedBox(height: height*0.02),
-                                        Text(
+
+                                    Text(
+                                      "Flat no or House no",
+                                      style: textStyle.copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16
+                                      ),
+                                    ),
+                                    SizedBox(height: height*0.01),
+                                    TextFormField(
+                                      controller: _addressNoController,
+                                      keyboardType: TextInputType.number,
+                                      style: textStyle.copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black
+                                      ),
+                                      cursorHeight: 22,
+                                      cursorColor: Colors.grey,
+                                      decoration: fieldStyle1.copyWith(
+                                          isDense: true,
+                                          errorStyle: TextStyle(height: 0,fontSize: 0)
+                                      ),
+                                    ),
+                                    SizedBox(height: height*0.02),
+
+                                    Text(
+                                      "Address",
+                                      style: textStyle.copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16
+                                      ),
+                                    ),
+                                    SizedBox(height: height*0.01),
+                                    TextFormField(
+                                      controller: _addressController,
+                                      style: textStyle.copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black
+                                      ),
+                                      cursorHeight: 22,
+                                      cursorColor: Colors.grey,
+                                      decoration: fieldStyle1.copyWith(
+                                          isDense: true,
+                                          errorStyle: TextStyle(height: 0,fontSize: 0)
+                                      ),
+                                    ),
+                                    SizedBox(height: height*0.02),
+
+
+                                    Text(
                                           "Add Location",
                                           style: textStyle.copyWith(
                                               color: Colors.black,
