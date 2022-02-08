@@ -16,6 +16,7 @@ class DistributorModel {
     this.latitude,
     this.longitude,
     this.home_address,
+    this.landmark,
     this.pincode,
     this.name,
     this.mobile,
@@ -36,6 +37,7 @@ class DistributorModel {
   String address;
   String pincode;
   String home_address;
+  String landmark;
   String latitude;
   String longitude;
   String name;
@@ -56,6 +58,7 @@ class DistributorModel {
     gstNo: json["gst_no"],
     address: json["address"],
     home_address: json["home_address"],
+    landmark: json["landmark"],
     pincode: json["pincode"],
     latitude: json["latitude"],
     longitude: json["longitude"],
@@ -78,6 +81,7 @@ class DistributorModel {
     "gst_no": gstNo,
     "address": address,
     "home_address": home_address,
+    "landmark": landmark,
     "pincode": pincode,
     "latitude": latitude,
     "longitude": longitude,

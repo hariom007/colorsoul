@@ -233,6 +233,7 @@ class _DistributorsState extends State<Distributors> {
                                                                   latitude: lat,
                                                                   longitude: lon,
                                                                   home_address: distributorData.home_address,
+                                                                  landmark: distributorData.landmark,
                                                                   person_name: distributorData.name,
                                                                   person_mobile: distributorData.mobile,
                                                                   person_tel: distributorData.telephone,

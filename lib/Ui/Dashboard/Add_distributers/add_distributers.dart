@@ -138,11 +138,8 @@ class _AddDistributersState extends State<AddDistributers> {
       "business_type":"${businessTypeController.text}",
       "gst_no":"${businessGSTController.text}",
       "address":"$address",
-      "home_address":
-      _addressNoController.text != "" ?
-      "${_addressNoController.text},${_addressController.text}"
-      :
-          "${_addressController.text}",
+      "home_address":_addressNoController.text,
+      "landmark":"${_addressController.text}",
       "city":"$city",
       "state":"$state",
       "pincode":"$pincode",

@@ -28,9 +28,9 @@ class TypeModel{
 
 class EditDistributers extends StatefulWidget {
 
-  String distributor_name,distributor_address,distributor_image,latitude,longitude,home_address,distributor_gst,
+  String distributor_name,distributor_address,distributor_image,latitude,longitude,home_address,distributor_gst,landmark,
       person_name,person_mobile,person_tel,opentime,closetime,business_type,type,id;
-  EditDistributers({Key key, this.distributor_name,this.distributor_address,this.distributor_image,this.latitude,this.longitude,this.distributor_gst,
+  EditDistributers({Key key, this.distributor_name,this.distributor_address,this.distributor_image,this.latitude,this.longitude,this.distributor_gst,this.landmark,
     this.person_name,this.person_mobile,this.person_tel,this.opentime,this.closetime,this.business_type,this.type,this.id,this.home_address
   }) : super(key: key);
 
@@ -105,6 +105,7 @@ class _EditDistributersState extends State<EditDistributers> {
     _personMobileController.text = widget.person_mobile;
     _personTelephoneController.text = widget.person_tel;
     _addressController.text = widget.home_address;
+    _addressNoController.text = widget.landmark;
     _openTimeController.text = widget.opentime;
     _closeTimeController.text = widget.closetime;
     businessTypeController.text = widget.business_type;
@@ -167,11 +168,8 @@ class _EditDistributersState extends State<EditDistributers> {
       "business_type":"${businessTypeController.text}",
       "gst_no":"${businessGSTController.text}",
       "address":"$address",
-      "home_address":
-      _addressNoController.text != "" ?
-      "${_addressNoController.text},${_addressController.text}"
-          :
-      "${_addressController.text}",
+      "home_address": _addressNoController.text,
+      "landmark":"${_addressController.text}",
       "city":"$city",
       "state":"$state",
       "pincode":"$pincode",
@@ -651,6 +649,30 @@ class _EditDistributersState extends State<EditDistributers> {
                                     ),
                                     SizedBox(height: height*0.02),
 */
+
+                                    Text(
+                                      "Flat no or House no",
+                                      style: textStyle.copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16
+                                      ),
+                                    ),
+                                    SizedBox(height: height*0.01),
+                                    TextFormField(
+                                      controller: _addressNoController,
+                                      style: textStyle.copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black
+                                      ),
+                                      cursorHeight: 22,
+                                      cursorColor: Colors.grey,
+                                      decoration: fieldStyle1.copyWith(
+                                          isDense: true,
+                                          errorStyle: TextStyle(height: 0,fontSize: 0)
+                                      ),
+                                    ),
+                                    SizedBox(height: height*0.02),
 
                                     Text(
                                       "Address",

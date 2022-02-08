@@ -11,11 +11,11 @@ import '../../../Values/appColors.dart';
 
 class Details extends StatefulWidget {
 
-  String distributor_name,distributor_address,distributor_image,latitude,longitude,home_address,distributor_gst,
+  String distributor_name,distributor_address,distributor_image,latitude,longitude,home_address,distributor_gst,landmark,
       person_name,person_mobile,person_tel,time,business_type,opentime,closetime,type,id;
 
   Details({Key key, this.distributor_name,this.distributor_address,this.distributor_image,this.latitude,this.longitude,this.home_address,this.distributor_gst,
-    this.person_name,this.person_mobile,this.person_tel,this.time,this.business_type,this.opentime,this.closetime,this.type,this.id
+    this.person_name,this.person_mobile,this.person_tel,this.time,this.business_type,this.opentime,this.closetime,this.type,this.id,this.landmark
   }) : super(key: key);
 
   @override
@@ -153,6 +153,7 @@ class _DetailsState extends State<Details> {
                         longitude: lon,
                         person_name: "${widget.person_name}",
                         home_address: "${widget.home_address}",
+                        landmark: "${widget.landmark}",
                         person_mobile: "${widget.person_mobile}",
                         person_tel: "${widget.person_tel}",
                         business_type: "${widget.business_type}",
