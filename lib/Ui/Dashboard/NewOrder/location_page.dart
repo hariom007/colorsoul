@@ -38,8 +38,7 @@ class _LocationPageState extends State<LocationPage> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       await Geolocator.openLocationSettings();
-
-      return Future.error('Location services are disabled.');
+      return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     }
 
 
@@ -60,6 +59,10 @@ class _LocationPageState extends State<LocationPage> {
 
         return Future.error('Location permissions are denied');
       }
+      else{
+        return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      }
+
     }
 
     if (permission == LocationPermission.deniedForever) {
@@ -258,6 +261,7 @@ class _LocationPageState extends State<LocationPage> {
 
   Future<void> _handlePressButton() async {
 
+/*
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -270,6 +274,7 @@ class _LocationPageState extends State<LocationPage> {
           ),
         )
     );
+*/
 
     Prediction p = await PlacesAutocomplete.show(
       context: context,

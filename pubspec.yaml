@@ -38,6 +38,7 @@ dependencies:
   geocoder: ^0.2.1
   cached_network_image: ^3.2.0
   flutter_html: ^2.2.1
+  url_launcher: ^6.0.18
 
 dev_dependencies:
   flutter_test:

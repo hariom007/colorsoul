@@ -126,18 +126,17 @@ class _DistributorsState extends State<Distributors> {
                               overscroll.disallowGlow();
                               return;
                             },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                            child: SingleChildScrollView(
+                              controller: _scrollViewController,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
 
-                                _distributorProvider.isLoaded == false
-                                    ?
-                                    SizedBox()
-                                    :
-                                Expanded(
-                                  child: ListView.builder(
-                                    controller: _scrollViewController,
-                                    padding: EdgeInsets.only(top: 10,bottom: 40),
+                                  ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    padding: EdgeInsets.only(
+                                        top: 10,
+                                    ),
                                     itemCount: _distributorProvider.distributorList.length,
                                     shrinkWrap: true,
                                     itemBuilder:(context, index){
@@ -359,22 +358,25 @@ class _DistributorsState extends State<Distributors> {
                                       );
                                     },
                                   ),
-                                ),
 
-                                _distributorProvider.isLoaded == false
-                                    ?
-                                Container(
-                                  height: 100,
-                                  child: Center(
-                                      child: SpinKitThreeBounce(
-                                        color: AppColors.black,
-                                        size: 25.0,
-                                      )
-                                  ),
-                                )
-                                    :
-                                    SizedBox()
-                              ],
+                                  _distributorProvider.isLoaded == false
+                                      ?
+                                  Container(
+                                    height: 100,
+                                    child: Center(
+                                        child: SpinKitThreeBounce(
+                                          color: AppColors.black,
+                                          size: 25.0,
+                                        )
+                                    ),
+                                  )
+                                      :
+                                      SizedBox(),
+
+                                  SizedBox(height: 40),
+
+                                ],
+                              ),
                             ),
                           )
                       ),

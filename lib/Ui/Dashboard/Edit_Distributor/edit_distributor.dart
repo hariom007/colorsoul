@@ -464,10 +464,6 @@ class _EditDistributersState extends State<EditDistributers> {
                                       ),
                                     ),
 
-                                    widget.type != "Distributor"
-                                        ?
-                                    SizedBox()
-                                        :
                                     SizedBox(height: height*0.01),
 
                                     widget.type == "Distributor"
@@ -526,11 +522,8 @@ class _EditDistributersState extends State<EditDistributers> {
                                         )
                                     ),
 
-                                    widget.type != "Distributor"
-                                        ?
-                                    SizedBox()
-                                        :
                                     SizedBox(height: height*0.02),
+
 
                                     Text(
                                       "Distributor Business Name",

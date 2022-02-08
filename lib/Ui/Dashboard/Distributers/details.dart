@@ -3,7 +3,10 @@ import 'package:colorsoul/Ui/Dashboard/Edit_Distributor/edit_distributor.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../Values/appColors.dart';
 
 class Details extends StatefulWidget {
@@ -46,6 +49,63 @@ class _DetailsState extends State<Details> {
     });
   }
 
+  Future<Position> getGeoLocationPosition() async {
+
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    }
+
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+
+        Fluttertoast.showToast(
+            msg: "Location permissions are denied. !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+        return Future.error('Location permissions are denied');
+      }
+      else{
+        return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      }
+
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+
+      Fluttertoast.showToast(
+          msg: "Location permissions are permanently denied, we cannot request permissions. !!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -66,7 +126,7 @@ class _DetailsState extends State<Details> {
             "${widget.distributor_name}",
             style: textStyle.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 24
+              fontSize: 22
             ),
           ),
           actions: [
@@ -422,7 +482,14 @@ class _DetailsState extends State<Details> {
                                         borderRadius: round.copyWith()
                                     ),
                                     child: ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () async {
+
+                                        Position position = await getGeoLocationPosition();
+
+                                        String url ='https://www.google.com/maps/dir/?api=1&origin=${position.latitude},${position.longitude}&destination=${widget.latitude},${widget.longitude}&travelmode=driving&dir_action=navigate';
+                                        launch(url);
+
+                                      },
                                       style: ElevatedButton.styleFrom(
                                           elevation: 10,
                                           primary: Colors.transparent,
