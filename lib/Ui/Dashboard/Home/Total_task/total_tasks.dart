@@ -69,7 +69,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
     String userId = sharedPreferences.get("userId");
 
     var data = {
-      //"uid":"$userId",
+      "uid":"$userId",
       //"from_date":"",
       //"to_date":"",
       "status":""
@@ -78,7 +78,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
 
 
     var data1 = {
-      // "uid":"$userId",
+       "uid":"$userId",
       // "from_date":"",
       // "to_date":"",
       "status":"reschedule"
@@ -87,7 +87,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
 
 
     var data2 = {
-      // "uid":"$userId",
+       "uid":"$userId",
       // "from_date":"",
       // "to_date":"",
       "status":"complete"
@@ -95,6 +95,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
     await _taskProvider.getCompletedTask(data2,'/getTask/$page');
 
   }
+
 
   @override
   Widget build(BuildContext context) {

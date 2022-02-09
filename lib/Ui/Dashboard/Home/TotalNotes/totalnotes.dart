@@ -53,7 +53,7 @@ class _TotalNotesState extends State<TotalNotes> {
     String userId = sharedPreferences.get("userId");
 
     var data = {
-      //"uid":"$userId",
+      "uid":"$userId",
       //"from_date":"",
       //"to_date":"",
       //"status":""

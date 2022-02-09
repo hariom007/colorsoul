@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:colorsoul/Provider/note_provider.dart';
 import 'package:colorsoul/Provider/order_provider.dart';
+import 'package:colorsoul/Provider/task_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Home/ToDoTask/to_do_task.dart';
 import 'package:colorsoul/Ui/Dashboard/Home/TotalNotes/totalnotes.dart';
 import 'package:colorsoul/Ui/Dashboard/Home/alert.dart';
@@ -31,14 +33,21 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
   String currentDate = DateFormat('MMM dd,yyyy').format(DateTime.now());
 
 
+  TaskProvider _taskProvider;
+  NoteProvider _noteProvider;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _orderProvider = Provider.of<OrderProvider>(context, listen: false);
+    _taskProvider = Provider.of<TaskProvider>(context, listen: false);
+    _noteProvider = Provider.of<NoteProvider>(context, listen: false);
 
     getUserDetails();
     getOrders();
+    getTask();
+    getNote();
 
   }
 
@@ -97,6 +106,46 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
     await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
 
   }
+
+
+  getTask() async {
+
+    setState(() {
+      _taskProvider.taskList.clear();
+    });
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      "uid":"$userId",
+      //"from_date":"",
+      //"to_date":"",
+      "status":""
+    };
+    await _taskProvider.getAllTask(data,'/getTask/$page');
+
+  }
+
+  getNote() async {
+
+    setState(() {
+      _noteProvider.noteList.clear();
+    });
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      "uid":"$userId",
+      //"from_date":"",
+      //"to_date":"",
+      //"status":""
+    };
+    await _noteProvider.getAllNote(data,'/getNote/$page');
+
+  }
+
 
   changeStatus(String orderId) async {
 
@@ -241,8 +290,19 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                       color: Colors.black
                                     )
                                   ),
+
+                                  _taskProvider.isLoaded == false
+                                      ?
+                                  SizedBox(
+                                    height: 15,
+                                    child: SpinKitThreeBounce(
+                                      color: AppColors.black,
+                                      size: 15.0,
+                                    ),
+                                  )
+                                      :
                                   Text(
-                                    "110",
+                                    "${_taskProvider.taskList.length}",
                                     style: textStyle.copyWith(
                                       fontSize: 14,
                                       color: Colors.black,
@@ -327,8 +387,18 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                           color: Colors.black
                                       )
                                   ),
+                                  _noteProvider.isLoaded == false
+                                      ?
+                                  SizedBox(
+                                    height: 15,
+                                    child: SpinKitThreeBounce(
+                                      color: AppColors.black,
+                                      size: 15.0,
+                                    ),
+                                  )
+                                      :
                                   Text(
-                                    "10",
+                                      "${_noteProvider.noteList.length}",
                                     style: textStyle.copyWith(
                                       fontSize: 14,
                                       color: Colors.black,
