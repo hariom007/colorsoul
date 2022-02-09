@@ -2,6 +2,7 @@ import 'dart:async';
 //import 'package:colorsoul/components.dart';
 import 'package:colorsoul/Provider/auth_provider.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
+import 'package:colorsoul/Provider/note_provider.dart';
 import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Provider/task_provider.dart';
@@ -34,6 +35,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => ProductProvider()),
         ChangeNotifierProvider(create: (context) => OrderProvider()),
         ChangeNotifierProvider(create: (context) => TaskProvider()),
+        ChangeNotifierProvider(create: (context) => NoteProvider()),
 
       ],
       child: MaterialApp(

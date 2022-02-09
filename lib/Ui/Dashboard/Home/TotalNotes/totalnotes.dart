@@ -1,6 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:colorsoul/Provider/note_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TotalNotes extends StatefulWidget {
   @override
@@ -8,10 +15,61 @@ class TotalNotes extends StatefulWidget {
 }
 
 class _TotalNotesState extends State<TotalNotes> {
+
+  NoteProvider _noteProvider;
+
+  ScrollController _scrollViewController =  ScrollController();
+  bool isScrollingDown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _noteProvider = Provider.of<NoteProvider>(context, listen: false);
+
+    setState(() {
+      _noteProvider.noteList.clear();
+    });
+    getNote();
+
+    _scrollViewController.addListener(() {
+      if (_scrollViewController.position.userScrollDirection == ScrollDirection.reverse) {
+        if (!isScrollingDown) {
+
+          isScrollingDown = true;
+          setState(() {
+            page = page + 1;
+            getNote();
+          });
+        }
+      }
+    });
+
+  }
+
+  int page = 1;
+  getNote() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      //"uid":"$userId",
+      //"from_date":"",
+      //"to_date":"",
+      //"status":""
+    };
+    await _noteProvider.getAllNote(data,'/getNote/$page');
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _noteProvider = Provider.of<NoteProvider>(context, listen: true);
+
     return Scaffold(
         body:Container(
           width: width,
@@ -103,208 +161,109 @@ class _TotalNotesState extends State<TotalNotes> {
                         color: AppColors.white,
                       ),
                       child: SingleChildScrollView(
+                        controller: _scrollViewController,
                         child: Padding(
                           padding: EdgeInsets.only(left: 10,right: 10,bottom: 20),
                           child: Column(
                             children: [
                               SizedBox(height: 30),
-                              Card(
-                                elevation: 10,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: round1.copyWith()
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.all(20),
-                                  width: width,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Chandanvan society",
-                                        style: textStyle.copyWith(
-                                          color: AppColors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16
-                                        ),
+
+                              ListView.builder(
+                                padding: EdgeInsets.only(top: 10,bottom: 10),
+                                itemCount: _noteProvider.noteList.length,
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemBuilder:(context, index){
+                                  return Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: Card(
+                                      elevation: 10,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: round1.copyWith()
                                       ),
-                                      SizedBox(height: 10),
-                                      Row(
-                                        children: [
-                                          Image.asset("assets/images/tasks/location1.png",width: 20,height: 20),
-                                          SizedBox(width: 10),
-                                          Flexible(
-                                            child: Text(
-                                              "Silicon Shoppers, F4, 1st Floor,  Chandanvan Society, Udhna, Surat, Gujarat 394210",
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                                      child: Container(
+                                        padding: EdgeInsets.all(20),
+                                        width: width,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "${_noteProvider.noteList[index].title}",
+                                              style: textStyle.copyWith(
+                                                  color: AppColors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16
+                                              ),
+                                            ),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              "${_noteProvider.noteList[index].note}",
                                               style: textStyle.copyWith(
                                                   color: AppColors.black,
                                                   height: 1.4
                                               ),
                                             ),
-                                          )
-                                        ],
+
+                                            SizedBox(height: 10),
+
+                                            StaggeredGridView.countBuilder(
+                                              physics: NeverScrollableScrollPhysics(),
+                                              scrollDirection: Axis.vertical,
+                                              crossAxisCount: 3,
+                                              crossAxisSpacing: 10,
+                                              mainAxisSpacing: 15,
+                                              shrinkWrap: true,
+                                              padding: EdgeInsets.zero,
+                                              itemCount: _noteProvider.noteList[index].imageUrl.length,
+                                              staggeredTileBuilder: (index) {
+                                                return StaggeredTile.fit(1);
+                                              },
+                                              itemBuilder: (BuildContext context, int index1) {
+                                                return ClipRRect(
+                                                  borderRadius: BorderRadius.all(Radius.circular(6)),
+                                                  child: CachedNetworkImage(
+                                                    fit: BoxFit.fitWidth,
+                                                    imageUrl: "${_noteProvider.noteList[index].imageUrl[index1]}",
+                                                    placeholder: (context, url) =>
+                                                        Center(
+                                                          child: SpinKitThreeBounce(
+                                                            color: AppColors.black,
+                                                            size: 25.0,
+                                                          ),
+                                                        ),
+                                                    errorWidget: (context, url, error) =>
+                                                        Center(
+                                                          child: Icon(Icons.error),
+                                                        ),
+                                                  ),
+                                                );
+                                              },
+
+                                            ),
+
+
+                                          ],
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                    ),
+                                  );
+                                },
                               ),
-                              SizedBox(height: 10),
-                              Card(
-                                elevation: 10,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: round1.copyWith()
+
+                              _noteProvider.isLoaded == false
+                                  ?
+                              Container(
+                                height: 100,
+                                child: Center(
+                                    child: SpinKitThreeBounce(
+                                      color: AppColors.black,
+                                      size: 25.0,
+                                    )
                                 ),
-                                child: Container(
-                                  padding: EdgeInsets.all(20),
-                                  width: width,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Payment",
-                                        style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam arcu sodales eget lacus orci dignissim. Nec nunc eu massa eu. At lectus sit arcu tincidunt felis hendrerit lectus fames ut. Sed vel senectus iaculis neque malesuada.",
-                                        style: textStyle.copyWith(
-                                          color: AppColors.black,
-                                          height: 1.4
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Card(
-                                color: Color.fromRGBO(246, 172, 210, 1),
-                                elevation: 10,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: round1.copyWith()
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.all(20),
-                                  width: width,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Incomplete Work",
-                                        style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim posuere ac mauris, suscipit justo volutpat nibh in. Dignissim in euismod lacus, ut habitasse at. Elementum ultricies id velit vulputate. Non vitae sed sed aenean. Tincidunt pellentesque sapien ultrices eget dignissim sapien, malesuada eu, nunc. Nunc id mollis lectus blandit risus dui arcu. Massa.",
-                                        style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                            height: 1.4
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Card(
-                                elevation: 10,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: round1.copyWith()
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.all(20),
-                                  width: width,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Shop image",
-                                        style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        "Udhna shops image",
-                                        style: textStyle.copyWith(
-                                          color: AppColors.black,
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Card(
-                                              elevation: 10,
-                                              child: Image.asset("assets/images/details/image1.png",width: width/4.5)
-                                          ),
-                                          Card(
-                                              elevation: 10,
-                                              child: Image.asset("assets/images/details/image2.png",width: width/4.5)
-                                          ),
-                                          Card(
-                                              elevation: 10,
-                                              child: Image.asset("assets/images/details/image3.png",width: width/4.5)
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Card(
-                                color: Color.fromRGBO(255, 237, 144, 1),
-                                elevation: 10,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: round1.copyWith()
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.all(20),
-                                  width: width,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Next Meeting",
-                                        style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        "Meeting with amit office visit",
-                                        style: textStyle.copyWith(
-                                          color: AppColors.black
-                                        ),
-                                      ),
-                                      SizedBox(height: 2),
-                                      Row(
-                                        children: [
-                                          Image.asset("assets/images/notes/clock1.png",width: 20,height: 20),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            "3:00 PM"
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                              )
+                                  :
+                              SizedBox(),
+
                             ],
                           ),
                         ),
