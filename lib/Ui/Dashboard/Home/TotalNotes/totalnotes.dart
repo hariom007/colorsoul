@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -166,7 +167,7 @@ class _TotalNotesState extends State<TotalNotes> {
                           padding: EdgeInsets.only(left: 10,right: 10,bottom: 20),
                           child: Column(
                             children: [
-                              SizedBox(height: 30),
+                              SizedBox(height: 10),
 
                               ListView.builder(
                                 padding: EdgeInsets.only(top: 10,bottom: 10),
@@ -183,6 +184,10 @@ class _TotalNotesState extends State<TotalNotes> {
                                       ),
                                       child: Container(
                                         padding: EdgeInsets.all(20),
+                                        decoration: BoxDecoration(
+                                            borderRadius: round1.copyWith(),
+                                          color: HexColor("${_noteProvider.noteList[index].colorCode}"),
+                                        ),
                                         width: width,
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,

@@ -31,6 +31,11 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
 
     _taskProvider = Provider.of<TaskProvider>(context, listen: false);
 
+    setState(() {
+      _taskProvider.taskList.clear();
+      _taskProvider.rescheduleTaskList.clear();
+      _taskProvider.completedTaskList.clear();
+    });
     getTask();
 
     _scrollViewController.addListener(() {
@@ -58,12 +63,6 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
 
   int page = 1;
   getTask() async {
-
-    setState(() {
-      _taskProvider.taskList.clear();
-      _taskProvider.rescheduleTaskList.clear();
-      _taskProvider.completedTaskList.clear();
-    });
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.get("userId");
@@ -95,6 +94,119 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
     await _taskProvider.getCompletedTask(data2,'/getTask/$page');
 
   }
+
+  completeTask(String taskId) async {
+
+    var data = {
+      "id":"$taskId"
+    };
+    await _taskProvider.completeTask(data,'/completeTask');
+
+    if(_taskProvider.isComplete == true){
+      setState(() {
+        _taskProvider.taskList.clear();
+        _taskProvider.rescheduleTaskList.clear();
+        _taskProvider.completedTaskList.clear();
+        page = 1;
+      });
+
+      getTask();
+    }
+
+  }
+
+
+  TimeOfDay time =  TimeOfDay.now();
+  String pickDate,pickTime,pickAmPm;
+
+  _pickDate(BuildContext context,String id) async {
+    DateTime newSelectedDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now().subtract(Duration(days: 0)),
+        lastDate: DateTime(2100),
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: ColorScheme.dark(
+                primary: Colors.grey,
+                onPrimary: Colors.black,
+                surface: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor: AppColors.white,
+            ),
+            child: child,
+          );
+        }
+    );
+
+    if(newSelectedDate != null){
+      pickDate = DateFormat('yyyy-MM-dd').format(newSelectedDate);
+      //print(pickDate);
+      _pickTime(id);
+    }
+
+  }
+
+  _pickTime(String id) async{
+    TimeOfDay t = await showTimePicker(
+        context: context,
+        initialTime: time,
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: ColorScheme.dark(
+                primary: Colors.grey,
+                onPrimary: Colors.black,
+                surface: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor: AppColors.white,
+            ),
+            child: child,
+          );
+        }
+    );
+
+    if(t != null)
+    {
+
+      pickTime = "${t.hour}:${t.minute}";
+      pickAmPm = t.period == "DayPeriod.pm" ? "PM":"AM";
+
+/*
+      print(pickTime);
+      print(pickAmPm);
+*/
+      rescheduleTask(id);
+
+    }
+  }
+
+
+  rescheduleTask(String taskId) async {
+
+    var data = {
+      "old_schedule_id":"$taskId",
+      "date":"$pickDate",
+      "time":"$pickTime",
+      "am_pm":"$pickAmPm"
+    };
+    await _taskProvider.rescheduleTask(data,'/rescheduleTask');
+
+    if(_taskProvider.isComplete == true){
+      setState(() {
+        _taskProvider.taskList.clear();
+        _taskProvider.rescheduleTaskList.clear();
+        _taskProvider.completedTaskList.clear();
+        page = 1;
+      });
+      getTask();
+    }
+
+  }
+
 
 
   @override
@@ -301,28 +413,171 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                             actionExtentRatio: 0.12,
                                             actionPane: SlidableDrawerActionPane(),
                                             actions: [
-                                              Container(
-                                                width: 100,
-                                                height: 100,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                  color: AppColors.black,
-                                                ),
-                                                child: Center(
-                                                    child: Image.asset("assets/images/tasks/time.png",width: 20,height: 20,color: AppColors.white)
+                                              InkWell(
+                                                onTap: (){
+
+                                                  showDialog<bool>(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          insetPadding: EdgeInsets.all(0),
+                                                          contentPadding: EdgeInsets.all(0),
+                                                          backgroundColor: Colors.transparent,
+                                                          content: Container(
+                                                            width: MediaQuery.of(context).size.width/1.2,
+                                                            decoration: BoxDecoration(
+                                                                color: AppColors.white,
+                                                                borderRadius: round1.copyWith()
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.fromLTRB(20, 14, 20, 0),
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Text(
+                                                                    'Are you sure you want to Reschedule Task?',
+                                                                    style: textStyle.copyWith(
+                                                                        fontSize: 16,
+                                                                        color: AppColors.black
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(height: 13),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                                    children: [
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'No',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(false);
+                                                                        },
+                                                                      ),
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'Yes, Reschedule',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+
+                                                                          Navigator.of(context).pop();
+                                                                          _pickDate(context,"${_taskProvider.taskList[index].id}");
+                                                                          //rescheduleTask(_taskProvider.taskList[index].id);
+
+
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                  );
+
+                                                },
+                                                child: Container(
+                                                  width: 100,
+                                                  height: 100,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: AppColors.black,
+                                                  ),
+                                                  child: Center(
+                                                      child: Image.asset("assets/images/tasks/time.png",width: 20,height: 20,color: AppColors.white)
+                                                  ),
                                                 ),
                                               )
                                             ],
                                             secondaryActions: [
-                                              Container(
-                                                width: 100,
-                                                height: 100,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                  color: AppColors.black,
-                                                ),
-                                                child: Center(
-                                                    child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                              InkWell(
+                                                onTap: (){
+
+                                                  showDialog<bool>(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          insetPadding: EdgeInsets.all(0),
+                                                          contentPadding: EdgeInsets.all(0),
+                                                          backgroundColor: Colors.transparent,
+                                                          content: Container(
+                                                            width: MediaQuery.of(context).size.width/1.2,
+                                                            decoration: BoxDecoration(
+                                                                color: AppColors.white,
+                                                                borderRadius: round1.copyWith()
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.fromLTRB(20, 14, 20, 0),
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Text(
+                                                                    'Are you sure you want to Complete Task?',
+                                                                    style: textStyle.copyWith(
+                                                                        fontSize: 16,
+                                                                        color: AppColors.black
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(height: 13),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                                    children: [
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'No',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(false);
+                                                                        },
+                                                                      ),
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'Yes, Confirm',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+
+                                                                          Navigator.of(context).pop();
+                                                                          completeTask(_taskProvider.taskList[index].id);
+
+
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                  );
+
+                                                },
+                                                child: Container(
+                                                  width: 100,
+                                                  height: 100,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: AppColors.black,
+                                                  ),
+                                                  child: Center(
+                                                      child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                                  ),
                                                 ),
                                               )
                                             ],
@@ -430,28 +685,171 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                             actionExtentRatio: 0.12,
                                             actionPane: SlidableDrawerActionPane(),
                                             actions: [
-                                              Container(
-                                                width: 100,
-                                                height: 100,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                  color: AppColors.black,
-                                                ),
-                                                child: Center(
-                                                    child: Image.asset("assets/images/tasks/time.png",width: 20,height: 20,color: AppColors.white)
+                                              InkWell(
+                                                onTap: (){
+
+                                                  showDialog<bool>(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          insetPadding: EdgeInsets.all(0),
+                                                          contentPadding: EdgeInsets.all(0),
+                                                          backgroundColor: Colors.transparent,
+                                                          content: Container(
+                                                            width: MediaQuery.of(context).size.width/1.2,
+                                                            decoration: BoxDecoration(
+                                                                color: AppColors.white,
+                                                                borderRadius: round1.copyWith()
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.fromLTRB(20, 14, 20, 0),
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Text(
+                                                                    'Are you sure you want to Reschedule Task?',
+                                                                    style: textStyle.copyWith(
+                                                                        fontSize: 16,
+                                                                        color: AppColors.black
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(height: 13),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                                    children: [
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'No',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(false);
+                                                                        },
+                                                                      ),
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'Yes, Reschedule',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+
+                                                                          Navigator.of(context).pop();
+                                                                          _pickDate(context,"${_taskProvider.rescheduleTaskList[index].id}");
+                                                                          //rescheduleTask(_taskProvider.taskList[index].id);
+
+
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                  );
+
+                                                },
+                                                child: Container(
+                                                  width: 100,
+                                                  height: 100,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: AppColors.black,
+                                                  ),
+                                                  child: Center(
+                                                      child: Image.asset("assets/images/tasks/time.png",width: 20,height: 20,color: AppColors.white)
+                                                  ),
                                                 ),
                                               )
                                             ],
                                             secondaryActions: [
-                                              Container(
-                                                width: 100,
-                                                height: 100,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                  color: AppColors.black,
-                                                ),
-                                                child: Center(
-                                                    child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                              InkWell(
+                                                onTap: (){
+
+                                                  showDialog<bool>(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          insetPadding: EdgeInsets.all(0),
+                                                          contentPadding: EdgeInsets.all(0),
+                                                          backgroundColor: Colors.transparent,
+                                                          content: Container(
+                                                            width: MediaQuery.of(context).size.width/1.2,
+                                                            decoration: BoxDecoration(
+                                                                color: AppColors.white,
+                                                                borderRadius: round1.copyWith()
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.fromLTRB(20, 14, 20, 0),
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Text(
+                                                                    'Are you sure you want to Complete Task?',
+                                                                    style: textStyle.copyWith(
+                                                                        fontSize: 16,
+                                                                        color: AppColors.black
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(height: 13),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                                    children: [
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'No',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(false);
+                                                                        },
+                                                                      ),
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'Yes, Confirm',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+
+                                                                          Navigator.of(context).pop();
+                                                                          completeTask(_taskProvider.rescheduleTaskList[index].id);
+
+
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                  );
+
+                                                },
+                                                child: Container(
+                                                  width: 100,
+                                                  height: 100,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: AppColors.black,
+                                                  ),
+                                                  child: Center(
+                                                      child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                                  ),
                                                 ),
                                               )
                                             ],

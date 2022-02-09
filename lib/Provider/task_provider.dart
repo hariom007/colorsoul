@@ -184,5 +184,82 @@ class TaskProvider with ChangeNotifier
 
   }
 
+  bool isReschedule = false;
+  rescheduleTask(data,url) async
+  {
+
+    isReschedule = false;
+    isLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+      if(value["st"] == "success")
+      {
+        isReschedule = true;
+        notifyListeners();
+      }
+      else
+      {
+        isReschedule = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Task Reschedule Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+  bool isComplete = false;
+  completeTask(data,url) async
+  {
+
+    isComplete = false;
+    isLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+      if(value["st"] == "success")
+      {
+        isComplete = true;
+        notifyListeners();
+      }
+      else
+      {
+        isComplete = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Task Complete Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+
 
 }
