@@ -1,8 +1,14 @@
+import 'package:colorsoul/Provider/task_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TotalTasks extends StatefulWidget {
   @override
@@ -14,10 +20,32 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
   TabController _tabController;
   int isSelected = 0;
 
+  ScrollController _scrollViewController =  ScrollController();
+  bool isScrollingDown = false;
+
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+
+    _taskProvider = Provider.of<TaskProvider>(context, listen: false);
+
+    getTask();
+
+    _scrollViewController.addListener(() {
+      if (_scrollViewController.position.userScrollDirection == ScrollDirection.reverse) {
+        if (!isScrollingDown) {
+
+          isScrollingDown = true;
+          setState(() {
+            page = page + 1;
+            getTask();
+          });
+        }
+      }
+    });
+
   }
 
   @override
@@ -26,10 +54,55 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
     _tabController.dispose();
   }
 
+  TaskProvider _taskProvider;
+
+  int page = 1;
+  getTask() async {
+
+    setState(() {
+      _taskProvider.taskList.clear();
+      _taskProvider.rescheduleTaskList.clear();
+      _taskProvider.completedTaskList.clear();
+    });
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      //"uid":"$userId",
+      //"from_date":"",
+      //"to_date":"",
+      "status":""
+    };
+    await _taskProvider.getAllTask(data,'/getTask/$page');
+
+
+    var data1 = {
+      // "uid":"$userId",
+      // "from_date":"",
+      // "to_date":"",
+      "status":"reschedule"
+    };
+    await _taskProvider.getRescheduleTask(data1,'/getTask/$page');
+
+
+    var data2 = {
+      // "uid":"$userId",
+      // "from_date":"",
+      // "to_date":"",
+      "status":"complete"
+    };
+    await _taskProvider.getCompletedTask(data2,'/getTask/$page');
+
+  }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _taskProvider = Provider.of<TaskProvider>(context, listen: true);
+
     return Scaffold(
         backgroundColor: Colors.black,
         body:Container(
@@ -209,88 +282,364 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                             physics: NeverScrollableScrollPhysics(),
                             controller: _tabController,
                             children: [
+
                               SingleChildScrollView(
+                                controller: _scrollViewController,
                                 child: Column(
                                   children: [
-                                    SizedBox(height: 20),
-                                    Text(
-                                      "19, December 2021",
-                                      style: textStyle.copyWith(
-                                          color: AppColors.black,
-                                          fontWeight: FontWeight.bold
-                                      ),
-                                    ),
+
                                     ListView.builder(
                                       padding: EdgeInsets.only(top: 10,bottom: 10),
-                                      itemCount: 3,
+                                      itemCount: _taskProvider.taskList.length,
                                       physics: NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemBuilder:(context, index){
-                                        return buildCard(height,index);
+                                        return Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                          child: Slidable(
+                                            actionExtentRatio: 0.12,
+                                            actionPane: SlidableDrawerActionPane(),
+                                            actions: [
+                                              Container(
+                                                width: 100,
+                                                height: 100,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  color: AppColors.black,
+                                                ),
+                                                child: Center(
+                                                    child: Image.asset("assets/images/tasks/time.png",width: 20,height: 20,color: AppColors.white)
+                                                ),
+                                              )
+                                            ],
+                                            secondaryActions: [
+                                              Container(
+                                                width: 100,
+                                                height: 100,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  color: AppColors.black,
+                                                ),
+                                                child: Center(
+                                                    child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                                ),
+                                              )
+                                            ],
+                                            child: Card(
+                                                elevation: 10,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius: round1.copyWith()
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(top: 5,bottom: 6),
+                                                  child: ListTile(
+                                                    title: Padding(
+                                                      padding: EdgeInsets.only(top: 6),
+                                                      child: Text(
+                                                        '${_taskProvider.taskList[index].title}',
+                                                        style: textStyle.copyWith(
+                                                            fontSize: 20,
+                                                            color: Colors.black,
+                                                            fontWeight: FontWeight.bold
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    subtitle: Column(
+                                                      children: [
+                                                        SizedBox(height: height*0.01,),
+                                                        Html(
+                                                          shrinkWrap: true,
+                                                          data: "${_taskProvider.taskList[index].description}",
+                                                          style: {
+                                                            '#': Style(
+                                                                fontSize: FontSize(14),
+                                                                maxLines: 2,
+                                                                color: AppColors.black,
+                                                                textOverflow: TextOverflow.ellipsis,
+                                                                fontFamily: "Roboto-Regular"
+                                                            ),
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    trailing: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                                      children: [
+                                                        Text(
+                                                          "${DateFormat('dd, MMM yyyy').format(_taskProvider.taskList[index].date)}",
+                                                          style: textStyle.copyWith(
+                                                            fontSize: 14,
+                                                            color: Colors.black,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 5),
+                                                        Text(
+                                                          "${_taskProvider.taskList[index].time}",
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: textStyle.copyWith(
+                                                            fontSize: 14,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                            ),
+                                          ),
+                                        );
                                       },
                                     ),
-                                    Text(
-                                      "20, December 2021",
-                                      style: textStyle.copyWith(
-                                          color: AppColors.black,
-                                          fontWeight: FontWeight.bold
+
+                                    _taskProvider.isLoaded == false
+                                        ?
+                                    Container(
+                                      height: 100,
+                                      child: Center(
+                                          child: SpinKitThreeBounce(
+                                            color: AppColors.black,
+                                            size: 25.0,
+                                          )
                                       ),
-                                    ),
-                                    ListView.builder(
-                                      padding: EdgeInsets.only(top: 10,bottom: 10),
-                                      itemCount: 1,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemBuilder:(context, index){
-                                        return buildCard(height,index);
-                                      },
-                                    ),
+                                    )
+                                        :
+                                    SizedBox(),
+
+                                    SizedBox(height: 40),
+
                                   ],
                                 ),
                               ),
+
                               SingleChildScrollView(
+                                controller: _scrollViewController,
                                 child: Column(
                                   children: [
-                                    SizedBox(height: 20),
-                                    Text(
-                                      "19, December 2021",
-                                      style: textStyle.copyWith(
-                                          color: AppColors.black,
-                                          fontWeight: FontWeight.bold
-                                      ),
-                                    ),
+
                                     ListView.builder(
                                       padding: EdgeInsets.only(top: 10,bottom: 10),
-                                      itemCount: 3,
+                                      itemCount: _taskProvider.rescheduleTaskList.length,
                                       physics: NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemBuilder:(context, index){
-                                        return buildCard(height,index);
+                                        return Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                          child: Slidable(
+                                            actionExtentRatio: 0.12,
+                                            actionPane: SlidableDrawerActionPane(),
+                                            actions: [
+                                              Container(
+                                                width: 100,
+                                                height: 100,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  color: AppColors.black,
+                                                ),
+                                                child: Center(
+                                                    child: Image.asset("assets/images/tasks/time.png",width: 20,height: 20,color: AppColors.white)
+                                                ),
+                                              )
+                                            ],
+                                            secondaryActions: [
+                                              Container(
+                                                width: 100,
+                                                height: 100,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  color: AppColors.black,
+                                                ),
+                                                child: Center(
+                                                    child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                                ),
+                                              )
+                                            ],
+                                            child: Card(
+                                                elevation: 10,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius: round1.copyWith()
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(top: 5,bottom: 6),
+                                                  child: ListTile(
+                                                    title: Padding(
+                                                      padding: EdgeInsets.only(top: 6),
+                                                      child: Text(
+                                                        '${_taskProvider.rescheduleTaskList[index].title}',
+                                                        style: textStyle.copyWith(
+                                                            fontSize: 20,
+                                                            color: Colors.black,
+                                                            fontWeight: FontWeight.bold
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    subtitle: Column(
+                                                      children: [
+                                                        SizedBox(height: height*0.01,),
+                                                        Html(
+                                                          shrinkWrap: true,
+                                                          data: "${_taskProvider.rescheduleTaskList[index].description}",
+                                                          style: {
+                                                            '#': Style(
+                                                                fontSize: FontSize(14),
+                                                                maxLines: 2,
+                                                                color: AppColors.black,
+                                                                textOverflow: TextOverflow.ellipsis,
+                                                                fontFamily: "Roboto-Regular"
+                                                            ),
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    trailing: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                                      children: [
+                                                        Text(
+                                                          "${DateFormat('dd, MMM yyyy').format(_taskProvider.rescheduleTaskList[index].date)}",
+                                                          style: textStyle.copyWith(
+                                                            fontSize: 14,
+                                                            color: Colors.black,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 5),
+                                                        Text(
+                                                          "${_taskProvider.rescheduleTaskList[index].time}",
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: textStyle.copyWith(
+                                                            fontSize: 14,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                            ),
+                                          ),
+                                        );
                                       },
                                     ),
+
+                                    _taskProvider.isLoaded == false
+                                        ?
+                                    Container(
+                                      height: 100,
+                                      child: Center(
+                                          child: SpinKitThreeBounce(
+                                            color: AppColors.black,
+                                            size: 25.0,
+                                          )
+                                      ),
+                                    )
+                                        :
+                                    SizedBox(),
+
+                                    SizedBox(height: 40),
+
                                   ],
                                 ),
                               ),
+
                               SingleChildScrollView(
+                                controller: _scrollViewController,
                                 child: Column(
                                   children: [
-                                    SizedBox(height: 20),
-                                    Text(
-                                      "20, December 2021",
-                                      style: textStyle.copyWith(
-                                          color: AppColors.black,
-                                          fontWeight: FontWeight.bold
-                                      ),
-                                    ),
+
                                     ListView.builder(
                                       padding: EdgeInsets.only(top: 10,bottom: 10),
-                                      itemCount: 1,
+                                      itemCount: _taskProvider.completedTaskList.length,
                                       physics: NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemBuilder:(context, index){
-                                        return buildCard(height,index);
+                                        return Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                          child: Slidable(
+                                            actionExtentRatio: 0.12,
+                                            actionPane: SlidableDrawerActionPane(),
+                                            child: Card(
+                                                elevation: 10,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius: round1.copyWith()
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(top: 5,bottom: 6),
+                                                  child: ListTile(
+                                                    title: Padding(
+                                                      padding: EdgeInsets.only(top: 6),
+                                                      child: Text(
+                                                        '${_taskProvider.completedTaskList[index].title}',
+                                                        style: textStyle.copyWith(
+                                                            fontSize: 20,
+                                                            color: Colors.black,
+                                                            fontWeight: FontWeight.bold
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    subtitle: Column(
+                                                      children: [
+                                                        SizedBox(height: height*0.01,),
+                                                        Html(
+                                                          shrinkWrap: true,
+                                                          data: "${_taskProvider.completedTaskList[index].description}",
+                                                          style: {
+                                                            '#': Style(
+                                                                fontSize: FontSize(14),
+                                                                maxLines: 2,
+                                                                color: AppColors.black,
+                                                                textOverflow: TextOverflow.ellipsis,
+                                                                fontFamily: "Roboto-Regular"
+                                                            ),
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    trailing: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                                      children: [
+                                                        Text(
+                                                          "${DateFormat('dd, MMM yyyy').format(_taskProvider.completedTaskList[index].date)}",
+                                                          style: textStyle.copyWith(
+                                                            fontSize: 14,
+                                                            color: Colors.black,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 5),
+                                                        Text(
+                                                          "${_taskProvider.completedTaskList[index].time}",
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: textStyle.copyWith(
+                                                            fontSize: 14,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                            ),
+                                          ),
+                                        );
                                       },
                                     ),
+
+                                    _taskProvider.isLoaded == false
+                                        ?
+                                    Container(
+                                      height: 100,
+                                      child: Center(
+                                          child: SpinKitThreeBounce(
+                                            color: AppColors.black,
+                                            size: 25.0,
+                                          )
+                                      ),
+                                    )
+                                        :
+                                    SizedBox(),
+
+                                    SizedBox(height: 40),
+
                                   ],
                                 ),
                               )
@@ -307,100 +656,6 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
     );
   }
 
-  Widget buildCard(double height,int index) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 10),
-      child: Slidable(
-        actionExtentRatio: 0.12,
-        actionPane: SlidableDrawerActionPane(),
-        actions: [
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: AppColors.black,
-            ),
-            child: Center(
-              child: Image.asset("assets/images/tasks/time.png",width: 20,height: 20,color: AppColors.white)
-            ),
-          )
-        ],
-        secondaryActions: [
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: AppColors.black,
-            ),
-            child: Center(
-              child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
-            ),
-          )
-        ],
-        child: Card(
-            elevation: 10,
-            shape: RoundedRectangleBorder(
-                borderRadius: round1.copyWith()
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(top: 5,bottom: 6),
-              child: ListTile(
-                title: Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Text(
-                    'Be Shoppers Stop',
-                    style: textStyle.copyWith(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-                subtitle: Column(
-                  children: [
-                    SizedBox(height: height*0.01,),
-                    Text(
-                      'Silicon Shoppers, F4, 1st Floor, Udhna Main Road, udhna, Surat, Gujarat - 394210 (India)',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: textStyle.copyWith(
-                          fontSize: 14,
-                          color: Colors.black,
-                          height: 1.4
-                      ),
-                    ),
-                  ],
-                ),
-                trailing: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '18, Dec 2021',
-                      style: textStyle.copyWith(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      '9:30 AM',
-                      overflow: TextOverflow.ellipsis,
-                      style: textStyle.copyWith(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-        ),
-      ),
-    );
-  }
 
   _selecttDate(BuildContext context) async {
     DateTime newSelectedDate = await showDatePicker(
