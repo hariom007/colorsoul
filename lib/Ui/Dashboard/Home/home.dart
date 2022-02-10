@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:colorsoul/Provider/note_provider.dart';
 import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Provider/task_provider.dart';
+import 'package:colorsoul/Provider/todo_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Home/ToDoTask/to_do_task.dart';
 import 'package:colorsoul/Ui/Dashboard/Home/TotalNotes/totalnotes.dart';
 import 'package:colorsoul/Ui/Dashboard/Home/alert.dart';
@@ -35,6 +36,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
 
   TaskProvider _taskProvider;
   NoteProvider _noteProvider;
+  TodoProvider _todoProvider;
 
   @override
   void initState() {
@@ -43,11 +45,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
     _orderProvider = Provider.of<OrderProvider>(context, listen: false);
     _taskProvider = Provider.of<TaskProvider>(context, listen: false);
     _noteProvider = Provider.of<NoteProvider>(context, listen: false);
+    _todoProvider = Provider.of<TodoProvider>(context, listen: false);
 
     getUserDetails();
     getOrders();
     getTask();
     getNote();
+    getTodo();
 
   }
 
@@ -146,6 +150,20 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
 
   }
 
+  getTodo() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      "uid":"$userId",
+      //"from_date":"",
+      //"to_date":"",
+      "status":""
+    };
+    await _todoProvider.getAllTodo(data,'/getTodo/$page');
+
+  }
 
   changeStatus(String orderId) async {
 
@@ -291,6 +309,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                     )
                                   ),
 
+                                  SizedBox(height: 4),
+
                                   _taskProvider.isLoaded == false
                                       ?
                                   SizedBox(
@@ -309,7 +329,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                       fontWeight: FontWeight.bold
                                     ),
                                   ),
-                                  SizedBox(height: height*0.015),
+                                  SizedBox(height: height*0.013),
                                 ],
                               )
                             ),
@@ -344,15 +364,28 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                           color: Colors.black
                                       )
                                   ),
+
+                                  SizedBox(height: 4),
+
+                                  _todoProvider.isLoaded == false
+                                      ?
+                                  SizedBox(
+                                    height: 15,
+                                    child: SpinKitThreeBounce(
+                                      color: AppColors.black,
+                                      size: 15.0,
+                                    ),
+                                  )
+                                      :
                                   Text(
-                                    "35",
+                                    "${_todoProvider.allTodoList.length}",
                                     style: textStyle.copyWith(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold
-                                    )
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold
+                                    ),
                                   ),
-                                  SizedBox(height: height*0.015),
+                                  SizedBox(height: height*0.013),
                                 ],
                               )
                             ),
@@ -387,6 +420,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                           color: Colors.black
                                       )
                                   ),
+
+                                  SizedBox(height: 4),
+
                                   _noteProvider.isLoaded == false
                                       ?
                                   SizedBox(
@@ -405,7 +441,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                       fontWeight: FontWeight.bold
                                     )
                                   ),
-                                  SizedBox(height: height*0.015),
+                                  SizedBox(height: height*0.013),
                                 ],
                               )
                             ),

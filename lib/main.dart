@@ -6,6 +6,7 @@ import 'package:colorsoul/Provider/note_provider.dart';
 import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Provider/task_provider.dart';
+import 'package:colorsoul/Provider/todo_provider.dart';
 import 'package:colorsoul/Ui/Pin/pin.dart';
 import 'package:colorsoul/locater.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,6 +37,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => OrderProvider()),
         ChangeNotifierProvider(create: (context) => TaskProvider()),
         ChangeNotifierProvider(create: (context) => NoteProvider()),
+        ChangeNotifierProvider(create: (context) => TodoProvider()),
 
       ],
       child: MaterialApp(
