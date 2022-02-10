@@ -1,17 +1,62 @@
+import 'package:colorsoul/Provider/feedback_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FeedbackPage extends StatefulWidget {
+
+  String distributorId;
+  FeedbackPage({Key key,this.distributorId}) : super(key: key);
+
   @override
   _FeedbackPageState createState() => _FeedbackPageState();
 }
 
 class _FeedbackPageState extends State<FeedbackPage> {
+
+  TextEditingController titleController = TextEditingController();
+  TextEditingController feedbackController = TextEditingController();
+  FeedBackProvider _feedBackProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _feedBackProvider = Provider.of<FeedBackProvider>(context, listen: false);
+  }
+
+  addFeedback() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.getString("userId");
+
+    var data = {
+      "uid":"$userId",
+      "title":"${titleController.text}",
+      "retailer_id":"${widget.distributorId}",
+      "feedback_detail":"${feedbackController.text}"
+    };
+
+    print(data);
+
+    _feedBackProvider.feedBackList.clear();
+    await _feedBackProvider.insertFeedBack(data,'/add_feedback_detail');
+    if(_feedBackProvider.isSuccess == true){
+      Navigator.pop(context,'Refresh');
+    }
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _feedBackProvider = Provider.of<FeedBackProvider>(context, listen: true);
+
     return Scaffold(
         body:Container(
             width: width,
@@ -48,9 +93,18 @@ class _FeedbackPageState extends State<FeedbackPage> {
                           ),
                         ),
                         Expanded(child: Container()),
+
+                        _feedBackProvider.isLoaded == false
+                            ?
+                        SpinKitThreeBounce(
+                          color: AppColors.white,
+                          size: 25.0,
+                        )
+                            :
                         InkWell(
                           onTap: () {
-                            Navigator.pop(context);
+
+                            addFeedback();
                           },
                           child: Container(
                               height: 40,
@@ -96,6 +150,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                 children: [
                                   SizedBox(height: height*0.03),
                                   TextFormField(
+                                    controller: titleController,
                                     style: textStyle.copyWith(
                                         fontSize: 16,
                                         color: Colors.black
@@ -111,6 +166,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                     cursorColor: Colors.black,
                                   ),
                                   TextFormField(
+                                    controller: feedbackController,
                                     keyboardType: TextInputType.multiline,
                                     maxLines: null,
                                     style: textStyle.copyWith(

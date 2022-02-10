@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:colorsoul/Provider/feedback_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Edit_Distributor/edit_distributor.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../Values/appColors.dart';
 
@@ -29,12 +32,6 @@ class _DetailsState extends State<Details> {
 
   void setCustomMarker() async{
     mapMarker = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/images/locater/location4.png');
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    setCustomMarker();
   }
 
   void _onMapCreated(GoogleMapController controller){
@@ -105,11 +102,43 @@ class _DetailsState extends State<Details> {
 
   }
 
+  FeedBackProvider _feedBackProvider;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _feedBackProvider = Provider.of<FeedBackProvider>(context, listen: false);
+
+    getFeedback();
+    setCustomMarker();
+  }
+
+  int page = 1;
+  getFeedback() async {
+
+    setState(() {
+      _feedBackProvider.feedBackList.clear();
+      _feedBackProvider.imageFeedBackList.clear();
+    });
+
+    var data = {
+      "retailer_id":"${widget.id}",
+    };
+
+    await _feedBackProvider.getFeedBack(data,'/getFeedback/$page');
+    await _feedBackProvider.getImageFeedBack(data,'/getFeedbackimage/$page');
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _feedBackProvider = Provider.of<FeedBackProvider>(context, listen: true);
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.black,
@@ -230,7 +259,7 @@ class _DetailsState extends State<Details> {
                       children: [
 
                         Container(
-                          padding: EdgeInsets.only(left: 30,right: 30),
+                          padding: EdgeInsets.only(left: 20,right: 20),
                           width: width,
                           decoration: BoxDecoration(
                             color: AppColors.white,
@@ -372,110 +401,177 @@ class _DetailsState extends State<Details> {
 
                               SizedBox(height: 20),
 
-                              Stack(
+                              _feedBackProvider.imageFeedBackList.length ==0 && _feedBackProvider.feedBackList.length == 0
+                              ?
+                                  SizedBox()
+                              :
+                              Text(
+                                "Feedbacks",
+                                style: textStyle.copyWith(
+                                    color: AppColors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16
+                                ),
+                              ),
+
+                              SizedBox(height: 15),
+
+                              _feedBackProvider.isLoaded == false
+                                  ?
+                              SizedBox(
+                                height: 70,
+                                child: SpinKitThreeBounce(
+                                  color: AppColors.black,
+                                  size: 25.0,
+                                ),
+                              )
+                                  :
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
-                                    child: Container(
-                                      padding: EdgeInsets.fromLTRB(40, 10, 20, 10),
-                                      width: width/1.2,
-                                      height: 110,
-                                      decoration: BoxDecoration(
-                                          borderRadius: round.copyWith(),
-                                          border: Border.all(
-                                              color: AppColors.black
+
+                                  Row(
+                                    children: [
+
+                                      _feedBackProvider.imageFeedBackList.length != 0
+                                      ?
+                                      Expanded(
+                                          child:  ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: CachedNetworkImage(
+                                              imageUrl: "${_feedBackProvider.imageFeedBackList[1].imageUrl[0]}",
+                                              placeholder: (context, url) => Center(
+                                                  child: SpinKitThreeBounce(
+                                                    color: AppColors.black,
+                                                    size: 25.0,
+                                                  )
+                                              ),
+                                              errorWidget: (context, url, error) => Icon(Icons.error),
+                                              fit: BoxFit.fitWidth,
+                                            ),
                                           )
-                                      ),
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                      ):
+                                          SizedBox(),
+
+                                      SizedBox(width: 10),
+
+                                      _feedBackProvider.imageFeedBackList.length > 1
+                                          ?
+                                      Expanded(
+                                          child:  ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: CachedNetworkImage(
+                                              imageUrl: "${_feedBackProvider.imageFeedBackList[1].imageUrl[0]}",
+                                              placeholder: (context, url) => Center(
+                                                  child: SpinKitThreeBounce(
+                                                    color: AppColors.black,
+                                                    size: 25.0,
+                                                  )
+                                              ),
+                                              errorWidget: (context, url, error) => Icon(Icons.error),
+                                              fit: BoxFit.fitWidth,
+                                            ),
+                                          )
+                                      )
+                                          :
+                                      SizedBox(),
+
+                                      SizedBox(width: 10),
+
+                                      _feedBackProvider.imageFeedBackList.length > 2
+                                          ?
+                                      Expanded(
+                                          child:  ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: CachedNetworkImage(
+                                              imageUrl: "${_feedBackProvider.imageFeedBackList[2].imageUrl[0]}",
+                                              placeholder: (context, url) => Center(
+                                                  child: SpinKitThreeBounce(
+                                                    color: AppColors.black,
+                                                    size: 25.0,
+                                                  )
+                                              ),
+                                              errorWidget: (context, url, error) => Icon(Icons.error),
+                                              fit: BoxFit.fitWidth,
+                                            ),
+                                          )
+                                      )
+                                          :
+                                      SizedBox(),
+
+
+                                    ],
+                                  ),
+
+                                  SizedBox(height: 15),
+
+                                  ListView.builder(
+                                    padding: EdgeInsets.only(top: 10,bottom: 10),
+                                    itemCount: _feedBackProvider.feedBackList.length > 3 ? 3 : _feedBackProvider.feedBackList.length,
+                                    shrinkWrap: true,
+                                    itemBuilder:(context, index){
+                                      var allFeedback = _feedBackProvider.feedBackList[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(bottom: 20),
+                                        child: Stack(
                                           children: [
-                                            Text(
-                                              "Good Storage",
-                                              style: textStyle.copyWith(
-                                                  color: AppColors.black,
-                                                  fontWeight: FontWeight.bold
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 20),
+                                              child: Container(
+                                                padding: EdgeInsets.fromLTRB(40, 15, 20, 15),
+                                                width: width/1.2,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: round.copyWith(),
+                                                    border: Border.all(
+                                                        color: AppColors.black
+                                                    )
+                                                ),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        "${allFeedback.title}",
+                                                        style: textStyle.copyWith(
+                                                            color: AppColors.black,
+                                                            fontWeight: FontWeight.bold
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 10),
+                                                      Text(
+                                                        "${allFeedback.feedbackDetail}",
+                                                        maxLines: 3,
+                                                        style: textStyle.copyWith(
+                                                          color: AppColors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                            Text(
-                                              "sit amet, consectetur adipiscing elit. Tellus odio tincidunt lacus lorem mi arcu quisque risus. Etiam malesuada justo sem donec malesuada et. ",
-                                              style: textStyle.copyWith(
-                                                color: AppColors.black,
+                                            Padding(
+                                              padding: EdgeInsets.only(top: 10),
+                                              child: Container(
+                                                height: 40,
+                                                width: 50,
+                                                padding: EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                    gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                                    borderRadius: round2.copyWith()
+                                                ),
+                                                child: Image.asset("assets/images/locater/message.png"),
                                               ),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    },
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 10),
-                                    child: Container(
-                                      height: 40,
-                                      width: 50,
-                                      padding: EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                          gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                          borderRadius: round2.copyWith()
-                                      ),
-                                      child: Image.asset("assets/images/locater/message.png"),
-                                    ),
-                                  ),
+
                                 ],
                               ),
-                              SizedBox(height: 20),
-                              Stack(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
-                                    child: Container(
-                                      padding: EdgeInsets.fromLTRB(40, 10, 20, 10),
-                                      width: width/1.2,
-                                      height: 110,
-                                      decoration: BoxDecoration(
-                                          borderRadius: round.copyWith(),
-                                          border: Border.all(
-                                              color: AppColors.black
-                                          )
-                                      ),
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Good Storage",
-                                              style: textStyle.copyWith(
-                                                  color: AppColors.black,
-                                                  fontWeight: FontWeight.bold
-                                              ),
-                                            ),
-                                            Text(
-                                              "sit amet, consectetur adipiscing elit. Tellus odio tincidunt lacus lorem mi arcu quisque risus. Etiam malesuada justo sem donec malesuada et. ",
-                                              style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 10),
-                                    child: Container(
-                                      height: 40,
-                                      width: 50,
-                                      padding: EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                          gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                          borderRadius: round2.copyWith()
-                                      ),
-                                      child: Image.asset("assets/images/locater/message.png"),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 20),
+
                               SizedBox(
                                   height: 50,
                                   width: width-30,

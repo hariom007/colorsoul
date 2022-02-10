@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:colorsoul/Provider/distributor_provider.dart';
+import 'package:colorsoul/Provider/feedback_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Distributers/feedback_page.dart';
 import 'package:colorsoul/Ui/Dashboard/Edit_Distributor/edit_distributor.dart';
 import 'package:colorsoul/Values/appColors.dart';
@@ -7,10 +9,14 @@ import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'details.dart';
+import 'package:http/http.dart' as http;
+
 
 class Distributors extends StatefulWidget {
   @override
@@ -21,7 +27,7 @@ class _DistributorsState extends State<Distributors> {
 
   File _image;
   final _picker = ImagePicker();
-  Future getImage(ImageSource source) async {
+  Future getImage(ImageSource source,id) async {
     final XFile photo = await _picker.pickImage(source: source);
     File cropped = await ImageCropper.cropImage(
         sourcePath: photo.path,
@@ -38,9 +44,93 @@ class _DistributorsState extends State<Distributors> {
     setState(() {
       _image = File(cropped.path);
     });
+    sendImage(_image,id);
   }
 
+  List imageUrls = [];
+
+  dailogeMethod(){
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          backgroundColor: Colors.transparent,
+          content: Center(
+            child: SpinKitThreeBounce(
+              color: AppColors.white,
+              size: 25.0,
+            ),
+          ),
+        )
+    );
+
+  }
+
+  sendImage(image,id) async {
+
+    dailogeMethod();
+
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "4ccda7514adc0f13595a585205fb9761"
+    };
+
+    final uri = 'https://colorsoul.koffeekodes.com/admin/Api/imageUpload';
+    var request = http.MultipartRequest('POST', Uri.parse(uri));
+    request.headers.addAll(headers);
+
+    request.fields['folder'] = "feedback";
+    request.files.add(await http.MultipartFile.fromPath('file', image.path));
+
+    request.send().then((response) async {
+      var res = await response.stream.bytesToString();
+      print(res);
+      var body = json.decode(res);
+
+      if (response.statusCode == 200 && body['st'] == "success") {
+        imageUrls.add(body['file']);
+
+        addFeedback(id);
+      }
+      else{
+        Navigator.pop(context);
+
+        Fluttertoast.showToast(
+            msg: "Image Upload Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+
+    });
+
+  }
+
+  addFeedback(id) async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.getString("userId");
+
+    var data = {
+      "uid":"$userId",
+      "retailer_id":"$id",
+      "image_url": imageUrls
+    };
+
+    print(data);
+
+    await _feedBackProvider.insertFeedBack(data,'/add_feedbackimage_detail');
+
+   Navigator.pop(context);
+  }
+
+
   DistributorProvider _distributorProvider;
+  FeedBackProvider _feedBackProvider;
 
   ScrollController _scrollViewController =  ScrollController();
   bool isScrollingDown = false;
@@ -50,6 +140,8 @@ class _DistributorsState extends State<Distributors> {
     super.initState();
 
     _distributorProvider = Provider.of<DistributorProvider>(context, listen: false);
+    _feedBackProvider = Provider.of<FeedBackProvider>(context, listen: false);
+
     _distributorProvider.distributorList.clear();
     getDistributor();
 
@@ -82,6 +174,7 @@ class _DistributorsState extends State<Distributors> {
     var height = MediaQuery.of(context).size.height;
 
     _distributorProvider = Provider.of<DistributorProvider>(context, listen: true);
+    _feedBackProvider = Provider.of<FeedBackProvider>(context, listen: true);
 
     return Scaffold(
         backgroundColor: Colors.black,
@@ -210,7 +303,9 @@ class _DistributorsState extends State<Distributors> {
                                                         onSelected: (index) {
                                                           if(index==3)
                                                           {
-                                                            Navigator.push(context, MaterialPageRoute(builder: (context) => FeedbackPage()));
+                                                            Navigator.push(context, MaterialPageRoute(builder: (context) => FeedbackPage(
+                                                              distributorId: distributorData.id,
+                                                            )));
                                                           }
                                                           if(index==4)
                                                           {
@@ -252,7 +347,7 @@ class _DistributorsState extends State<Distributors> {
                                                         itemBuilder: (context) => [
                                                           PopupMenuItem(
                                                             onTap: () {
-                                                              getImage(ImageSource.gallery);
+                                                              getImage(ImageSource.gallery,distributorData.id);
                                                             },
                                                             value: 1,
                                                             child: Row(
@@ -271,7 +366,7 @@ class _DistributorsState extends State<Distributors> {
                                                           ),
                                                           PopupMenuItem(
                                                             onTap: () {
-                                                              getImage(ImageSource.camera);
+                                                              getImage(ImageSource.camera,distributorData.id);
                                                             },
                                                             value: 2,
                                                             child: Row(
