@@ -1,10 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
 class Preview extends StatefulWidget {
 
   String imgname;
-
   Preview({this.imgname});
 
   @override
@@ -51,12 +51,12 @@ class _PreviewState extends State<Preview> {
                       currentPage = value;
                     });
                   },
-                  itemCount: 3,
+                  itemCount: 1,
                   itemBuilder: (context,index) =>
                   PhotoView(
                     minScale: PhotoViewComputedScale.contained*1,
                     maxScale: PhotoViewComputedScale.covered*2,
-                    imageProvider: AssetImage(widget.imgname),
+                    imageProvider: CachedNetworkImageProvider("${widget.imgname}"),
                     backgroundDecoration: BoxDecoration(
                       color: Colors.white
                     )
@@ -65,13 +65,13 @@ class _PreviewState extends State<Preview> {
               ),
             ),
             SizedBox(height: 15),
-            Row(
+            /*Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 3,
                 (index) => buildDot(index: index)
               ),
-            ),
+            ),*/
           ],
         ),
       ),

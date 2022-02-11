@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:colorsoul/Provider/feedback_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Edit_Distributor/edit_distributor.dart';
+import 'package:colorsoul/Ui/Dashboard/Products/preview.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -436,18 +437,30 @@ class _DetailsState extends State<Details> {
                                       _feedBackProvider.imageFeedBackList.length != 0
                                       ?
                                       Expanded(
-                                          child:  ClipRRect(
-                                            borderRadius: BorderRadius.circular(8),
-                                            child: CachedNetworkImage(
-                                              imageUrl: "${_feedBackProvider.imageFeedBackList[0]}",
-                                              placeholder: (context, url) => Center(
-                                                  child: SpinKitThreeBounce(
-                                                    color: AppColors.black,
-                                                    size: 25.0,
-                                                  )
+                                          child:  InkWell(
+                                            onTap: (){
+
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => Preview(
+                                                    imgname: "${_feedBackProvider.imageFeedBackList[0]}",
+                                                  ))
+                                              );
+
+                                            },
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(8),
+                                              child: CachedNetworkImage(
+                                                imageUrl: "${_feedBackProvider.imageFeedBackList[0]}",
+                                                placeholder: (context, url) => Center(
+                                                    child: SpinKitThreeBounce(
+                                                      color: AppColors.black,
+                                                      size: 25.0,
+                                                    )
+                                                ),
+                                                errorWidget: (context, url, error) => Icon(Icons.error),
+                                                fit: BoxFit.fitWidth,
                                               ),
-                                              errorWidget: (context, url, error) => Icon(Icons.error),
-                                              fit: BoxFit.fitWidth,
                                             ),
                                           )
                                       ):
@@ -458,18 +471,30 @@ class _DetailsState extends State<Details> {
                                       _feedBackProvider.imageFeedBackList.length > 1
                                           ?
                                       Expanded(
-                                          child:  ClipRRect(
-                                            borderRadius: BorderRadius.circular(8),
-                                            child: CachedNetworkImage(
-                                              imageUrl: "${_feedBackProvider.imageFeedBackList[1]}",
-                                              placeholder: (context, url) => Center(
-                                                  child: SpinKitThreeBounce(
-                                                    color: AppColors.black,
-                                                    size: 25.0,
-                                                  )
+                                          child:  InkWell(
+                                            onTap: (){
+
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => Preview(
+                                                    imgname: "${_feedBackProvider.imageFeedBackList[1]}",
+                                                  ))
+                                              );
+
+                                            },
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(8),
+                                              child: CachedNetworkImage(
+                                                imageUrl: "${_feedBackProvider.imageFeedBackList[1]}",
+                                                placeholder: (context, url) => Center(
+                                                    child: SpinKitThreeBounce(
+                                                      color: AppColors.black,
+                                                      size: 25.0,
+                                                    )
+                                                ),
+                                                errorWidget: (context, url, error) => Icon(Icons.error),
+                                                fit: BoxFit.fitWidth,
                                               ),
-                                              errorWidget: (context, url, error) => Icon(Icons.error),
-                                              fit: BoxFit.fitWidth,
                                             ),
                                           )
                                       )
@@ -481,18 +506,30 @@ class _DetailsState extends State<Details> {
                                       _feedBackProvider.imageFeedBackList.length > 2
                                           ?
                                       Expanded(
-                                          child:  ClipRRect(
-                                            borderRadius: BorderRadius.circular(8),
-                                            child: CachedNetworkImage(
-                                              imageUrl: "${_feedBackProvider.imageFeedBackList[2]}",
-                                              placeholder: (context, url) => Center(
-                                                  child: SpinKitThreeBounce(
-                                                    color: AppColors.black,
-                                                    size: 25.0,
-                                                  )
+                                          child:  InkWell(
+                                            onTap: (){
+
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => Preview(
+                                                    imgname: "${_feedBackProvider.imageFeedBackList[2]}",
+                                                  ))
+                                              );
+
+                                            },
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(8),
+                                              child: CachedNetworkImage(
+                                                imageUrl: "${_feedBackProvider.imageFeedBackList[2]}",
+                                                placeholder: (context, url) => Center(
+                                                    child: SpinKitThreeBounce(
+                                                      color: AppColors.black,
+                                                      size: 25.0,
+                                                    )
+                                                ),
+                                                errorWidget: (context, url, error) => Icon(Icons.error),
+                                                fit: BoxFit.fitWidth,
                                               ),
-                                              errorWidget: (context, url, error) => Icon(Icons.error),
-                                              fit: BoxFit.fitWidth,
                                             ),
                                           )
                                       )
