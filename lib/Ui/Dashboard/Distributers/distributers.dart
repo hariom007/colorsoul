@@ -151,7 +151,9 @@ class _DistributorsState extends State<Distributors> {
       if (_scrollViewController.position.userScrollDirection == ScrollDirection.reverse) {
         if (!isScrollingDown) {
 
-          isScrollingDown = true;
+          setState(() {
+            isScrollingDown = true;
+          });
           setState(() {
             page = page + 1;
             getDistributor();
@@ -166,7 +168,15 @@ class _DistributorsState extends State<Distributors> {
   int page = 1;
   getDistributor() async {
 
+    setState(() {
+      isScrollingDown = true;
+    });
+
     await _distributorProvider.getDistributor('/getDistributorRetailer/$page');
+
+    setState(() {
+      isScrollingDown = false;
+    });
 
   }
 

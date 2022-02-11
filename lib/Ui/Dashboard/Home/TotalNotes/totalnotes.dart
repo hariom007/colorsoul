@@ -36,7 +36,10 @@ class _TotalNotesState extends State<TotalNotes> {
       if (_scrollViewController.position.userScrollDirection == ScrollDirection.reverse) {
         if (!isScrollingDown) {
 
-          isScrollingDown = true;
+          setState(() {
+            isScrollingDown = true;
+          });
+
           setState(() {
             page = page + 1;
             getNote();
@@ -50,6 +53,10 @@ class _TotalNotesState extends State<TotalNotes> {
   int page = 1;
   getNote() async {
 
+    setState(() {
+      isScrollingDown = true;
+    });
+
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.get("userId");
 
@@ -61,6 +68,9 @@ class _TotalNotesState extends State<TotalNotes> {
     };
     await _noteProvider.getAllNote(data,'/getNote/$page');
 
+    setState(() {
+      isScrollingDown = false;
+    });
   }
 
 

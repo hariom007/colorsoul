@@ -42,7 +42,10 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
       if (_scrollViewController.position.userScrollDirection == ScrollDirection.reverse) {
         if (!isScrollingDown) {
 
-          isScrollingDown = true;
+          setState(() {
+            isScrollingDown = true;
+          });
+
           setState(() {
             page = page + 1;
             getTask();
@@ -63,6 +66,10 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
 
   int page = 1;
   getTask() async {
+
+    setState(() {
+      isScrollingDown = true;
+    });
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.get("userId");
@@ -92,6 +99,10 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
       "status":"complete"
     };
     await _taskProvider.getCompletedTask(data2,'/getTask/$page');
+
+    setState(() {
+      isScrollingDown = false;
+    });
 
   }
 

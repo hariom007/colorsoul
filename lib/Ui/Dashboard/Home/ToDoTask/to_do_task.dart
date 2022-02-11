@@ -47,7 +47,10 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
       if (_scrollViewController.position.userScrollDirection == ScrollDirection.reverse) {
         if (!isScrollingDown) {
 
-          isScrollingDown = true;
+          setState(() {
+            isScrollingDown = true;
+          });
+
           setState(() {
             page = page + 1;
             getTodo();
@@ -59,6 +62,10 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
   }
 
   getTodo() async {
+
+    setState(() {
+      isScrollingDown = true;
+    });
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.get("userId");
@@ -88,6 +95,10 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
       "status":"complete"
     };
     await _todoProvider.getCompleteTodo(data2,'/getTodo/$page');
+
+    setState(() {
+      isScrollingDown = false;
+    });
 
   }
 

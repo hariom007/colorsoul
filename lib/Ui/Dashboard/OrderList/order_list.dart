@@ -45,7 +45,9 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
       if (_scrollViewController.position.userScrollDirection == ScrollDirection.reverse) {
         if (!isScrollingDown) {
 
-          isScrollingDown = true;
+          setState(() {
+            isScrollingDown = true;
+          });
           setState(() {
             page = page + 1;
             getOrders();
@@ -65,6 +67,10 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
 
   int page = 1;
   getOrders() async {
+
+    setState(() {
+      isScrollingDown = true;
+    });
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.get("userId");
@@ -94,6 +100,10 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
       "status":"Delivered"
     };
     await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
+
+    setState(() {
+      isScrollingDown = false;
+    });
 
   }
 
