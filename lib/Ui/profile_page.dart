@@ -24,9 +24,9 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
 
-  bool isNotification = true;
-  bool isEmail = true;
-  bool isBiometric = true;
+  bool isNotification = false;
+  bool isEmail = false;
+  bool isBiometric = false;
 
   AuthProvider _authProvider;
 
@@ -56,6 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
       mobileNumber = sharedPreferences.getString("mobile");
       address = sharedPreferences.getString("address");
       image = sharedPreferences.getString("image");
+      isBiometric = sharedPreferences.getBool("authValue");
 
       nameController = TextEditingController(text: name);
       addressController = TextEditingController(text: address);
@@ -185,6 +186,14 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
 
+  setBiomatic(bool value) async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setBool('authValue', value);
+
+  }
+
+
   bool isEdit = false;
 
   @override
@@ -260,7 +269,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               });
 
                             },
-                            child: Image.asset("assets/images/notes/edit.png",width: 20,height: 20,color: AppColors.white,)
+                            child: Icon(Icons.edit,color: AppColors.white,size: 23)
                         ),
                       ),
 
@@ -679,9 +688,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
                       Switch(
                         onChanged: (value){
+
                           setState(() {
                             isBiometric = value;
                           });
+
+                          setBiomatic(value);
+
                         },
                         value: isBiometric,
                         activeColor: AppColors.black,
