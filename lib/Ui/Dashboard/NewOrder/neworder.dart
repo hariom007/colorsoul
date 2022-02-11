@@ -29,8 +29,10 @@ class TypeModel{
   String name;
   String address;
   String mobile;
+  String business_name;
 
-  TypeModel(this.id, this.name, this.address, this.mobile);
+
+  TypeModel(this.id, this.name, this.address, this.mobile,this.business_name);
 }
 
 class _NewOrderState extends State<NewOrder> {
@@ -78,7 +80,7 @@ class _NewOrderState extends State<NewOrder> {
       var singleDistributor;
 
       for (var abc in result) {
-        singleDistributor = TypeModel(abc.id,abc.name,abc.address,abc.mobile);
+        singleDistributor = TypeModel(abc.id,abc.name,abc.address,abc.mobile,abc.businessName);
         distributor_List.add(singleDistributor);
       }
     }
@@ -1177,7 +1179,17 @@ class _NewOrderState extends State<NewOrder> {
                                                     items: distributor_List.map((TypeModel t) {
                                                       return DropdownMenuItem<TypeModel>(
                                                         value: t,
-                                                        child: Text(t.name),
+                                                        child: Text(
+                                                            t.name != ''
+                                                                ?
+                                                            t.name
+                                                                :
+                                                            t.business_name != ''
+                                                                ?
+                                                            t.business_name
+                                                                :
+                                                            t.mobile
+                                                        ),
                                                       );
                                                     }).toList(),
                                                   ),

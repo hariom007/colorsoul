@@ -22,9 +22,10 @@ import 'package:http/http.dart' as http;
 class TypeModel{
   String id;
   String name;
+  String number;
   String business_name;
 
-  TypeModel(this.id, this.name,this.business_name);
+  TypeModel(this.id, this.name,this.business_name,this.number);
 }
 
 class AddDistributers extends StatefulWidget {
@@ -183,7 +184,7 @@ class _AddDistributersState extends State<AddDistributers> {
       var singleDistributor;
 
       for (var abc in result) {
-        singleDistributor = TypeModel(abc.id,abc.name,abc.businessName);
+        singleDistributor = TypeModel(abc.id,abc.name,abc.businessName,abc.mobile);
         distributor_List.add(singleDistributor);
       }
     }
@@ -497,7 +498,16 @@ class _AddDistributersState extends State<AddDistributers> {
                                                 return DropdownMenuItem<TypeModel>(
                                                   value: t,
                                                   child: Text(
-                                                      t.name == '' ? t.business_name : t.name
+                                                      t.name != ''
+                                                          ?
+                                                      t.name
+                                                          :
+                                                      t.business_name != ''
+                                                          ?
+                                                      t.business_name
+                                                          :
+                                                      t.number
+
                                                   ),
                                                 );
                                               }).toList(),
