@@ -255,7 +255,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                         ),
                         SizedBox(width: 10),
                         Text(
-                          "Task",
+                          "To do Task",
                           style: textStyle.copyWith(
                             color: AppColors.black,
                             fontSize: 20,
@@ -457,7 +457,12 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                             child: Slidable(
                                               actionExtentRatio: 0.12,
                                               actionPane: SlidableDrawerActionPane(),
-                                              actions: [
+                                              actions:
+                                              todoDetails.status == "Completed"
+                                              ?
+                                              []
+                                              :
+                                              [
                                                 InkWell(
                                                   onTap: (){
 
@@ -542,7 +547,12 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                   ),
                                                 )
                                               ],
-                                              secondaryActions: [
+                                              secondaryActions:
+                                              todoDetails.status == "Completed"
+                                                  ?
+                                              []
+                                                  :
+                                              [
                                                 InkWell(
                                                   onTap: (){
 
@@ -657,7 +667,22 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                           ),
                                                         ],
                                                       ),
-                                                      trailing: Icon(Icons.star,color: Colors.orange),
+                                                      trailing: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                                        children: [
+                                                          Text(
+                                                            todoDetails.status == "New_schedule" ? "New schedule" : todoDetails.status,
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: textStyle.copyWith(
+                                                              fontSize: 14,
+                                                              color: Colors.black,
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 6),
+                                                          Icon(Icons.star,color: Colors.orange),
+                                                        ],
+                                                      ),
                                                     ),
                                                   )
                                               ),
