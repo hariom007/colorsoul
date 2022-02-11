@@ -7,6 +7,7 @@ import 'package:colorsoul/Ui/Dashboard/Home/ToDoTask/to_do_task.dart';
 import 'package:colorsoul/Ui/Dashboard/Home/TotalNotes/totalnotes.dart';
 import 'package:colorsoul/Ui/Dashboard/Home/alert.dart';
 import 'package:colorsoul/Ui/Dashboard/OrderList/order_details.dart';
+import 'package:colorsoul/Ui/profile_page.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
@@ -222,45 +223,55 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: height*0.05),
-                  ListTile(
-                    leading: CachedNetworkImage(
-                      imageUrl: "$userImage",
-                      placeholder: (context, url) => Center(
-                          child: SpinKitThreeBounce(
-                            color: AppColors.white,
-                            size: 25.0,
-                          )
-                      ),
-                      errorWidget: (context, url, error) => Image.asset("assets/images/profile.png",height: 50,width: 50),
-                      width: 50,
-                      height: 50,
-                    ),
-                    title: Text(
-                      "Hii ${userName}",
-                      style: textStyle.copyWith(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
-                    subtitle:  Row(
-                      children: [
-                        //Icon(FontAwesomeIcons.calendar,color:Colors.white,size: 12),
-                        Image.asset("assets/images/home/date.png",width: 12),
-                        SizedBox(width: 8),
-                        Text(
-                          "$currentDate",
-                          style: textStyle.copyWith(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold
-                          )
+                  InkWell(
+                    onTap: (){
+
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+
+                    },
+                    child: ListTile(
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(300),
+                        child: CachedNetworkImage(
+                          imageUrl: "$userImage",
+                          placeholder: (context, url) => Center(
+                              child: SpinKitThreeBounce(
+                                color: AppColors.white,
+                                size: 25.0,
+                              )
+                          ),
+                          errorWidget: (context, url, error) => Image.asset("assets/images/profile.png",height: 50,width: 50),
+                          width: 50,
+                          height: 50,
                         ),
-                      ],
-                    ),
-                    trailing: InkWell(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Alert()));
-                      },
-                      child: Image.asset("assets/images/bell.png",width: 24,height: 24)
+                      ),
+                      title: Text(
+                        "Hii ${userName}",
+                        style: textStyle.copyWith(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      subtitle:  Row(
+                        children: [
+                          //Icon(FontAwesomeIcons.calendar,color:Colors.white,size: 12),
+                          Image.asset("assets/images/home/date.png",width: 12),
+                          SizedBox(width: 8),
+                          Text(
+                            "$currentDate",
+                            style: textStyle.copyWith(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold
+                            )
+                          ),
+                        ],
+                      ),
+                      trailing: InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => Alert()));
+                        },
+                        child: Image.asset("assets/images/bell.png",width: 24,height: 24)
+                      ),
                     ),
                   ),
                   SizedBox(height: height*0.02),

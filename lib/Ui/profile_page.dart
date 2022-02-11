@@ -1,9 +1,18 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:colorsoul/Provider/auth_provider.dart';
+import 'package:colorsoul/Ui/Login/login.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:http/http.dart' as http;
 import '../Values/components.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -19,31 +28,160 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isEmail = true;
   bool isBiometric = true;
 
+  AuthProvider _authProvider;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     getData();
 
   }
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController addressCotroller = TextEditingController();
+  TextEditingController addressController = TextEditingController();
 
-  String name,email,mobileNumber,address,image;
+  String id,name,email,mobileNumber,address,image;
   getData() async {
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    name = sharedPreferences.getString("name");
-    email = sharedPreferences.getString("email");
-    mobileNumber = sharedPreferences.getString("mobile");
-    address = sharedPreferences.getString("address");
-    image = sharedPreferences.getString("image");
 
-    nameController = TextEditingController(text: name);
-    addressCotroller = TextEditingController(text: address);
+    setState(() {
+      id = sharedPreferences.getString("userId");
+      name = sharedPreferences.getString("name");
+      email = sharedPreferences.getString("email");
+      mobileNumber = sharedPreferences.getString("mobile");
+      address = sharedPreferences.getString("address");
+      image = sharedPreferences.getString("image");
 
+      nameController = TextEditingController(text: name);
+      addressController = TextEditingController(text: address);
+    });
+
+  }
+
+  dailogeMethod(){
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          contentPadding: EdgeInsets.only(left: 0,right: 0),
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          content: Center(
+            child: SpinKitThreeBounce(
+              color: AppColors.white,
+              size: 25.0,
+            ),
+          ),
+        )
+    );
+
+  }
+
+  File _image;
+  final _picker = ImagePicker();
+
+  Future getImage(ImageSource source) async {
+    final XFile photo = await _picker.pickImage(source: source);
+    File cropped = await ImageCropper.cropImage(
+        sourcePath: photo.path,
+        // aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+        compressQuality: 100,
+        maxWidth: 700,
+        maxHeight: 700,
+        compressFormat: ImageCompressFormat.jpg,
+        androidUiSettings: AndroidUiSettings(
+            initAspectRatio: CropAspectRatioPreset.original,
+            toolbarWidgetColor: AppColors.white
+        )
+    );
+    setState(() {
+      _image = File(cropped.path);
+    });
+    sendImage(_image);
+  }
+
+  sendImage(file) async {
+
+    dailogeMethod();
+
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "4ccda7514adc0f13595a585205fb9761"
+    };
+
+    final uri = 'https://colorsoul.koffeekodes.com/admin/Api/imageUpload';
+    var request = http.MultipartRequest('POST', Uri.parse(uri));
+    request.headers.addAll(headers);
+
+    request.fields['folder'] = "profile";
+    request.files.add(await http.MultipartFile.fromPath('file', file.path));
+
+    request.send().then((response) async {
+      var res = await response.stream.bytesToString();
+      print(res);
+      var body = json.decode(res);
+
+      if (response.statusCode == 200 && body['st'] == "success") {
+        image = body['file'];
+
+        Navigator.pop(context);
+        editMethod();
+      }
+      else{
+        Navigator.pop(context);
+
+        Fluttertoast.showToast(
+            msg: "Image Upload Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+
+    });
+
+  }
+
+  editMethod() async {
+
+    dailogeMethod();
+
+    var data = {
+
+      "sales_id": "$id",
+      "sales_name": "${nameController.text}",
+      "sales_address": "${addressController.text}",
+      "image": "$image"
+
+    };
+
+    await _authProvider.editProfile(data,'/update_profile');
+    if(_authProvider.isSuccess == true){
+
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+      print(_authProvider.editData);
+      var body = _authProvider.editData['data'];
+      sharedPreferences.setString('name', '${body['sales_name']}');
+      sharedPreferences.setString('address', '${body['sales_address']}');
+      sharedPreferences.setString('image', '${body['image']}');
+
+      Navigator.pop(context);
+      getData();
+
+      setState(() {
+        isEdit = false;
+      });
+
+    }
   }
 
 
@@ -51,6 +189,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    _authProvider = Provider.of<AuthProvider>(context, listen: true);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Stack(
@@ -63,7 +204,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   fit: BoxFit.fitHeight,
                 ),
               ),
-              height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height+30,
             ),
 
             Column(
@@ -102,9 +243,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: InkWell(
                             onTap: (){
 
-                              setState(() {
-                                isEdit = false;
-                              });
+                             editMethod();
 
                             },
                             child: Icon(Icons.check,size: 27,color: AppColors.white)
@@ -135,6 +274,49 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Column(
                       children: [
 
+                        isEdit == true
+                            ?
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20,right: 10,bottom: 15,top: 10),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                gradient: RadialGradient(
+                                  center: Alignment.topLeft,
+                                  focal: Alignment.centerLeft,
+                                  radius: 4,
+                                  colors: [
+                                    AppColors.grey2,
+                                    AppColors.grey4,
+                                    AppColors.grey2,
+                                  ],
+                                ),
+                                borderRadius: round.copyWith(),
+                                boxShadow: [new BoxShadow(
+                                  color: Color.fromRGBO(0,0,0, 0.2),
+                                  offset: Offset(0, 5),
+                                  blurRadius: 5,
+                                )
+                                ]
+                            ),
+                            child: TextFormField(
+                                controller: nameController,
+                                style: textStyle.copyWith(
+                                    color: AppColors.black
+                                ),
+                                cursorColor: AppColors.black,
+                                textAlign: TextAlign.center,
+                                decoration: fieldStyle3.copyWith(
+                                  errorStyle: TextStyle(height: 0),
+                                  hintText: "Enter Your Name",
+                                  hintStyle: textStyle.copyWith(
+                                      color: AppColors.black
+                                  ),
+                                  isDense: true,
+                                ),
+                            ),
+                          ),
+                        )
+                        :
                         Text(
                           "Hii ${name}",
                           style: textStyle.copyWith(
@@ -250,6 +432,49 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
 
+                isEdit == true
+                ?
+                Padding(
+                  padding: const EdgeInsets.only(left: 20,right: 10,bottom: 15,top: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          center: Alignment.topLeft,
+                          focal: Alignment.centerLeft,
+                          radius: 4,
+                          colors: [
+                            AppColors.grey2,
+                            AppColors.grey4,
+                            AppColors.grey2,
+                          ],
+                        ),
+                        borderRadius: round.copyWith(),
+                        boxShadow: [new BoxShadow(
+                          color: Color.fromRGBO(0,0,0, 0.2),
+                          offset: Offset(0, 5),
+                          blurRadius: 5,
+                        )
+                        ]
+                    ),
+                    child: TextFormField(
+                      controller: addressController,
+                      style: textStyle.copyWith(
+                          color: AppColors.black
+                      ),
+                      cursorColor: AppColors.black,
+                      textAlign: TextAlign.center,
+                      decoration: fieldStyle3.copyWith(
+                        errorStyle: TextStyle(height: 0),
+                        hintText: "Enter Your Name",
+                        hintStyle: textStyle.copyWith(
+                            color: AppColors.black
+                        ),
+                        isDense: true,
+                      ),
+                    ),
+                  ),
+                )
+                :
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 10),
                   child: Row(
@@ -481,7 +706,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             borderRadius: round.copyWith()
                         ),
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
+
+                            SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                            sharedPreferences.clear();
+
+                            Navigator.pop(context);
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
 
 
                           },
@@ -560,10 +791,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: InkWell(
                                 onTap: (){
 
-
+                                  getImage(ImageSource.gallery);
 
                                 },
-                                child: Image.asset("assets/images/notes/edit.png",width: 20,height: 20,color: AppColors.white,)
+                                child: Image.asset("assets/images/notes/camera.png",width: 20,height: 20,color: AppColors.white,)
                             ),
                           ),
                         ),
@@ -575,8 +806,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
               ],
             )
-
-
 
 
           ],

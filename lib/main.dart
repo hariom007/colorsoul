@@ -46,8 +46,8 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Colorsoul',
-        //home: splash(),
-        home: ProfilePage(),
+        home: splash(),
+        //home: ProfilePage(),
       ),
     );
   }
