@@ -516,6 +516,7 @@ class _NewOrderState extends State<NewOrder> {
                                   width: 80,
                                   child: TextFormField(
                                     controller: allQuantity,
+                                    keyboardType: TextInputType.number,
                                     enabled: isSelectAll,
                                     validator: (String value) {
                                       if(value.isEmpty)
@@ -561,6 +562,7 @@ class _NewOrderState extends State<NewOrder> {
                                   width: 80,
                                   child: TextFormField(
                                     controller: allAmount,
+                                    keyboardType: TextInputType.number,
                                     enabled: isSelectAll,
                                     validator: (String value) {
                                       if(value.isEmpty)
@@ -702,6 +704,7 @@ class _NewOrderState extends State<NewOrder> {
                                             width: 70,
                                             child: TextFormField(
                                               controller: selectedQuantity[index],
+                                              keyboardType: TextInputType.number,
                                               validator: (String value) {
                                                 if(value.isEmpty)
                                                 {
@@ -736,6 +739,7 @@ class _NewOrderState extends State<NewOrder> {
                                             width: 70,
                                             child: TextFormField(
                                               controller: selectedAmount[index],
+                                              keyboardType: TextInputType.number,
                                               validator: (String value) {
                                                 if(value.isEmpty)
                                                 {

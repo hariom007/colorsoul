@@ -9,7 +9,7 @@ class TodoProvider with ChangeNotifier
   bool isLoaded = true;
 
   bool isSuccess = false;
-  insertTodo(data,url) async
+  insertTOdo(data,url) async
   {
 
     isLoaded = false;
@@ -19,11 +19,8 @@ class TodoProvider with ChangeNotifier
       if(value["st"] == "success")
       {
         isSuccess = true;
-        allTodoList.clear();
-        rescheduleTodoList.clear();
-        completedTodoList.clear();
-        getAllTodo({},"/getTodo/1");
         notifyListeners();
+
       }
       else
       {

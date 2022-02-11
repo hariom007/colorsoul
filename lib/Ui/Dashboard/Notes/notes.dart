@@ -113,6 +113,13 @@ class _AddNotesState extends State<AddNotes> {
     _noteProvider.noteList.clear();
     await _noteProvider.insertNote(data,'/createNote');
     if(_noteProvider.isSuccess == true){
+
+      var data = {
+        "uid":"$userId",
+      };
+
+      _noteProvider.noteList.clear();
+      _noteProvider.getAllNote(data,"/getNote/1");
       Navigator.pop(context,'Refresh');
     }
 

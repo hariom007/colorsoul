@@ -10,10 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'details.dart';
 import 'package:http/http.dart' as http;
 
@@ -168,6 +170,63 @@ class _DistributorsState extends State<Distributors> {
 
   }
 
+  Future<Position> getGeoLocationPosition() async {
+
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    }
+
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+
+        Fluttertoast.showToast(
+            msg: "Location permissions are denied. !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+        return Future.error('Location permissions are denied');
+      }
+      else{
+        return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      }
+
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+
+      Fluttertoast.showToast(
+          msg: "Location permissions are permanently denied, we cannot request permissions. !!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -278,21 +337,35 @@ class _DistributorsState extends State<Distributors> {
                                                 trailing: Row(
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
-                                                    Column(
-                                                      children: [
-                                                        SizedBox(height: 5),
-                                                        Image.asset("assets/images/locater/direction.png",width: 22),
-                                                        SizedBox(height: 10),
-                                                        Text(
-                                                          "Direction",
-                                                          style: textStyle.copyWith(
-                                                              fontWeight: FontWeight.bold,
-                                                              color: AppColors.black
-                                                          ),
-                                                        )
-                                                      ],
+
+                                                    InkWell(
+                                                      onTap: () async {
+
+                                                        Position position = await getGeoLocationPosition();
+
+                                                        String url ='https://www.google.com/maps/dir/?api=1&origin=${position.latitude},${position.longitude}&destination=${distributorData.latitude},${distributorData.longitude}&travelmode=driving&dir_action=navigate';
+                                                        launch(url);
+
+
+                                                      },
+                                                      child: Column(
+                                                        children: [
+                                                          SizedBox(height: 5),
+                                                          Image.asset("assets/images/locater/direction.png",width: 22),
+                                                          SizedBox(height: 10),
+                                                          Text(
+                                                            "Direction",
+                                                            style: textStyle.copyWith(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: AppColors.black
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
                                                     ),
+
                                                     SizedBox(width: 5),
+
                                                     PopupMenuButton(
                                                         elevation: 2,
                                                         offset: Offset(3,-10),

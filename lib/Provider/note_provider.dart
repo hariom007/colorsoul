@@ -19,7 +19,6 @@ class NoteProvider with ChangeNotifier
       if(value["st"] == "success")
       {
         isSuccess = true;
-        getAllNote({},"/getNote/1");
         notifyListeners();
       }
       else

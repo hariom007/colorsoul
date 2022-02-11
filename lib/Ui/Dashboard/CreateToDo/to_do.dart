@@ -1,10 +1,14 @@
+import 'package:colorsoul/Provider/todo_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ToDo extends StatefulWidget {
   const ToDo({Key key}) : super(key: key);
@@ -17,19 +21,64 @@ class _ToDoState extends State<ToDo> {
   TextEditingController _textEditingController1 = new TextEditingController();
   TextEditingController _textEditingController2 = new TextEditingController();
   DateTime _selectedDate;
-  TimeOfDay time;
+  TimeOfDay time = TimeOfDay.now();
   DateTime _selectedstarttime = DateTime.now();
+
+  TodoProvider _todoProvider;
 
   @override
   void initState(){
     super.initState();
-    time = TimeOfDay.now();
+
+    _todoProvider = Provider.of<TodoProvider>(context, listen: false);
+
   }
+
+  String pickDate = "Select Date",pickTime = "Select Time",pickAmPm;
+
+  addTodo() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.getString("userId");
+
+    var data = {
+      "id":"",
+      "uid":"$userId",
+      "title":"${_textEditingController1.text}",
+      "description":"${_textEditingController2.text}",
+      "date":"$pickDate",
+      "time":"$pickTime",
+      "am_pm":"$pickAmPm",
+      "priority":"high"
+
+    };
+
+    print(data);
+
+    await _todoProvider.insertTOdo(data,'/createTodo');
+    if(_todoProvider.isSuccess == true){
+
+      var data = {
+        "uid":"$userId",
+        "status":""
+      };
+
+      _todoProvider.allTodoList.clear();
+
+      await _todoProvider.getAllTodo(data,'/getTodo/1');
+      Navigator.pop(context,'Refresh');
+    }
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+    _todoProvider = Provider.of<TodoProvider>(context, listen: true);
+
     return Scaffold(
         backgroundColor: Colors.black,
         body:Container(
@@ -103,6 +152,7 @@ class _ToDoState extends State<ToDo> {
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
+                                    controller: _textEditingController1,
                                     style: textStyle.copyWith(
                                         fontSize: 16,
                                         color: Colors.black
@@ -124,6 +174,7 @@ class _ToDoState extends State<ToDo> {
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
+                                    controller: _textEditingController2,
                                     minLines: 6,
                                     keyboardType: TextInputType.multiline,
                                     maxLines: null,
@@ -183,7 +234,7 @@ class _ToDoState extends State<ToDo> {
                                                     icon: new Image.asset('assets/images/tasks/donedate.png',width: 20,height: 20),
                                                     onPressed: null,
                                                   ),
-                                                  hintText: "Select Date",
+                                                  hintText: "$pickDate",
                                                   hintStyle: textStyle.copyWith(
                                                       color: Colors.black
                                                   ),
@@ -195,7 +246,6 @@ class _ToDoState extends State<ToDo> {
                                                   color: Colors.black
                                               ),
                                               focusNode: AlwaysDisabledFocusNode(),
-                                              controller: _textEditingController1,
                                               onTap: () {
                                                 _selecttDate(context);
                                               },
@@ -224,7 +274,7 @@ class _ToDoState extends State<ToDo> {
                                                     icon: new Image.asset('assets/images/tasks/clock.png',width: 20,height: 20),
                                                     onPressed: null,
                                                   ),
-                                                  hintText: "Select Time",
+                                                  hintText: "$pickTime $pickAmPm",
                                                   hintStyle: textStyle.copyWith(
                                                       color: Colors.black
                                                   ),
@@ -236,7 +286,6 @@ class _ToDoState extends State<ToDo> {
                                                   color: Colors.black
                                               ),
                                               focusNode: AlwaysDisabledFocusNode(),
-                                              controller: _textEditingController2,
                                               onTap: () {
                                                 _pickTime();
                                               },
@@ -247,6 +296,19 @@ class _ToDoState extends State<ToDo> {
                                     ],
                                   ),
                                   SizedBox(height: 5),
+
+                                  _todoProvider.isLoaded == false
+                                      ?
+                                  Container(
+                                    height: 100,
+                                    child: Center(
+                                        child: SpinKitThreeBounce(
+                                          color: AppColors.black,
+                                          size: 25.0,
+                                        )
+                                    ),
+                                  )
+                                      :
                                   SizedBox(
                                       height: 50,
                                       width: width,
@@ -257,7 +319,9 @@ class _ToDoState extends State<ToDo> {
                                         ),
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            Navigator.pop(context);
+
+                                            addTodo();
+
                                           },
                                           style: ElevatedButton.styleFrom(
                                               elevation: 10,
@@ -310,17 +374,8 @@ class _ToDoState extends State<ToDo> {
         }
     );
 
-    if (newSelectedDate != null) {
-      _selectedDate = newSelectedDate;
-      initializeDateFormatting('es');
-      _textEditingController1
-        ..text = DateFormat.yMd('es').format(_selectedDate)
-        ..selection = TextSelection.fromPosition(TextPosition(
-            offset: _textEditingController1.text.length,
-            affinity: TextAffinity.upstream
-        )
-        );
-    }
+    pickDate = DateFormat('yyyy-MM-dd').format(newSelectedDate);
+
   }
 
   _pickTime() async{
@@ -346,10 +401,10 @@ class _ToDoState extends State<ToDo> {
     if(t != null)
     {
       setState(() {
-        time = t;
-        _selectedstarttime = DateTime(0,0,0,t.hour,t.minute);
-        String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
-        _textEditingController2 = TextEditingController(text: "$starttime");
+
+        pickTime = "${t.hour}:${t.minute}";
+        pickAmPm = t.period == "DayPeriod.pm" ? "PM":"AM";
+
       });
     }
   }

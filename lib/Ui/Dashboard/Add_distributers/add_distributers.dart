@@ -98,7 +98,7 @@ class _AddDistributersState extends State<AddDistributers> {
     };
 
     final uri = 'https://colorsoul.koffeekodes.com/admin/Api/imageUpload';
-    var request = http.MultipartRequest('POST', Uri.parse(uri));
+    var request = await http.MultipartRequest('POST', Uri.parse(uri));
     request.headers.addAll(headers);
 
     if(_image != null){
@@ -112,16 +112,17 @@ class _AddDistributersState extends State<AddDistributers> {
 
         if (response.statusCode == 200 && body['st'] == "success") {
           imageUrl = body['file'];
+          addDistributor();
+
         }
         else{
           print("Image Upload Error");
+          addDistributor();
         }
 
       });
 
     }
-
-    addDistributor();
 
   }
 

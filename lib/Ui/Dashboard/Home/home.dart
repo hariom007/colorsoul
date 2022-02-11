@@ -153,6 +153,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
 
   getTodo() async {
 
+    setState(() {
+      _todoProvider.allTodoList.clear();
+    });
+
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.get("userId");
 
@@ -195,6 +199,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     _orderProvider = Provider.of<OrderProvider>(context, listen: true);
+    _noteProvider = Provider.of<NoteProvider>(context, listen: true);
+    _taskProvider = Provider.of<TaskProvider>(context, listen: true);
+    _todoProvider = Provider.of<TodoProvider>(context, listen: true);
+
     return Scaffold(
           backgroundColor: Colors.black,
           body:  NotificationListener<OverscrollIndicatorNotification>(
