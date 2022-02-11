@@ -1,5 +1,3 @@
-import 'package:colorsoul/Model/location.dart';
-import 'package:colorsoul/Provider/location_card.dart';
 import 'package:colorsoul/Provider/todo_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
