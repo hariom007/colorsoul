@@ -92,7 +92,7 @@ class FeedBackProvider with ChangeNotifier
   }
 
 
-  List<ImageFeedbackModel> imageFeedBackList = [];
+  List imageFeedBackList = [];
   getImageFeedBack(data,url) async
   {
 
@@ -100,7 +100,7 @@ class FeedBackProvider with ChangeNotifier
     notifyListeners();
 
     await ApiHandler.post(data,url).then((value){
-      List<ImageFeedbackModel> list;
+      List list;
 
       if(value["st"] == "success")
       {
@@ -108,10 +108,7 @@ class FeedBackProvider with ChangeNotifier
 
         var items = value["data"];
 
-        List client = items as List;
-        list  = client.map<ImageFeedbackModel>((json) => ImageFeedbackModel.fromJson(json)).toList();
-        imageFeedBackList.addAll(list);
-
+        imageFeedBackList = items;
         notifyListeners();
       }
       else

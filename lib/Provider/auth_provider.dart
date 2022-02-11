@@ -47,5 +47,43 @@ class AuthProvider with ChangeNotifier
 
   }
 
+  var editData;
+  editProfile(data,url) async
+  {
+
+    isLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      if(value["st"] == "success")
+      {
+        isSuccess = true;
+        editData = value;
+        notifyListeners();
+      }
+      else
+      {
+        isSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Error in Edit !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
 
 }

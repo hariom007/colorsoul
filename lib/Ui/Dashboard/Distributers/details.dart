@@ -439,7 +439,7 @@ class _DetailsState extends State<Details> {
                                           child:  ClipRRect(
                                             borderRadius: BorderRadius.circular(8),
                                             child: CachedNetworkImage(
-                                              imageUrl: "${_feedBackProvider.imageFeedBackList[1].imageUrl[0]}",
+                                              imageUrl: "${_feedBackProvider.imageFeedBackList[0]}",
                                               placeholder: (context, url) => Center(
                                                   child: SpinKitThreeBounce(
                                                     color: AppColors.black,
@@ -461,7 +461,7 @@ class _DetailsState extends State<Details> {
                                           child:  ClipRRect(
                                             borderRadius: BorderRadius.circular(8),
                                             child: CachedNetworkImage(
-                                              imageUrl: "${_feedBackProvider.imageFeedBackList[1].imageUrl[0]}",
+                                              imageUrl: "${_feedBackProvider.imageFeedBackList[1]}",
                                               placeholder: (context, url) => Center(
                                                   child: SpinKitThreeBounce(
                                                     color: AppColors.black,
@@ -484,7 +484,7 @@ class _DetailsState extends State<Details> {
                                           child:  ClipRRect(
                                             borderRadius: BorderRadius.circular(8),
                                             child: CachedNetworkImage(
-                                              imageUrl: "${_feedBackProvider.imageFeedBackList[2].imageUrl[0]}",
+                                              imageUrl: "${_feedBackProvider.imageFeedBackList[2]}",
                                               placeholder: (context, url) => Center(
                                                   child: SpinKitThreeBounce(
                                                     color: AppColors.black,
@@ -604,6 +604,7 @@ class _DetailsState extends State<Details> {
                                     ),
                                   )
                               ),
+
                               SizedBox(height: 20),
                             ],
                           ),
