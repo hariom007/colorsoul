@@ -309,6 +309,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                     ),
                   ),
 
+/*
                   TableCalendar(
                     focusedDay: _selectedDay,
                     firstDay: DateTime(1990),
@@ -348,6 +349,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                       ),
                     ),
                   ),
+*/
 
                   SizedBox(height: height*0.01),
                   Expanded(
