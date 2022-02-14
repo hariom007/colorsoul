@@ -209,6 +209,29 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
   }
 
 
+  cancelTodo(String taskId) async {
+
+    var data = {
+      "id":"$taskId"
+    };
+    print(data);
+    await _todoProvider.cancelTodo(data,'/cancelTodo');
+
+    if(_todoProvider.isCancel == true){
+      setState(() {
+        _todoProvider.allTodoList.clear();
+        _todoProvider.rescheduleTodoList.clear();
+        _todoProvider.completedTodoList.clear();
+        page = 1;
+      });
+
+      getTodo();
+    }
+
+  }
+
+
+
   @override
   void dispose() {
     super.dispose();
@@ -329,7 +352,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                   SizedBox(height: height*0.01),
                   Expanded(
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       width: width,
                       decoration: BoxDecoration(
                           color: Colors.white,
@@ -457,7 +480,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                           return Padding(
                                             padding: EdgeInsets.only(bottom: 10),
                                             child: Slidable(
-                                              actionExtentRatio: 0.12,
+                                              actionExtentRatio: 0.14,
                                               actionPane: SlidableDrawerActionPane(),
                                               actions:
                                               todoDetails.status == "Completed"
@@ -465,6 +488,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                               []
                                               :
                                               [
+
                                                 InkWell(
                                                   onTap: (){
 
@@ -536,18 +560,105 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                     );
 
                                                   },
-                                                  child: Container(
-                                                    width: 100,
-                                                    height: 100,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      color: AppColors.black,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(top: 5,bottom: 5,right: 5),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        color: AppColors.black,
+                                                      ),
+                                                      child: Center(
+                                                          child: Image.asset("assets/images/tasks/progress.png",width: 20,height: 20,color: AppColors.white)
+                                                      ),
                                                     ),
-                                                    child: Center(
-                                                        child: Image.asset("assets/images/tasks/progress.png",width: 20,height: 20,color: AppColors.white)
+                                                  ),
+                                                ),
+
+                                                InkWell(
+                                                  onTap: (){
+
+                                                    showDialog<bool>(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return AlertDialog(
+                                                            insetPadding: EdgeInsets.all(0),
+                                                            contentPadding: EdgeInsets.all(0),
+                                                            backgroundColor: Colors.transparent,
+                                                            content: Container(
+                                                              width: MediaQuery.of(context).size.width/1.2,
+                                                              decoration: BoxDecoration(
+                                                                  color: AppColors.white,
+                                                                  borderRadius: round1.copyWith()
+                                                              ),
+                                                              child: Padding(
+                                                                padding: EdgeInsets.fromLTRB(20, 14, 20, 0),
+                                                                child: Column(
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  mainAxisSize: MainAxisSize.min,
+                                                                  children: [
+                                                                    Text(
+                                                                      'Are you sure you want to Cancel Todo Task?',
+                                                                      style: textStyle.copyWith(
+                                                                          fontSize: 16,
+                                                                          color: AppColors.black
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(height: 13),
+                                                                    Row(
+                                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                                      children: [
+                                                                        TextButton(
+                                                                          child: Text(
+                                                                            'No',
+                                                                            style: textStyle.copyWith(
+                                                                                color: AppColors.black
+                                                                            ),
+                                                                          ),
+                                                                          onPressed: () {
+                                                                            Navigator.of(context).pop(false);
+                                                                          },
+                                                                        ),
+                                                                        TextButton(
+                                                                          child: Text(
+                                                                            'Yes, Cancel',
+                                                                            style: textStyle.copyWith(
+                                                                                color: AppColors.black
+                                                                            ),
+                                                                          ),
+                                                                          onPressed: () {
+
+                                                                            Navigator.of(context).pop();
+                                                                            cancelTodo("${_todoProvider.allTodoList[index].id}");
+
+
+                                                                          },
+                                                                        ),
+                                                                      ],
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+                                                    );
+
+                                                  },
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(top: 5,bottom: 5,right: 5),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        color: AppColors.black,
+                                                      ),
+                                                      child: Center(
+                                                          child: Icon(Icons.close,color: AppColors.white,)
+                                                      ),
                                                     ),
                                                   ),
                                                 )
+
+
                                               ],
                                               secondaryActions:
                                               todoDetails.status == "Completed"
@@ -625,15 +736,16 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                     );
 
                                                   },
-                                                  child: Container(
-                                                    width: 100,
-                                                    height: 100,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      color: AppColors.black,
-                                                    ),
-                                                    child: Center(
-                                                        child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(top: 5,bottom: 5,left: 5),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        color: AppColors.black,
+                                                      ),
+                                                      child: Center(
+                                                          child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                                      ),
                                                     ),
                                                   ),
                                                 )
@@ -740,7 +852,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                           return Padding(
                                             padding: EdgeInsets.only(bottom: 10),
                                             child: Slidable(
-                                              actionExtentRatio: 0.12,
+                                              actionExtentRatio: 0.14,
                                               actionPane: SlidableDrawerActionPane(),
                                               actions: [
                                                 InkWell(
@@ -814,18 +926,105 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                     );
 
                                                   },
-                                                  child: Container(
-                                                    width: 100,
-                                                    height: 100,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      color: AppColors.black,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(top: 5,bottom: 5,right: 5),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        color: AppColors.black,
+                                                      ),
+                                                      child: Center(
+                                                          child: Image.asset("assets/images/tasks/progress.png",width: 20,height: 20,color: AppColors.white)
+                                                      ),
                                                     ),
-                                                    child: Center(
-                                                        child: Image.asset("assets/images/tasks/progress.png",width: 20,height: 20,color: AppColors.white)
+                                                  ),
+                                                ),
+
+                                                InkWell(
+                                                  onTap: (){
+
+                                                    showDialog<bool>(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return AlertDialog(
+                                                            insetPadding: EdgeInsets.all(0),
+                                                            contentPadding: EdgeInsets.all(0),
+                                                            backgroundColor: Colors.transparent,
+                                                            content: Container(
+                                                              width: MediaQuery.of(context).size.width/1.2,
+                                                              decoration: BoxDecoration(
+                                                                  color: AppColors.white,
+                                                                  borderRadius: round1.copyWith()
+                                                              ),
+                                                              child: Padding(
+                                                                padding: EdgeInsets.fromLTRB(20, 14, 20, 0),
+                                                                child: Column(
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  mainAxisSize: MainAxisSize.min,
+                                                                  children: [
+                                                                    Text(
+                                                                      'Are you sure you want to Cancel Todo Task?',
+                                                                      style: textStyle.copyWith(
+                                                                          fontSize: 16,
+                                                                          color: AppColors.black
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(height: 13),
+                                                                    Row(
+                                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                                      children: [
+                                                                        TextButton(
+                                                                          child: Text(
+                                                                            'No',
+                                                                            style: textStyle.copyWith(
+                                                                                color: AppColors.black
+                                                                            ),
+                                                                          ),
+                                                                          onPressed: () {
+                                                                            Navigator.of(context).pop(false);
+                                                                          },
+                                                                        ),
+                                                                        TextButton(
+                                                                          child: Text(
+                                                                            'Yes, Cancel',
+                                                                            style: textStyle.copyWith(
+                                                                                color: AppColors.black
+                                                                            ),
+                                                                          ),
+                                                                          onPressed: () {
+
+                                                                            Navigator.of(context).pop();
+                                                                            cancelTodo("${_todoProvider.rescheduleTodoList[index].id}");
+
+
+                                                                          },
+                                                                        ),
+                                                                      ],
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+                                                    );
+
+                                                  },
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(top: 5,bottom: 5,right: 5),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        color: AppColors.black,
+                                                      ),
+                                                      child: Center(
+                                                          child: Icon(Icons.close,color: AppColors.white,)
+                                                      ),
                                                     ),
                                                   ),
                                                 )
+
+
                                               ],
                                               secondaryActions: [
                                                 InkWell(
@@ -898,15 +1097,16 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                     );
 
                                                   },
-                                                  child: Container(
-                                                    width: 100,
-                                                    height: 100,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      color: AppColors.black,
-                                                    ),
-                                                    child: Center(
-                                                        child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(top: 5,bottom: 5,left: 5),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        color: AppColors.black,
+                                                      ),
+                                                      child: Center(
+                                                          child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                                      ),
                                                     ),
                                                   ),
                                                 )

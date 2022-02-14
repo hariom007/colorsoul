@@ -221,6 +221,27 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
   }
 
 
+  cancelTask(String taskId) async {
+
+    var data = {
+      "id":"$taskId"
+    };
+    print(data);
+    await _taskProvider.cancelTask(data,'/cancelTask');
+
+    if(_taskProvider.isCancel == true){
+      setState(() {
+        _taskProvider.taskList.clear();
+        _taskProvider.rescheduleTaskList.clear();
+        _taskProvider.completedTaskList.clear();
+        page = 1;
+      });
+
+      getTask();
+    }
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -289,7 +310,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                 SizedBox(height: height*0.01),
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     width: width,
                     decoration: BoxDecoration(
                         color: Colors.white,
@@ -425,7 +446,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                         return Padding(
                                           padding: EdgeInsets.only(bottom: 10),
                                           child: Slidable(
-                                            actionExtentRatio: 0.13,
+                                            actionExtentRatio: 0.14,
                                             actionPane: SlidableDrawerActionPane(),
                                             actions:
                                             _taskProvider.taskList[index].status == "Completed"
@@ -504,15 +525,100 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                   );
 
                                                 },
-                                                child: Container(
-                                                  width: 100,
-                                                  height: 100,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    color: AppColors.black,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(top: 5,bottom: 5,right: 5),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      color: AppColors.black,
+                                                    ),
+                                                    child: Center(
+                                                        child: Image.asset("assets/images/tasks/time.png",width: 20,height: 20,color: AppColors.white)
+                                                    ),
                                                   ),
-                                                  child: Center(
-                                                      child: Image.asset("assets/images/tasks/time.png",width: 20,height: 20,color: AppColors.white)
+                                                ),
+                                              ),
+
+                                              InkWell(
+                                                onTap: (){
+
+                                                  showDialog<bool>(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          insetPadding: EdgeInsets.all(0),
+                                                          contentPadding: EdgeInsets.all(0),
+                                                          backgroundColor: Colors.transparent,
+                                                          content: Container(
+                                                            width: MediaQuery.of(context).size.width/1.2,
+                                                            decoration: BoxDecoration(
+                                                                color: AppColors.white,
+                                                                borderRadius: round1.copyWith()
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.fromLTRB(20, 14, 20, 0),
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Text(
+                                                                    'Are you sure you want to Cancel Task?',
+                                                                    style: textStyle.copyWith(
+                                                                        fontSize: 16,
+                                                                        color: AppColors.black
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(height: 13),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                                    children: [
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'No',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(false);
+                                                                        },
+                                                                      ),
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'Yes, Cancel',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+
+                                                                          Navigator.of(context).pop();
+                                                                          cancelTask("${_taskProvider.taskList[index].id}");
+
+
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                  );
+
+                                                },
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(top: 5,bottom: 5,right: 5),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      color: AppColors.black,
+                                                    ),
+                                                    child: Center(
+                                                        child: Icon(Icons.close,color: AppColors.white,)
+                                                    ),
                                                   ),
                                                 ),
                                               )
@@ -593,15 +699,16 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                   );
 
                                                 },
-                                                child: Container(
-                                                  width: 100,
-                                                  height: 100,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    color: AppColors.black,
-                                                  ),
-                                                  child: Center(
-                                                      child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(top: 5,bottom: 5,left: 5),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      color: AppColors.black,
+                                                    ),
+                                                    child: Center(
+                                                        child: Image.asset("assets/images/notes/tick.png",width: 20,height: 20)
+                                                    ),
                                                   ),
                                                 ),
                                               )
@@ -619,7 +726,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                       child: Text(
                                                         '${_taskProvider.taskList[index].title}',
                                                         style: textStyle.copyWith(
-                                                            fontSize: 20,
+                                                            fontSize: 18,
                                                             color: Colors.black,
                                                             fontWeight: FontWeight.bold
                                                         ),
@@ -740,7 +847,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                         return Padding(
                                           padding: EdgeInsets.only(bottom: 10),
                                           child: Slidable(
-                                            actionExtentRatio: 0.12,
+                                            actionExtentRatio: 0.14,
                                             actionPane: SlidableDrawerActionPane(),
                                             actions:
                                             [
@@ -815,18 +922,104 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                   );
 
                                                 },
-                                                child: Container(
-                                                  width: 100,
-                                                  height: 100,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    color: AppColors.black,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(top: 5,bottom: 5,right: 5),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      color: AppColors.black,
+                                                    ),
+                                                    child: Center(
+                                                        child: Image.asset("assets/images/tasks/time.png",width: 20,height: 20,color: AppColors.white)
+                                                    ),
                                                   ),
-                                                  child: Center(
-                                                      child: Image.asset("assets/images/tasks/time.png",width: 20,height: 20,color: AppColors.white)
+                                                ),
+                                              ),
+
+                                              InkWell(
+                                                onTap: (){
+
+                                                  showDialog<bool>(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          insetPadding: EdgeInsets.all(0),
+                                                          contentPadding: EdgeInsets.all(0),
+                                                          backgroundColor: Colors.transparent,
+                                                          content: Container(
+                                                            width: MediaQuery.of(context).size.width/1.2,
+                                                            decoration: BoxDecoration(
+                                                                color: AppColors.white,
+                                                                borderRadius: round1.copyWith()
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.fromLTRB(20, 14, 20, 0),
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Text(
+                                                                    'Are you sure you want to Cancel Task?',
+                                                                    style: textStyle.copyWith(
+                                                                        fontSize: 16,
+                                                                        color: AppColors.black
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(height: 13),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                                    children: [
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'No',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+                                                                          Navigator.of(context).pop(false);
+                                                                        },
+                                                                      ),
+                                                                      TextButton(
+                                                                        child: Text(
+                                                                          'Yes, Cancel',
+                                                                          style: textStyle.copyWith(
+                                                                              color: AppColors.black
+                                                                          ),
+                                                                        ),
+                                                                        onPressed: () {
+
+                                                                          Navigator.of(context).pop();
+                                                                          cancelTask("${_taskProvider.rescheduleTaskList[index].id}");
+
+
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                  );
+
+                                                },
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(top: 5,bottom: 5,right: 5),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      color: AppColors.black,
+                                                    ),
+                                                    child: Center(
+                                                        child: Icon(Icons.close,color: AppColors.white,)
+                                                    ),
                                                   ),
                                                 ),
                                               )
+
                                             ],
                                             secondaryActions: [
                                               InkWell(
@@ -1166,16 +1359,6 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
         }
     );
 
-    // if (newSelectedDate != null) {
-    //   _selectedDate = newSelectedDate;
-    //   _textEditingController1
-    //     ..text = DateFormat.yMMMd().format(_selectedDate)
-    //     ..selection = TextSelection.fromPosition(TextPosition(
-    //         offset: _textEditingController1.text.length,
-    //         affinity: TextAffinity.upstream
-    //     )
-    //     );
-    // }
   }
 
 }

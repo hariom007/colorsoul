@@ -260,6 +260,47 @@ class TaskProvider with ChangeNotifier
 
   }
 
+  bool isCancel = false;
+  cancelTask(data,url) async
+  {
+
+    isComplete = false;
+    isLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      print(value);
+
+      if(value["st"] == "success")
+      {
+        isCancel = true;
+        notifyListeners();
+      }
+      else
+      {
+        isCancel = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Task Cancel Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
 
 
 }

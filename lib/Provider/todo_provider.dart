@@ -140,6 +140,7 @@ class TodoProvider with ChangeNotifier
 
   }
 
+
   List<TodoModel> completedTodoList = [];
   getCompleteTodo(data,url) async
   {
@@ -225,6 +226,7 @@ class TodoProvider with ChangeNotifier
 
   }
 
+
   bool isComplete = false;
   completeTodo(data,url) async
   {
@@ -262,6 +264,49 @@ class TodoProvider with ChangeNotifier
     });
 
   }
+
+
+  bool isCancel = false;
+  cancelTodo(data,url) async
+  {
+
+    isCancel = false;
+    isLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      print(value);
+
+      if(value["st"] == "success")
+      {
+        isCancel = true;
+        notifyListeners();
+      }
+      else
+      {
+        isCancel = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Todo Cancel Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
 
 
 }
