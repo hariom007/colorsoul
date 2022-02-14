@@ -666,6 +666,10 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
 
                                                         SizedBox(height: 10),
 
+                                                        _taskProvider.taskList[index].status == "Completed"
+                                                            ?
+                                                        Icon(Icons.star,color: Colors.green)
+                                                            :
                                                         Container(
                                                           decoration: BoxDecoration(
                                                             shape: BoxShape.circle,
@@ -1090,6 +1094,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                             color: Colors.black,
                                                           ),
                                                         ),
+
                                                       ],
                                                     ),
                                                   ),

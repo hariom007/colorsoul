@@ -1,3 +1,6 @@
+// To parse this JSON data, do
+//
+//     final todoModel = todoModelFromJson(jsonString);
 
 import 'dart:convert';
 
@@ -12,8 +15,7 @@ class TodoModel {
     this.title,
     this.description,
     this.priority,
-    this.date,
-    this.time,
+    this.dateTime,
     this.status,
   });
 
@@ -22,8 +24,7 @@ class TodoModel {
   String title;
   String description;
   String priority;
-  DateTime date;
-  String time;
+  DateTime dateTime;
   String status;
 
   factory TodoModel.fromJson(Map<String, dynamic> json) => TodoModel(
@@ -32,8 +33,7 @@ class TodoModel {
     title: json["title"],
     description: json["description"],
     priority: json["priority"],
-    date: DateTime.parse(json["date"]),
-    time: json["time"],
+    dateTime: DateTime.parse(json["date_time"]),
     status: json["status"],
   );
 
@@ -43,8 +43,7 @@ class TodoModel {
     "title": title,
     "description": description,
     "priority": priority,
-    "date": "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
-    "time": time,
+    "date_time": dateTime.toIso8601String(),
     "status": status,
   };
 }

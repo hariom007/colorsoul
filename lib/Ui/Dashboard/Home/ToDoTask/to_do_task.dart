@@ -284,6 +284,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                       ],
                     ),
                   ),
+
                   TableCalendar(
                     focusedDay: _selectedDay,
                     firstDay: DateTime(1990),
@@ -323,6 +324,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                       ),
                     ),
                   ),
+
                   SizedBox(height: height*0.01),
                   Expanded(
                     child: Container(
@@ -337,6 +339,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                       ),
                       child: Column(
                         children: [
+                          SizedBox(height: height*0.01),
                           TabBar(
                               onTap: (index) {
                                 setState(() {
@@ -655,7 +658,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                         children: [
                                                           SizedBox(height: height*0.012),
                                                           Text(
-                                                            todoDetails.time,
+                                                            "${DateFormat('MMM dd,yyyy').format(todoDetails.dateTime)}"+" - "+"${DateFormat('hh:mm').format(todoDetails.dateTime)}",
                                                             maxLines: 1,
                                                             overflow: TextOverflow.ellipsis,
                                                             style: textStyle.copyWith(
@@ -665,22 +668,34 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                           ),
                                                         ],
                                                       ),
-                                                      trailing: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                                        children: [
-                                                          Text(
-                                                            todoDetails.status == "New_schedule" ? "New schedule" : todoDetails.status,
-                                                            maxLines: 1,
-                                                            overflow: TextOverflow.ellipsis,
-                                                            style: textStyle.copyWith(
-                                                              fontSize: 14,
-                                                              color: Colors.black,
-                                                            ),
-                                                          ),
-                                                          SizedBox(height: 6),
-                                                          Icon(Icons.star,color: Colors.orange),
-                                                        ],
-                                                      ),
+                                                      trailing:
+
+                                                      todoDetails.status == "Completed"
+                                                          ?
+                                                      Icon(Icons.star,color: Colors.green)
+                                                      :
+                                                      Container(
+                                                        decoration: BoxDecoration(
+                                                            shape: BoxShape.circle,
+                                                            color:
+                                                            todoDetails.status == "New_schedule"
+                                                                ?
+                                                            Colors.green
+                                                                :
+                                                            todoDetails.status == "Over_time"
+                                                                ?
+                                                            Colors.red
+                                                                :
+                                                            todoDetails.status == "Rescheduled"
+                                                                ?
+                                                            Colors.amberAccent
+                                                                :
+                                                            Colors.white
+
+                                                        ),
+                                                        width: 10,height: 10,
+                                                      )
+
                                                     ),
                                                   )
                                               ),
@@ -916,7 +931,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                         children: [
                                                           SizedBox(height: height*0.012),
                                                           Text(
-                                                            todoDetails.time,
+                                                            "${DateFormat('hh:mm').format(todoDetails.dateTime)}",
                                                             maxLines: 1,
                                                             overflow: TextOverflow.ellipsis,
                                                             style: textStyle.copyWith(
@@ -926,7 +941,27 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                           ),
                                                         ],
                                                       ),
-                                                      trailing: Icon(Icons.star,color: Colors.orange),
+                                                      trailing: Container(
+                                                        decoration: BoxDecoration(
+                                                            shape: BoxShape.circle,
+                                                            color:
+                                                            todoDetails.status == "New_schedule"
+                                                                ?
+                                                            Colors.green
+                                                                :
+                                                            todoDetails.status == "Over_time"
+                                                                ?
+                                                            Colors.red
+                                                                :
+                                                            todoDetails.status == "Rescheduled"
+                                                                ?
+                                                            Colors.amberAccent
+                                                                :
+                                                            Colors.white
+
+                                                        ),
+                                                        width: 10,height: 10,
+                                                      ),
                                                     ),
                                                   )
                                               ),
@@ -993,7 +1028,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                         children: [
                                                           SizedBox(height: height*0.012),
                                                           Text(
-                                                            todoDetails.time,
+                                                            "${DateFormat('hh:mm').format(todoDetails.dateTime)}",
                                                             maxLines: 1,
                                                             overflow: TextOverflow.ellipsis,
                                                             style: textStyle.copyWith(
@@ -1003,7 +1038,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                           ),
                                                         ],
                                                       ),
-                                                      trailing: Icon(Icons.star,color: Colors.orange),
+                                                      trailing: Icon(Icons.star,color: Colors.green),
                                                     ),
                                                   )
                                               ),
