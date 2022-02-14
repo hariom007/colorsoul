@@ -281,14 +281,23 @@ class _ProductsDataState extends State<ProductsData> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
+
+                                      productData.clProductImg.length != 0
+                                          ?
                                       Center(
-                                        child: Hero(
+                                        child:
+                                        Hero(
                                             tag: '${productData.clProductId}',
                                             child:
                                             ClipRRect(
                                               borderRadius: BorderRadius.circular(6),
                                               child: CachedNetworkImage(
-                                                  imageUrl: "${productData.clProductImg[0].hPath}"+"${productData.clProductImg[0].imageName}",
+                                                  imageUrl:
+                                                  productData.clProductImg.length != 0
+                                                      ?
+                                                  "${productData.clProductImg[0].hPath}"+"${productData.clProductImg[0].imageName}"
+                                                  :
+                                                      "",
                                                   placeholder: (context, url) => Container(
                                                     width: MediaQuery.of(context).size.width,
                                                     height: 140,
@@ -305,7 +314,13 @@ class _ProductsDataState extends State<ProductsData> {
                                               ),
                                             ),
                                         ),
+                                      )
+                                      :
+                                      Container(
+                                        height: 140,
+                                          child: Center(child: Icon(Icons.error))
                                       ),
+
                                       SizedBox(height: 10),
 
                                       Row(

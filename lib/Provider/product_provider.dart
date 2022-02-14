@@ -69,6 +69,8 @@ class ProductProvider with ChangeNotifier
     await ApiHandler.post(data,url).then((value){
       List<ProductModel> list;
 
+      print(value);
+
       if(value["st"] == "success")
       {
         isSuccess = true;

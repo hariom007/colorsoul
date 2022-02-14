@@ -270,7 +270,12 @@ class _NewOrderState extends State<NewOrder> {
                                         padding: EdgeInsets.only(top: 5,bottom: 6),
                                         child: ListTile(
                                           leading: CachedNetworkImage(
-                                            imageUrl: "${productData.clProductImg[0].hPath}"+"${productData.clProductImg[0].imageName}",
+                                            imageUrl:
+                                            productData.clProductImg.length != 0
+                                                ?
+                                            "${productData.clProductImg[0].hPath}"+"${productData.clProductImg[0].imageName}"
+                                            :
+                                            "",
                                             placeholder: (context, url) => Container(
                                               width: 70,
                                               height: 70,
