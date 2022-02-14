@@ -121,87 +121,88 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
   }
 
 
-  TimeOfDay time =  TimeOfDay.now();
-  String pickDate,pickTime,pickAmPm;
+  DateTime date;
+  TimeOfDay time;
 
-  _pickDate(BuildContext context,String id) async {
-    DateTime newSelectedDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now().subtract(Duration(days: 0)),
-        lastDate: DateTime(2100),
-        builder: (BuildContext context, Widget child) {
-          return Theme(
-            data: ThemeData.dark().copyWith(
-              colorScheme: ColorScheme.dark(
-                primary: Colors.grey,
-                onPrimary: Colors.black,
-                surface: Colors.white,
-                onSurface: Colors.black,
-              ),
-              dialogBackgroundColor: AppColors.white,
+  DateTime pickedDate = DateTime.now();
+  TimeOfDay pickedTime = TimeOfDay.now();
+
+
+  dateTimeSelect(id) async {
+    date = await showDatePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(DateTime.now().year + 5),
+      initialDate: pickedDate,
+      builder: (context,child){
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: Colors.grey,
+              onPrimary: Colors.black,
+              surface: Colors.white,
+              onSurface: Colors.black,
             ),
-            child: child,
-          );
-        }
+            dialogBackgroundColor: AppColors.white,
+          ),
+          child: child,
+        );
+      },
     );
 
-    if(newSelectedDate != null){
-      pickDate = DateFormat('yyyy-MM-dd').format(newSelectedDate);
-      //print(pickDate);
-      _pickTime(id);
-    }
-
-  }
-
-  _pickTime(String id) async{
-    TimeOfDay t = await showTimePicker(
-        context: context,
-        initialTime: time,
-        builder: (BuildContext context, Widget child) {
-          return Theme(
-            data: ThemeData.dark().copyWith(
-              colorScheme: ColorScheme.dark(
-                primary: Colors.grey,
-                onPrimary: Colors.black,
-                surface: Colors.white,
-                onSurface: Colors.black,
-              ),
-              dialogBackgroundColor: AppColors.white,
+    time = await showTimePicker(
+      context: context,
+      initialTime: pickedTime,
+      builder: (context,child){
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: Colors.grey,
+              onPrimary: Colors.black,
+              surface: Colors.white,
+              onSurface: Colors.black,
             ),
-            child: child,
-          );
-        }
+            dialogBackgroundColor: AppColors.white,
+          ),
+          child: child,
+        );
+      },
     );
 
-    if(t != null)
-    {
-
-      pickTime = "${t.hour}:${t.minute}";
-      pickAmPm = t.period == "DayPeriod.pm" ? "PM":"AM";
+    if (date != null){
+      setState(() {
+        this.pickedDate = DateTime(
+            date.year,
+            date.month,
+            date.day,
+            time.hour,
+            time.minute
+        );
+      });
 
       rescheduleTodo(id);
 
     }
   }
 
+
   rescheduleTodo(String taskId) async {
 
     var data = {
       "old_schedule_id":"$taskId",
-      "date":"$pickDate",
-      "time":"$pickTime",
-      "am_pm":"$pickAmPm"
+      "date_time":"$pickedDate",
     };
     await _todoProvider.rescheduleTodo(data,'/rescheduleTodo');
 
-    if(_todoProvider.isComplete == true){
+    if(_todoProvider.isReschedule == true){
+
       setState(() {
         _todoProvider.allTodoList.clear();
         _todoProvider.rescheduleTodoList.clear();
         _todoProvider.completedTodoList.clear();
         page = 1;
       });
+
       getTodo();
     }
 
@@ -518,8 +519,8 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                                           onPressed: () {
 
                                                                             Navigator.of(context).pop();
-                                                                            _pickDate(context,"${_todoProvider.allTodoList[index].id}");
-                                                                            //rescheduleTask(_taskProvider.taskList[index].id);
+
+                                                                            dateTimeSelect(_todoProvider.allTodoList[index].id);
 
 
                                                                           },
@@ -796,7 +797,7 @@ class _ToDoTasksState extends State<ToDoTasks> with TickerProviderStateMixin{
                                                                           onPressed: () {
 
                                                                             Navigator.of(context).pop();
-                                                                            _pickDate(context,"${_todoProvider.rescheduleTodoList[index].id}");
+                                                                            dateTimeSelect(_todoProvider.rescheduleTodoList[index].id);
                                                                             //rescheduleTask(_taskProvider.taskList[index].id);
 
 

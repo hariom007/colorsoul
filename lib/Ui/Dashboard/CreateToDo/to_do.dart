@@ -46,10 +46,8 @@ class _ToDoState extends State<ToDo> {
       "uid":"$userId",
       "title":"${_textEditingController1.text}",
       "description":"${_textEditingController2.text}",
-      "date":"$pickDate",
-      "time":"$pickTime",
-      "am_pm":"$pickAmPm",
-      "priority":"high"
+      "date_time":"$pickedDate",
+      "priority":"$priority"
 
     };
 
@@ -71,6 +69,7 @@ class _ToDoState extends State<ToDo> {
 
   }
 
+  String priority;
 
   @override
   Widget build(BuildContext context) {
@@ -189,8 +188,10 @@ class _ToDoState extends State<ToDo> {
                                     ),
                                   ),
                                   SizedBox(height: height*0.02),
+
+
                                   Text(
-                                    "Add Catagory name",
+                                    "Select Prority",
                                     style: textStyle.copyWith(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
@@ -198,7 +199,7 @@ class _ToDoState extends State<ToDo> {
                                     ),
                                   ),
                                   SizedBox(height: height*0.01),
-                                  TextFormField(
+                                 /* TextFormField(
                                     style: textStyle.copyWith(
                                         fontSize: 16,
                                         color: Colors.black
@@ -208,7 +209,64 @@ class _ToDoState extends State<ToDo> {
                                     decoration: fieldStyle1.copyWith(
                                         isDense: true
                                     ),
+                                  ),*/
+
+                                  Container(
+                                      height: 50,
+                                      width: width-30,
+                                      decoration: BoxDecoration(
+                                          gradient: LinearGradient(begin: Alignment.topCenter,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2]),
+                                          borderRadius: round.copyWith(),
+                                          boxShadow: [new BoxShadow(
+                                            color: Color.fromRGBO(0,0,0,0.2),
+                                            offset: Offset(0, 5),
+                                            blurRadius: 5,
+                                          )
+                                          ]
+                                      ),
+                                      child:  Padding(
+                                        padding: EdgeInsets.only(left: 20,right: 20),
+                                        child: DropdownButton<String>(
+                                          icon: Image.asset('assets/images/locater/down.png',width: 16),
+                                          isExpanded: true,
+                                          value: priority,
+                                          borderRadius: round.copyWith(),
+                                          style: textStyle.copyWith(
+                                              fontSize: 16,
+                                              color: AppColors.black,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                          underline: SizedBox(),
+                                          items: [
+                                            DropdownMenuItem(
+                                                value: "high",
+                                                child: Text("High")
+                                            ),
+                                            DropdownMenuItem(
+                                                value: "medium",
+                                                child: Text("Medium")
+                                            ),
+                                            DropdownMenuItem(
+                                                value: "low",
+                                                child: Text("Low")
+                                            ),
+                                          ],
+                                          onChanged: (_value) {
+                                            setState((){
+                                              priority = _value;
+                                            });
+                                          },
+                                          hint: Text(
+                                            "Select Priority",
+                                            style: textStyle.copyWith(
+                                                color: AppColors.black,
+                                                fontWeight: FontWeight.bold
+                                            ),
+                                          ),
+                                        ),
+                                      )
                                   ),
+
                                   SizedBox(height: height*0.02),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -352,8 +410,11 @@ class _ToDoState extends State<ToDo> {
     );
   }
 
+
+  DateTime pickedDate = DateTime.now();
+  DateTime newSelectedDate;
   _selecttDate(BuildContext context) async {
-    DateTime newSelectedDate = await showDatePicker(
+    newSelectedDate = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime.now().subtract(Duration(days: 0)),
@@ -374,7 +435,22 @@ class _ToDoState extends State<ToDo> {
         }
     );
 
-    pickDate = DateFormat('yyyy-MM-dd').format(newSelectedDate);
+    if (newSelectedDate != null){
+      setState(() {
+        this.pickedDate = DateTime(
+            newSelectedDate.year,
+            newSelectedDate.month,
+            newSelectedDate.day,
+            time.hour,
+            time.minute
+        );
+        setState(() {
+          pickDate = DateFormat('yyyy-MM-dd').format(newSelectedDate);
+        });
+
+      });
+
+    }
 
   }
 
@@ -398,15 +474,24 @@ class _ToDoState extends State<ToDo> {
         }
     );
 
-    if(t != null)
-    {
+    if (t != null){
       setState(() {
-
-        pickTime = "${t.hour}:${t.minute}";
-        pickAmPm = t.period == "DayPeriod.pm" ? "PM":"AM";
+        this.pickedDate = DateTime(
+            newSelectedDate.year,
+            newSelectedDate.month,
+            newSelectedDate.day,
+            time.hour,
+            time.minute
+        );
+        setState(() {
+          pickTime = "${t.hour}:${t.minute}";
+          pickAmPm = t.period == "DayPeriod.pm" ? "PM":"AM";
+        });
 
       });
+
     }
+
   }
 }
 

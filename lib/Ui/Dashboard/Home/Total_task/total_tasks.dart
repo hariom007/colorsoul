@@ -2,6 +2,7 @@ import 'package:colorsoul/Provider/task_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -424,7 +425,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                         return Padding(
                                           padding: EdgeInsets.only(bottom: 10),
                                           child: Slidable(
-                                            actionExtentRatio: 0.12,
+                                            actionExtentRatio: 0.13,
                                             actionPane: SlidableDrawerActionPane(),
                                             actions:
                                             _taskProvider.taskList[index].status == "Completed"
@@ -624,69 +625,72 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                         ),
                                                       ),
                                                     ),
-                                                    subtitle: Column(
-                                                      children: [
-                                                        SizedBox(height: height*0.01,),
-                                                        Html(
-                                                          shrinkWrap: true,
-                                                          data: "${_taskProvider.taskList[index].description}",
-                                                          style: {
-                                                            '#': Style(
-                                                                fontSize: FontSize(14),
-                                                                maxLines: 2,
-                                                                color: AppColors.black,
-                                                                textOverflow: TextOverflow.ellipsis,
-                                                                fontFamily: "Roboto-Regular"
-                                                            ),
-                                                          },
+                                                    subtitle: Html(
+                                                      shrinkWrap: true,
+                                                      data: "${_taskProvider.taskList[index].description}",
+                                                      style: {
+                                                        '#': Style(
+                                                            fontSize: FontSize(14),
+                                                            maxLines: 2,
+                                                            textAlign: TextAlign.start,
+                                                            color: AppColors.black,
+                                                            textOverflow: TextOverflow.ellipsis,
+                                                            fontFamily: "Roboto-Regular"
                                                         ),
-                                                      ],
+                                                      },
                                                     ),
-                                                    trailing: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                    trailing: Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
                                                       children: [
-                                                        Text(
-                                                          "${DateFormat('dd, MMM yyyy').format(_taskProvider.taskList[index].dateTime)}",
-                                                          style: textStyle.copyWith(
-                                                            fontSize: 14,
-                                                            color: Colors.black,
-                                                            fontWeight: FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 5),
-                                                        Text(
-                                                          "${DateFormat('hh:mm').format(_taskProvider.taskList[index].dateTime)}",
-                                                          overflow: TextOverflow.ellipsis,
-                                                          style: textStyle.copyWith(
-                                                            fontSize: 14,
-                                                            color: Colors.black,
-                                                          ),
+
+                                                        Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text(
+                                                              "${DateFormat('dd, MMM yyyy').format(_taskProvider.taskList[index].dateTime)}",
+                                                              style: textStyle.copyWith(
+                                                                fontSize: 14,
+                                                                color: Colors.black,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                            SizedBox(height: 5),
+                                                            Text(
+                                                              "${DateFormat('hh:mm').format(_taskProvider.taskList[index].dateTime)}",
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: textStyle.copyWith(
+                                                                fontSize: 14,
+                                                                color: Colors.black,
+                                                              ),
+                                                            ),
+
+                                                          ],
                                                         ),
 
-                                                        SizedBox(height: 10),
+                                                        SizedBox(width: 6),
 
                                                         _taskProvider.taskList[index].status == "Completed"
                                                             ?
-                                                        Icon(Icons.star,color: Colors.green)
+                                                        Icon(Icons.star,color: Colors.green,size: 20)
                                                             :
                                                         Container(
                                                           decoration: BoxDecoration(
-                                                            shape: BoxShape.circle,
-                                                            color:
+                                                              shape: BoxShape.circle,
+                                                              color:
                                                               _taskProvider.taskList[index].status == "New_schedule"
-                                                              ?
-                                                                  Colors.green
+                                                                  ?
+                                                              Colors.green
                                                                   :
-                                                                  _taskProvider.taskList[index].status == "Over_time"
-                                                              ?
-                                                                  Colors.red
-                                                                      :
-                                                                  _taskProvider.taskList[index].status == "Rescheduled"
-                                                                      ?
-                                                                  Colors.amberAccent
-                                                                      :
-                                                                  Colors.white
+                                                              _taskProvider.taskList[index].status == "Over_time"
+                                                                  ?
+                                                              Colors.red
+                                                                  :
+                                                              _taskProvider.taskList[index].status == "Rescheduled"
+                                                                  ?
+                                                              Colors.amberAccent
+                                                                  :
+                                                              Colors.transparent
 
                                                           ),
                                                           width: 8,height: 8,
@@ -927,23 +931,19 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                         ),
                                                       ),
                                                     ),
-                                                    subtitle: Column(
-                                                      children: [
-                                                        SizedBox(height: height*0.01,),
-                                                        Html(
-                                                          shrinkWrap: true,
-                                                          data: "${_taskProvider.rescheduleTaskList[index].description}",
-                                                          style: {
-                                                            '#': Style(
-                                                                fontSize: FontSize(14),
-                                                                maxLines: 2,
-                                                                color: AppColors.black,
-                                                                textOverflow: TextOverflow.ellipsis,
-                                                                fontFamily: "Roboto-Regular"
-                                                            ),
-                                                          },
+                                                    subtitle: Html(
+                                                      shrinkWrap: true,
+                                                      data: "${_taskProvider.rescheduleTaskList[index].description}",
+                                                      style: {
+                                                        '#': Style(
+                                                            fontSize: FontSize(14),
+                                                            maxLines: 2,
+                                                            textAlign: TextAlign.start,
+                                                            color: AppColors.black,
+                                                            textOverflow: TextOverflow.ellipsis,
+                                                            fontFamily: "Roboto-Regular"
                                                         ),
-                                                      ],
+                                                      },
                                                     ),
                                                     trailing: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -1056,23 +1056,19 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                         ),
                                                       ),
                                                     ),
-                                                    subtitle: Column(
-                                                      children: [
-                                                        SizedBox(height: height*0.01,),
-                                                        Html(
-                                                          shrinkWrap: true,
-                                                          data: "${_taskProvider.completedTaskList[index].description}",
-                                                          style: {
-                                                            '#': Style(
-                                                                fontSize: FontSize(14),
-                                                                maxLines: 2,
-                                                                color: AppColors.black,
-                                                                textOverflow: TextOverflow.ellipsis,
-                                                                fontFamily: "Roboto-Regular"
-                                                            ),
-                                                          },
+                                                    subtitle: Html(
+                                                      shrinkWrap: true,
+                                                      data: "${_taskProvider.completedTaskList[index].description}",
+                                                      style: {
+                                                        '#': Style(
+                                                            fontSize: FontSize(14),
+                                                            maxLines: 2,
+                                                            textAlign: TextAlign.start,
+                                                            color: AppColors.black,
+                                                            textOverflow: TextOverflow.ellipsis,
+                                                            fontFamily: "Roboto-Regular"
                                                         ),
-                                                      ],
+                                                      },
                                                     ),
                                                     trailing: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -1094,6 +1090,14 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                             color: Colors.black,
                                                           ),
                                                         ),
+                                                        SizedBox(height: 10),
+                                                        Container(
+                                                          decoration: BoxDecoration(
+                                                              shape: BoxShape.circle,
+                                                              color: Colors.green
+                                                          ),
+                                                          width: 8,height: 8,
+                                                        )
 
                                                       ],
                                                     ),
