@@ -127,82 +127,83 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
   }
 
 
-  TimeOfDay time =  TimeOfDay.now();
-  String pickDate,pickTime,pickAmPm;
+  DateTime date;
+  TimeOfDay time;
 
-  _pickDate(BuildContext context,String id) async {
-    DateTime newSelectedDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now().subtract(Duration(days: 0)),
-        lastDate: DateTime(2100),
-        builder: (BuildContext context, Widget child) {
-          return Theme(
-            data: ThemeData.dark().copyWith(
-              colorScheme: ColorScheme.dark(
-                primary: Colors.grey,
-                onPrimary: Colors.black,
-                surface: Colors.white,
-                onSurface: Colors.black,
-              ),
-              dialogBackgroundColor: AppColors.white,
+  DateTime pickedDate = DateTime.now();
+  TimeOfDay pickedTime = TimeOfDay.now();
+
+  String formattedDate = '',formattedtime = '';
+
+  dateTimeSelect(id) async {
+    date = await showDatePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(DateTime.now().year + 5),
+      initialDate: pickedDate,
+      builder: (context,child){
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: Colors.grey,
+              onPrimary: Colors.black,
+              surface: Colors.white,
+              onSurface: Colors.black,
             ),
-            child: child,
-          );
-        }
+            dialogBackgroundColor: AppColors.white,
+          ),
+          child: child,
+        );
+      },
     );
 
-    if(newSelectedDate != null){
-      pickDate = DateFormat('yyyy-MM-dd').format(newSelectedDate);
-      //print(pickDate);
-      _pickTime(id);
-    }
-
-  }
-
-  _pickTime(String id) async{
-    TimeOfDay t = await showTimePicker(
-        context: context,
-        initialTime: time,
-        builder: (BuildContext context, Widget child) {
-          return Theme(
-            data: ThemeData.dark().copyWith(
-              colorScheme: ColorScheme.dark(
-                primary: Colors.grey,
-                onPrimary: Colors.black,
-                surface: Colors.white,
-                onSurface: Colors.black,
-              ),
-              dialogBackgroundColor: AppColors.white,
+    time = await showTimePicker(
+      context: context,
+      initialTime: pickedTime,
+      builder: (context,child){
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: Colors.grey,
+              onPrimary: Colors.black,
+              surface: Colors.white,
+              onSurface: Colors.black,
             ),
-            child: child,
-          );
-        }
+            dialogBackgroundColor: AppColors.white,
+          ),
+          child: child,
+        );
+      },
     );
 
-    if(t != null)
-    {
+    if (date != null){
+      setState(() {
+        this.pickedDate = DateTime(
+            date.year,
+            date.month,
+            date.day,
+            time.hour,
+            time.minute
+        );
+        setState(() {
+          formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+          formattedtime = DateFormat('hh:mm a').format(pickedDate);
+        });
 
-      pickTime = "${t.hour}:${t.minute}";
-      pickAmPm = t.period == "DayPeriod.pm" ? "PM":"AM";
+      });
 
-/*
-      print(pickTime);
-      print(pickAmPm);
-*/
       rescheduleTask(id);
 
     }
   }
 
-
   rescheduleTask(String taskId) async {
+
+    print(pickedDate);
 
     var data = {
       "old_schedule_id":"$taskId",
-      "date":"$pickDate",
-      "time":"$pickTime",
-      "am_pm":"$pickAmPm"
+      "date_time": "${pickedDate}",
     };
     await _taskProvider.rescheduleTask(data,'/rescheduleTask');
 
@@ -298,6 +299,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                     ),
                     child: Column(
                       children: [
+
                         TabBar(
                           onTap: (index) {
                             setState(() {
@@ -401,6 +403,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                             )
                           ]
                         ),
+
                         Expanded(
                           child: TabBarView(
                             physics: NeverScrollableScrollPhysics(),
@@ -423,7 +426,12 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                           child: Slidable(
                                             actionExtentRatio: 0.12,
                                             actionPane: SlidableDrawerActionPane(),
-                                            actions: [
+                                            actions:
+                                            _taskProvider.taskList[index].status == "Completed"
+                                            ?
+                                                []
+                                            :
+                                            [
                                               InkWell(
                                                 onTap: (){
 
@@ -478,7 +486,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                                         onPressed: () {
 
                                                                           Navigator.of(context).pop();
-                                                                          _pickDate(context,"${_taskProvider.taskList[index].id}");
+                                                                          dateTimeSelect("${_taskProvider.taskList[index].id}");
                                                                           //rescheduleTask(_taskProvider.taskList[index].id);
 
 
@@ -508,7 +516,12 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                 ),
                                               )
                                             ],
-                                            secondaryActions: [
+                                            secondaryActions:
+                                            _taskProvider.taskList[index].status == "Completed"
+                                                ?
+                                            []
+                                                :
+                                            [
                                               InkWell(
                                                 onTap: (){
 
@@ -631,9 +644,10 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                     ),
                                                     trailing: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.end,
+                                                      mainAxisAlignment: MainAxisAlignment.end,
                                                       children: [
                                                         Text(
-                                                          "${DateFormat('dd, MMM yyyy').format(_taskProvider.taskList[index].date)}",
+                                                          "${DateFormat('dd, MMM yyyy').format(_taskProvider.taskList[index].dateTime)}",
                                                           style: textStyle.copyWith(
                                                             fontSize: 14,
                                                             color: Colors.black,
@@ -642,13 +656,38 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                         ),
                                                         SizedBox(height: 5),
                                                         Text(
-                                                          "${_taskProvider.taskList[index].time}",
+                                                          "${DateFormat('hh:mm').format(_taskProvider.taskList[index].dateTime)}",
                                                           overflow: TextOverflow.ellipsis,
                                                           style: textStyle.copyWith(
                                                             fontSize: 14,
                                                             color: Colors.black,
                                                           ),
                                                         ),
+
+                                                        SizedBox(height: 10),
+
+                                                        Container(
+                                                          decoration: BoxDecoration(
+                                                            shape: BoxShape.circle,
+                                                            color:
+                                                              _taskProvider.taskList[index].status == "New_schedule"
+                                                              ?
+                                                                  Colors.green
+                                                                  :
+                                                                  _taskProvider.taskList[index].status == "Over_time"
+                                                              ?
+                                                                  Colors.red
+                                                                      :
+                                                                  _taskProvider.taskList[index].status == "Rescheduled"
+                                                                      ?
+                                                                  Colors.amberAccent
+                                                                      :
+                                                                  Colors.white
+
+                                                          ),
+                                                          width: 8,height: 8,
+                                                        )
+
                                                       ],
                                                     ),
                                                   ),
@@ -695,7 +734,8 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                           child: Slidable(
                                             actionExtentRatio: 0.12,
                                             actionPane: SlidableDrawerActionPane(),
-                                            actions: [
+                                            actions:
+                                            [
                                               InkWell(
                                                 onTap: (){
 
@@ -750,7 +790,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                                         onPressed: () {
 
                                                                           Navigator.of(context).pop();
-                                                                          _pickDate(context,"${_taskProvider.rescheduleTaskList[index].id}");
+                                                                          dateTimeSelect("${_taskProvider.rescheduleTaskList[index].id}");
                                                                           //rescheduleTask(_taskProvider.taskList[index].id);
 
 
@@ -903,9 +943,10 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                     ),
                                                     trailing: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.end,
+                                                      mainAxisAlignment: MainAxisAlignment.end,
                                                       children: [
                                                         Text(
-                                                          "${DateFormat('dd, MMM yyyy').format(_taskProvider.rescheduleTaskList[index].date)}",
+                                                          "${DateFormat('dd, MMM yyyy').format(_taskProvider.rescheduleTaskList[index].dateTime)}",
                                                           style: textStyle.copyWith(
                                                             fontSize: 14,
                                                             color: Colors.black,
@@ -914,13 +955,38 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                         ),
                                                         SizedBox(height: 5),
                                                         Text(
-                                                          "${_taskProvider.rescheduleTaskList[index].time}",
+                                                          "${DateFormat('HH:mm').format(_taskProvider.rescheduleTaskList[index].dateTime)}",
                                                           overflow: TextOverflow.ellipsis,
                                                           style: textStyle.copyWith(
                                                             fontSize: 14,
                                                             color: Colors.black,
                                                           ),
                                                         ),
+
+                                                        SizedBox(height: 10),
+
+                                                        Container(
+                                                          decoration: BoxDecoration(
+                                                              shape: BoxShape.circle,
+                                                              color:
+                                                              _taskProvider.rescheduleTaskList[index].status == "New_schedule"
+                                                                  ?
+                                                              Colors.green
+                                                                  :
+                                                              _taskProvider.rescheduleTaskList[index].status == "Over_time"
+                                                                  ?
+                                                              Colors.red
+                                                                  :
+                                                              _taskProvider.rescheduleTaskList[index].status == "Rescheduled"
+                                                                  ?
+                                                              Colors.amberAccent
+                                                                  :
+                                                              Colors.white
+
+                                                          ),
+                                                          width: 8,height: 8,
+                                                        )
+
                                                       ],
                                                     ),
                                                   ),
@@ -1008,7 +1074,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                       crossAxisAlignment: CrossAxisAlignment.end,
                                                       children: [
                                                         Text(
-                                                          "${DateFormat('dd, MMM yyyy').format(_taskProvider.completedTaskList[index].date)}",
+                                                          "${DateFormat('dd, MMM yyyy').format(_taskProvider.completedTaskList[index].dateTime)}",
                                                           style: textStyle.copyWith(
                                                             fontSize: 14,
                                                             color: Colors.black,
@@ -1017,7 +1083,7 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                                         ),
                                                         SizedBox(height: 5),
                                                         Text(
-                                                          "${_taskProvider.completedTaskList[index].time}",
+                                                          "${DateFormat('HH:mm').format(_taskProvider.completedTaskList[index].dateTime)}",
                                                           overflow: TextOverflow.ellipsis,
                                                           style: textStyle.copyWith(
                                                             fontSize: 14,
@@ -1053,9 +1119,11 @@ class _TotalTasksState extends State<TotalTasks> with TickerProviderStateMixin{
                                   ],
                                 ),
                               )
+
                             ],
                           ),
                         ),
+
                       ],
                     ),
                   ),
