@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final productModel = productModelFromJson(jsonString);
+
 import 'dart:convert';
 
 List<ProductModel> productModelFromJson(String str) => List<ProductModel>.from(json.decode(str).map((x) => ProductModel.fromJson(x)));
@@ -12,6 +16,7 @@ class ProductModel {
     this.clProductSubCatId,
     this.clProductSupplierId,
     this.clProductName,
+    this.clProductShortname,
     this.clProductSortDesc,
     this.clProductDesc,
     this.clProductUnitPrice,
@@ -35,6 +40,7 @@ class ProductModel {
     this.clProductUpdatedBy,
     this.clProductCreatedDate,
     this.clProductUpdatedDate,
+    this.isDeleted,
     this.clCategoryName,
     this.clSubcategoryName,
     this.colors,
@@ -46,6 +52,7 @@ class ProductModel {
   String clProductSubCatId;
   String clProductSupplierId;
   String clProductName;
+  String clProductShortname;
   String clProductSortDesc;
   String clProductDesc;
   String clProductUnitPrice;
@@ -69,6 +76,7 @@ class ProductModel {
   String clProductUpdatedBy;
   DateTime clProductCreatedDate;
   String clProductUpdatedDate;
+  String isDeleted;
   String clCategoryName;
   String clSubcategoryName;
   List<ApiColor> colors;
@@ -80,6 +88,7 @@ class ProductModel {
     clProductSubCatId: json["cl_product_sub_cat_id"],
     clProductSupplierId: json["cl_product_supplier_id"],
     clProductName: json["cl_product_name"],
+    clProductShortname: json["cl_product_shortname"],
     clProductSortDesc: json["cl_product_sort_desc"],
     clProductDesc: json["cl_product_desc"],
     clProductUnitPrice: json["cl_product_unit_price"],
@@ -103,6 +112,7 @@ class ProductModel {
     clProductUpdatedBy: json["cl_product_updated_by"],
     clProductCreatedDate: DateTime.parse(json["cl_product_created_date"]),
     clProductUpdatedDate: json["cl_product_updated_date"],
+    isDeleted: json["is_deleted"],
     clCategoryName: json["cl_category_name"],
     clSubcategoryName: json["cl_subcategory_name"],
     colors: List<ApiColor>.from(json["colors"].map((x) => ApiColor.fromJson(x))),
@@ -115,6 +125,7 @@ class ProductModel {
     "cl_product_sub_cat_id": clProductSubCatId,
     "cl_product_supplier_id": clProductSupplierId,
     "cl_product_name": clProductName,
+    "cl_product_shortname": clProductShortname,
     "cl_product_sort_desc": clProductSortDesc,
     "cl_product_desc": clProductDesc,
     "cl_product_unit_price": clProductUnitPrice,
@@ -138,6 +149,7 @@ class ProductModel {
     "cl_product_updated_by": clProductUpdatedBy,
     "cl_product_created_date": clProductCreatedDate.toIso8601String(),
     "cl_product_updated_date": clProductUpdatedDate,
+    "is_deleted": isDeleted,
     "cl_category_name": clCategoryName,
     "cl_subcategory_name": clSubcategoryName,
     "colors": List<dynamic>.from(colors.map((x) => x.toJson())),

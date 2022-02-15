@@ -105,23 +105,7 @@ class _NewOrderState extends State<NewOrder> {
 
 
   String groupId;
-  getProducts(BuildContext context) async {
-    setState(() {
-      isLoaded = false;
-    });
 
-    var data ={
-      "search_term" : "",
-      "group_id":"$groupId"
-    };
-    await _productProvider.getSearchProducts(data,'/searchProductByKeyword');
-    setState(() {
-      isLoaded = true;
-    });
-
-    addNewItem(context);
-
-  }
 
   selectGroup(BuildContext context) {
 
@@ -140,6 +124,40 @@ class _NewOrderState extends State<NewOrder> {
             onWillPop: () async => false,
             child: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
+
+
+                  getProducts(context) async {
+
+                    setState(() {
+                      isLoading = true;
+                      checkBoxList.clear();
+                    });
+
+                    var data ={
+                      "search_term" : "",
+                      "group_id":"$groupId"
+                    };
+                    await _productProvider.getSearchProducts(data,'/searchProductByKeyword');
+                    if(_productProvider.isSuccess == true){
+
+                      setState(() {
+
+                        for(int i = 0;i<_productProvider.searchProductList.length;i++){
+                          print(i);
+                          var data = {
+                            "id":"${_productProvider.searchProductList[i].clProductId}",
+                            "value": false
+                          };
+                          checkBoxList.add(data);
+                        }
+                        isLoading = false;
+
+                      });
+                      addNewItem();
+
+                    }
+
+                  }
 
                   return Container(
                       padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
@@ -208,7 +226,8 @@ class _NewOrderState extends State<NewOrder> {
                                       getProducts(context);
 
                                     },
-                                    child: Card(
+                                    child:
+                                    Card(
                                         elevation: 10,
                                         shape: RoundedRectangleBorder(
                                             borderRadius: round1.copyWith()
@@ -221,8 +240,10 @@ class _NewOrderState extends State<NewOrder> {
                                               style: textStyle.copyWith(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
+                                                color: AppColors.black
                                               ),
-                                            )
+                                            ),
+                                            trailing: Icon(Icons.chevron_right),
                                           ),
                                         )
 
@@ -248,8 +269,10 @@ class _NewOrderState extends State<NewOrder> {
   }
 
 
-  ProductModel selectedProduct;
-  addNewItem(BuildContext context) {
+  List checkBoxList = [];
+
+  List<ProductModel> selectedProductList = [];
+  addNewItem() {
 
     bool isLoading = false;
     TextEditingController searchController = TextEditingController();
@@ -268,7 +291,7 @@ class _NewOrderState extends State<NewOrder> {
             child: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
 
-                  getProducts(String value) async {
+/*                  getProducts(String value) async {
 
                     setState((){
                       isLoading = true;
@@ -284,259 +307,7 @@ class _NewOrderState extends State<NewOrder> {
                       isLoading = false;
                     });
 
-                  }
-
-                  return Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                    height: MediaQuery.of(context).size.height-100,
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      children: [
-
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10,right: 10),
-                          child: Row(
-                            children: [
-
-                              Expanded(
-                                child: Text(
-                                  "Add products",
-                                  style: textStyle.copyWith(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16
-                                  ),
-                                ),
-                              ),
-
-                              InkWell(
-                                onTap: (){
-
-                                  Navigator.pop(context);
-
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(Icons.close),
-                                ),
-                              )
-
-
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: 20),
-
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10,right: 10),
-                          child: TextFormField(
-                            controller: searchController,
-                              style: textStyle.copyWith(
-                                  color: AppColors.black
-                              ),
-                              cursorColor: AppColors.black,
-                              cursorHeight: 22,
-                              decoration: fieldStyle1.copyWith(
-                                  hintText: "Search Product",
-                                  hintStyle: textStyle.copyWith(
-                                      color: AppColors.black
-                                  ),
-                                  prefixIcon: new IconButton(
-                                    icon: new Image.asset('assets/images/locater/search.png',width: 20,height: 20),
-                                    onPressed: null,
-                                  ),
-                                  isDense: true
-                              ),
-                            onChanged: (value){
-
-                              setState((){
-                                _productProvider.searchProductList.clear();
-                              });
-                              if(_productProvider.isLoaded == true){
-                                getProducts(value);
-                              }
-                              else{
-
-                              }
-
-                            },
-                          ),
-                        ),
-
-                        Expanded(
-                          child:
-                          isLoading == true
-                              ?
-                          SpinKitThreeBounce(
-                            color: AppColors.black,
-                            size: 25.0,
-                          )
-                              :
-                          ListView.builder(
-                            padding: EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
-                            itemCount: _productProvider.searchProductList.length,
-                            shrinkWrap: true,
-                            itemBuilder:(context, index){
-                              var productData = _productProvider.searchProductList[index];
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: 10),
-                                child: InkWell(
-                                  onTap: (){
-
-/*
-                                    selectedProduct = productData;
-                                    for(int i =0;i<selectedProduct.colors.length;i++){
-
-                                      var controller = TextEditingController();
-                                      var controller1 = TextEditingController();
-                                      selectedQuantity.add(controller);
-                                      selectedAmount.add(controller1);
-                                      selected.add(false);
-
-                                    }
-*/
-
-/*
-                                    selectedQuantity = List.filled(selectedProduct.colors.length, TextEditingController());
-                                    selectedAmount = List.filled(selectedProduct.colors.length, TextEditingController());
-*/
-
-/*
-                                    selectColors(context);
-*/
-
-
-                                  },
-                                  child: Card(
-                                      elevation: 10,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: round1.copyWith()
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsets.only(top: 5,bottom: 6),
-                                        child: ListTile(
-                                          leading: CachedNetworkImage(
-                                            imageUrl:
-                                            productData.clProductImg.length != 0
-                                                ?
-                                            "${productData.clProductImg[0].hPath}"+"${productData.clProductImg[0].imageName}"
-                                            :
-                                            "",
-                                            placeholder: (context, url) => Container(
-                                              width: 70,
-                                              height: 70,
-                                              child: Center(
-                                                  child: SpinKitThreeBounce(
-                                                    color: AppColors.black,
-                                                    size: 25.0,
-                                                  )
-                                              ),
-                                            ),
-                                            errorWidget: (context, url, error) => Icon(Icons.error),
-                                            width: 70,
-                                            height: 70,
-                                          ),
-                                          title: Padding(
-                                            padding: EdgeInsets.only(top: 6),
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    "${productData.clProductName}",
-                                                    style: textStyle.copyWith(
-                                                        fontSize: 16,
-                                                        color: Colors.black,
-                                                        fontWeight: FontWeight.bold
-                                                    ),
-                                                  ),
-                                                ),
-
-                                                Text(
-                                                    "In Stock",
-                                                    style: textStyle.copyWith(
-                                                        fontSize: 12,
-                                                        color: Color.fromRGBO(0, 169, 145, 1),
-                                                        fontWeight: FontWeight.bold
-                                                    )
-                                                ),
-
-                                              ],
-                                            ),
-                                          ),
-                                          subtitle: Padding(
-                                            padding: const EdgeInsets.only(top: 6),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(height: 2),
-
-                                                Html(
-                                                  shrinkWrap: true,
-                                                  data: "${productData.clProductSortDesc}",
-                                                  style: {
-                                                    '#': Style(
-                                                        fontSize: FontSize(14),
-                                                        maxLines: 1,
-                                                        color: AppColors.black,
-                                                        textOverflow: TextOverflow.ellipsis,
-                                                        fontFamily: "Roboto-Regular"
-                                                    ),
-                                                  },
-                                                ),
-
-                                                SizedBox(height: 5),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      )
-
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-
-                      ],
-                    )
-                  );
-                }
-            ),
-          );
-        }
-    ).whenComplete(() {
-      setState(() {
-        print("Product Added");
-      });
-    });
-  }
-
-
-  bool isSelectAll = false;
-  List<bool> selected = [];
-
-  List<TextEditingController> selectedQuantity = [];
-  List<TextEditingController> selectedAmount = [];
-  TextEditingController allQuantity = TextEditingController();
-  TextEditingController allAmount = TextEditingController();
-
-  selectColors(BuildContext context) {
-
-    showModalBottomSheet(
-        enableDrag: false,
-        isScrollControlled:true,
-        backgroundColor: Colors.white,
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        builder: (context) {
-          return WillPopScope(
-            onWillPop: () async => false,
-            child: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+                  }*/
 
                   return Container(
                       padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
@@ -552,7 +323,7 @@ class _NewOrderState extends State<NewOrder> {
 
                                 Expanded(
                                   child: Text(
-                                    "Select Products",
+                                    "Add products",
                                     style: textStyle.copyWith(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
@@ -581,447 +352,183 @@ class _NewOrderState extends State<NewOrder> {
                           SizedBox(height: 20),
 
                           Padding(
-                            padding: EdgeInsets.only(left: 10,right: 10),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "Select All",
-                                          style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      ),
-
-                                      Checkbox(
-                                          value: isSelectAll,
-                                          onChanged: (value){
-                                            setState((){
-                                              isSelectAll = value;
-
-                                              if(isSelectAll == true){
-
-                                                setState((){
-                                                  selectedQuantity.clear();
-                                                  for(int i =0;i<selectedProduct.colors.length;i++){
-                                                    var controller = TextEditingController(text: "${allQuantity.text}");
-                                                    selectedQuantity.add(controller);
-                                                  }
-                                                });
-
-                                                setState((){
-                                                  selectedAmount.clear();
-                                                  for(int i =0;i<selectedProduct.colors.length;i++){
-                                                    var controller1 = TextEditingController(text: "${allAmount.text}");
-                                                    selectedAmount.add(controller1);
-                                                  }
-                                                });
-
-                                                setState((){
-                                                  selected.clear();
-                                                  for(int i =0;i<selectedProduct.colors.length;i++){
-                                                    selected.add(true);
-                                                  }
-                                                });
-
-                                              }
-                                              else{
-                                                setState((){
-                                                  selectedQuantity.clear();
-                                                  for(int i =0;i<selectedProduct.colors.length;i++){
-                                                    var controller = TextEditingController();
-                                                    selectedQuantity.add(controller);
-                                                  }
-                                                });
-
-                                                setState((){
-                                                  selectedAmount.clear();
-                                                  for(int i =0;i<selectedProduct.colors.length;i++){
-                                                    var controller1 = TextEditingController();
-                                                    selectedAmount.add(controller1);
-                                                  }
-                                                });
-
-                                                setState((){
-                                                  selected.clear();
-                                                  for(int i =0;i<selectedProduct.colors.length;i++){
-                                                    selected.add(false);
-                                                  }
-                                                });
-                                              }
-
-
-                                            });
-                                          }
-                                      )
-
-                                    ],
+                            padding: const EdgeInsets.only(left: 10,right: 10),
+                            child: TextFormField(
+                              controller: searchController,
+                              style: textStyle.copyWith(
+                                  color: AppColors.black
+                              ),
+                              cursorColor: AppColors.black,
+                              cursorHeight: 22,
+                              decoration: fieldStyle1.copyWith(
+                                  hintText: "Search Product",
+                                  hintStyle: textStyle.copyWith(
+                                      color: AppColors.black
                                   ),
-                                ),
-
-                                SizedBox(width: 10),
-
-                                Container(
-                                  width: 80,
-                                  child: TextFormField(
-                                    controller: allQuantity,
-                                    keyboardType: TextInputType.number,
-                                    enabled: isSelectAll,
-                                    validator: (String value) {
-                                      if(value.isEmpty)
-                                      {
-                                        return "";
-                                      }
-                                      return null;
-                                    },
-                                    style: textStyle.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    cursorHeight: 22,
-                                    cursorColor: Colors.grey,
-                                    decoration: InputDecoration(
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderRadius: BorderRadius.only(),
-                                      ),
-                                      focusedBorder: UnderlineInputBorder(
-                                        borderRadius: BorderRadius.only(),
-                                      ),
-                                      isDense: true,
-                                      hintText: "Quantity",
-                                      errorStyle: TextStyle(height: 0,fontSize: 0),
-                                    ),
-                                    onChanged: (value){
-
-                                      setState((){
-                                        selectedQuantity.clear();
-                                        for(int i =0;i<selectedProduct.colors.length;i++){
-                                          var controller = TextEditingController(text: "$value");
-                                          selectedQuantity.add(controller);
-                                        }
-                                      });
-
-                                    },
+                                  prefixIcon: new IconButton(
+                                    icon: new Image.asset('assets/images/locater/search.png',width: 20,height: 20),
+                                    onPressed: null,
                                   ),
-                                ),
+                                  isDense: true
+                              ),
+                              onChanged: (value){
 
-                                SizedBox(width: 10),
+                                setState((){
+                                  _productProvider.searchProductList.clear();
+                                });
+                                if(_productProvider.isLoaded == true){
+                                  //getProducts(value);
+                                }
+                                else{
 
-                                Container(
-                                  width: 80,
-                                  child: TextFormField(
-                                    controller: allAmount,
-                                    keyboardType: TextInputType.number,
-                                    enabled: isSelectAll,
-                                    validator: (String value) {
-                                      if(value.isEmpty)
-                                      {
-                                        return "";
-                                      }
-                                      return null;
-                                    },
-                                    style: textStyle.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    cursorHeight: 22,
-                                    cursorColor: Colors.grey,
-                                    decoration: InputDecoration(
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderRadius: BorderRadius.only(),
-                                      ),
-                                      focusedBorder: UnderlineInputBorder(
-                                        borderRadius: BorderRadius.only(),
-                                      ),
-                                      isDense: true,
-                                      hintText: "Amount",
-                                      errorStyle: TextStyle(height: 0,fontSize: 0),
-                                    ),
-                                    onChanged: (value){
+                                }
 
-                                      setState((){
-                                        selectedAmount.clear();
-                                        for(int i =0;i<selectedProduct.colors.length;i++){
-                                          var controller = TextEditingController(text: "$value");
-                                          selectedAmount.add(controller);
-                                        }
-                                      });
-
-                                    },
-                                  ),
-                                ),
-                              ],
+                              },
                             ),
                           ),
 
-                          SizedBox(height: 20),
-
                           Expanded(
                             child:
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-
-                                Divider(
-                                    height: 20,
-                                    color: Color.fromRGBO(185, 185, 185, 0.75),
-                                    thickness: 1.2
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 10,right: 10),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "Item Code",
-                                          style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 70,
-                                        child: Text(
-                                          "Quantity",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-                                      Container(
-                                        width: 70,
-                                        child: Text(
-                                          "Amount",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-                                      Container(
-                                        width: 50,
-                                        child: Text(
-                                          "Select",
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Divider(
-                                    height: 20,
-                                    color: Color.fromRGBO(185, 185, 185, 0.75),
-                                    thickness: 1.2
-                                ),
-
-                                ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.only(top: 10,left: 10,right: 10),
-                                  itemCount: selectedProduct.colors.length,
-                                  shrinkWrap: true,
-                                  itemBuilder:(context, index){
-                                    var colorData = selectedProduct.colors[index];
-
-                                    return Padding(
-                                      padding: const EdgeInsets.only(bottom: 20),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              "${colorData.clColorCode}",
-                                              style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                              ),
-                                            ),
-                                          ),
-
-                                          Container(
-                                            width: 70,
-                                            child: TextFormField(
-                                              controller: selectedQuantity[index],
-                                              keyboardType: TextInputType.number,
-                                              validator: (String value) {
-                                                if(value.isEmpty)
-                                                {
-                                                  return "";
-                                                }
-                                                return null;
-                                              },
-                                              style: textStyle.copyWith(
-                                                  fontSize: 16,
-                                                  color: Colors.black
-                                              ),
-                                              cursorHeight: 22,
-                                              textAlign: TextAlign.center,
-                                              cursorColor: Colors.grey,
-                                              decoration: InputDecoration(
-                                                enabledBorder: UnderlineInputBorder(
-                                                  borderRadius: BorderRadius.only(),
-                                                ),
-                                                focusedBorder: UnderlineInputBorder(
-                                                  borderRadius: BorderRadius.only(),
-                                                ),
-                                                isDense: true,
-                                                hintText: "Quantity",
-                                                errorStyle: TextStyle(height: 0,fontSize: 0),
-                                              ),
-                                            ),
-                                          ),
-
-                                          SizedBox(width: 15),
-
-                                          Container(
-                                            width: 70,
-                                            child: TextFormField(
-                                              controller: selectedAmount[index],
-                                              keyboardType: TextInputType.number,
-                                              validator: (String value) {
-                                                if(value.isEmpty)
-                                                {
-                                                  return "";
-                                                }
-                                                return null;
-                                              },
-                                              style: textStyle.copyWith(
-                                                  fontSize: 16,
-                                                  color: Colors.black
-                                              ),
-                                              cursorHeight: 22,
-                                              textAlign: TextAlign.center,
-                                              cursorColor: Colors.grey,
-                                              decoration: InputDecoration(
-                                                enabledBorder: UnderlineInputBorder(
-                                                  borderRadius: BorderRadius.only(),
-                                                ),
-                                                focusedBorder: UnderlineInputBorder(
-                                                  borderRadius: BorderRadius.only(),
-                                                ),
-                                                isDense: true,
-                                                hintText: "Amount",
-                                                errorStyle: TextStyle(height: 0,fontSize: 0),
-                                              ),
-                                            ),
-                                          ),
-
-                                          SizedBox(width: 10),
-
-                                          Checkbox(
-                                              value: selected[index],
-                                              onChanged: (value){
-                                                setState((){
-                                                  selected[index] = value;
-                                                });
-                                              }
-                                          )
-
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-
-                                SizedBox(
-                                    height: 50,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: DecoratedBox(
-                                      decoration: BoxDecoration(
-                                          gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                          borderRadius: round.copyWith()
-                                      ),
-                                      child: ElevatedButton(
-                                        onPressed: () {
-
-                                          bool isSucess = true;
-
-                                          print(selected.length);
-
-                                          for(int i=0 ; i<selected.length ; i++){
-
-                                            if(selected[i] == true){
-                                              if(selectedAmount[i].text == "" || selectedQuantity[i].text == "" ){
-                                                setState((){
-                                                  isSucess = false;
-                                                });
-                                              }
-                                            }
-
-                                          }
-
-                                          if(isSucess == true){
-
-                                            for(int i=0;i<selected.length;i++){
-
-                                              if(selected[i] == true){
-
-                                                var product = {
-                                                  "pid":"${selectedProduct.clProductId}",
-                                                  "color_id":"${selectedProduct.colors[i].clColorId}",
-                                                  "color_code":"${selectedProduct.colors[i].clColorCode}",
-                                                  "sku":"${selectedProduct.colors[i].skuCode}",
-                                                  "amount":"${selectedAmount[i].text}",
-                                                  "qty":"${selectedQuantity[i].text}"
-                                                };
-                                                viewProduct.add(product);
-                                              }
-                                            }
-
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-
-                                          }
-                                          else{
-
-                                            Fluttertoast.showToast(
-                                                msg: "Please Add Selected Product Price and Quantity !",
-                                                toastLength: Toast.LENGTH_SHORT,
-                                                gravity: ToastGravity.BOTTOM,
-                                                timeInSecForIosWeb: 1,
-                                                backgroundColor: Colors.red,
-                                                textColor: Colors.white,
-                                                fontSize: 16.0
-                                            );
-
-                                          }
-
-
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            elevation: 10,
-                                            primary: Colors.transparent,
-                                            shape: StadiumBorder()
-                                        ),
-                                        child: Text('Add Products',
-                                          textAlign: TextAlign.center,
-                                          style: textStyle.copyWith(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                ),
-
-                              ],
+                            isLoading == true
+                                ?
+                            SpinKitThreeBounce(
+                              color: AppColors.black,
+                              size: 25.0,
                             )
+                                :
+                            ListView.builder(
+                              padding: EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
+                              itemCount: _productProvider.searchProductList.length,
+                              shrinkWrap: true,
+                              itemBuilder:(context, index){
+                                var productData = _productProvider.searchProductList[index];
+
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 10),
+                                  child: InkWell(
+                                    onTap: (){
+
+
+                                    },
+                                    child: Card(
+                                        elevation: 3,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: round1.copyWith()
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 20,right: 20,top: 10,bottom: 10),
+                                          child: Row(
+                                            children: [
+
+                                              Expanded(
+                                                child: Text(
+                                                  "${productData.clProductShortname}",
+                                                  style: textStyle.copyWith(
+                                                      fontSize: 16,
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                              ),
+
+                                              Container(
+                                                width: 25,
+                                                height: 25,
+                                                child: ListView.builder(
+                                                  shrinkWrap: true,
+                                                  itemCount: checkBoxList.length,
+                                                  itemBuilder: (context, index2) {
+
+                                                    return
+                                                      checkBoxList[index2]["id"] == productData.clProductId
+                                                          ?
+                                                      SizedBox(
+                                                        height: 20,width: 20,
+                                                        child: Checkbox(
+                                                            value: checkBoxList[index2]["value"],
+                                                            checkColor: AppColors.white,
+                                                            activeColor: AppColors.black,
+                                                            onChanged: (value){
+
+                                                              print(value);
+
+                                                              setState((){
+                                                                var data = {
+                                                                  "id":"${checkBoxList[index2]["id"]}",
+                                                                  "value":value
+                                                                };
+                                                                checkBoxList[index2] = data;
+                                                              });
+
+                                                            }),
+                                                      )
+                                                          :
+                                                      SizedBox();
+
+                                                  },
+                                                ),
+                                              ),
+
+                                            ],
+                                          ),
+                                        )
+
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                                height: 50,
+                                width: MediaQuery.of(context).size.width,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                      gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                      borderRadius: round.copyWith()
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+
+                                      for(int i=0;i<checkBoxList.length;i++){
+                                        if(checkBoxList[i]['value'] == true){
+
+                                          for(int j=0;j< _productProvider.searchProductList.length;j++){
+
+                                            if(checkBoxList[i]['id'] == _productProvider.searchProductList[j].clProductId){
+
+                                              selectedProductList.add(_productProvider.searchProductList[j]);
+                                              selectedQuantity.add(TextEditingController());
+                                              selectedAmount.add(TextEditingController());
+                                            }
+
+                                          }
+
+                                        }
+                                      }
+
+                                      selectColors();
+
+
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        elevation: 10,
+                                        primary: Colors.transparent,
+                                        shape: StadiumBorder()
+                                    ),
+                                    child: Text('Next',
+                                      textAlign: TextAlign.center,
+                                      style: textStyle.copyWith(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                            ),
                           ),
 
                         ],
@@ -1033,12 +540,486 @@ class _NewOrderState extends State<NewOrder> {
         }
     ).whenComplete(() {
       setState(() {
+        print("Product Added");
+      });
+
+    });
+  }
+
+
+  bool isSelectAll = false;
+
+  List<TextEditingController> selectedQuantity = [];
+  List<TextEditingController> selectedAmount = [];
+
+  selectColors() {
+
+    final _formkey2 = GlobalKey<FormState>();
+
+    showModalBottomSheet(
+        enableDrag: false,
+        isScrollControlled:true,
+        backgroundColor: Colors.white,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        builder: (context) {
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+
+                  return Form(
+                    key: _formkey2,
+                    child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                        height: MediaQuery.of(context).size.height-100,
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          children: [
+
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10,right: 10),
+                              child: Row(
+                                children: [
+
+                                  Expanded(
+                                    child: Text(
+                                      "Select Products",
+                                      style: textStyle.copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16
+                                      ),
+                                    ),
+                                  ),
+
+                                  InkWell(
+                                    onTap: (){
+
+                                      Navigator.pop(context);
+
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(Icons.close),
+                                    ),
+                                  )
+
+
+                                ],
+                              ),
+                            ),
+
+/*
+                            SizedBox(height: 20),
+
+                            Padding(
+                              padding: EdgeInsets.only(left: 10,right: 10),
+                              child: Row(
+                                children: [
+
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "Select All",
+                                            style: textStyle.copyWith(
+                                                color: AppColors.black,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold
+                                            ),
+                                          ),
+                                        ),
+
+                                        Checkbox(
+                                            value: isSelectAll,
+                                            onChanged: (value){
+                                              setState((){
+                                                isSelectAll = value;
+
+                                                if(isSelectAll == true){
+
+                                                  setState((){
+                                                    selectedQuantity.clear();
+                                                    for(int i =0;i<selectedProduct.colors.length;i++){
+                                                      var controller = TextEditingController(text: "${allQuantity.text}");
+                                                      selectedQuantity.add(controller);
+                                                    }
+                                                  });
+
+                                                  setState((){
+                                                    selectedAmount.clear();
+                                                    for(int i =0;i<selectedProduct.colors.length;i++){
+                                                      var controller1 = TextEditingController(text: "${allAmount.text}");
+                                                      selectedAmount.add(controller1);
+                                                    }
+                                                  });
+
+                                                  setState((){
+                                                    selected.clear();
+                                                    for(int i =0;i<selectedProduct.colors.length;i++){
+                                                      selected.add(true);
+                                                    }
+                                                  });
+
+                                                }
+                                                else{
+                                                  setState((){
+                                                    selectedQuantity.clear();
+                                                    for(int i =0;i<selectedProduct.colors.length;i++){
+                                                      var controller = TextEditingController();
+                                                      selectedQuantity.add(controller);
+                                                    }
+                                                  });
+
+                                                  setState((){
+                                                    selectedAmount.clear();
+                                                    for(int i =0;i<selectedProduct.colors.length;i++){
+                                                      var controller1 = TextEditingController();
+                                                      selectedAmount.add(controller1);
+                                                    }
+                                                  });
+
+                                                  setState((){
+                                                    selected.clear();
+                                                    for(int i =0;i<selectedProduct.colors.length;i++){
+                                                      selected.add(false);
+                                                    }
+                                                  });
+                                                }
+
+
+                                              });
+                                            }
+                                        )
+
+                                      ],
+                                    ),
+                                  ),
+
+                                  SizedBox(width: 10),
+
+                                  Container(
+                                    width: 80,
+                                    child: TextFormField(
+                                      controller: allQuantity,
+                                      keyboardType: TextInputType.number,
+                                      enabled: isSelectAll,
+                                      validator: (String value) {
+                                        if(value.isEmpty)
+                                        {
+                                          return "";
+                                        }
+                                        return null;
+                                      },
+                                      style: textStyle.copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black
+                                      ),
+                                      cursorHeight: 22,
+                                      cursorColor: Colors.grey,
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderRadius: BorderRadius.only(),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderRadius: BorderRadius.only(),
+                                        ),
+                                        isDense: true,
+                                        hintText: "Quantity",
+                                        errorStyle: TextStyle(height: 0,fontSize: 0),
+                                      ),
+                                      onChanged: (value){
+
+                                        setState((){
+                                          selectedQuantity.clear();
+                                          for(int i =0;i<selectedProduct.colors.length;i++){
+                                            var controller = TextEditingController(text: "$value");
+                                            selectedQuantity.add(controller);
+                                          }
+                                        });
+
+                                      },
+                                    ),
+                                  ),
+
+                                  SizedBox(width: 10),
+
+                                  Container(
+                                    width: 80,
+                                    child: TextFormField(
+                                      controller: allAmount,
+                                      keyboardType: TextInputType.number,
+                                      enabled: isSelectAll,
+                                      validator: (String value) {
+                                        if(value.isEmpty)
+                                        {
+                                          return "";
+                                        }
+                                        return null;
+                                      },
+                                      style: textStyle.copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black
+                                      ),
+                                      cursorHeight: 22,
+                                      cursorColor: Colors.grey,
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderRadius: BorderRadius.only(),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderRadius: BorderRadius.only(),
+                                        ),
+                                        isDense: true,
+                                        hintText: "Amount",
+                                        errorStyle: TextStyle(height: 0,fontSize: 0),
+                                      ),
+                                      onChanged: (value){
+
+                                        setState((){
+                                          selectedAmount.clear();
+                                          for(int i =0;i<selectedProduct.colors.length;i++){
+                                            var controller = TextEditingController(text: "$value");
+                                            selectedAmount.add(controller);
+                                          }
+                                        });
+
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+*/
+
+                            SizedBox(height: 20),
+
+                            Expanded(
+                              child:
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+
+                                  Divider(
+                                      height: 20,
+                                      color: Color.fromRGBO(185, 185, 185, 0.75),
+                                      thickness: 1.2
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 10,right: 10),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "Item Name",
+                                            style: textStyle.copyWith(
+                                                color: AppColors.black,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 70,
+                                          child: Text(
+                                            "Quantity",
+                                            textAlign: TextAlign.center,
+                                            style: textStyle.copyWith(
+                                                color: AppColors.black,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Container(
+                                          width: 70,
+                                          child: Text(
+                                            "Amount",
+                                            textAlign: TextAlign.center,
+                                            style: textStyle.copyWith(
+                                                color: AppColors.black,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                      height: 20,
+                                      color: Color.fromRGBO(185, 185, 185, 0.75),
+                                      thickness: 1.2
+                                  ),
+
+                                  ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    padding: EdgeInsets.only(top: 10,left: 10,right: 10),
+                                    itemCount: selectedProductList.length,
+                                    shrinkWrap: true,
+                                    itemBuilder:(context, index){
+                                      var productData = selectedProductList[index];
+
+                                      return Padding(
+                                        padding: const EdgeInsets.only(bottom: 20),
+                                        child: Row(
+                                          children: [
+
+                                            Expanded(
+                                              child: Text(
+                                                "${productData.clProductShortname}",
+                                                style: textStyle.copyWith(
+                                                  color: AppColors.black,
+                                                ),
+                                              ),
+                                            ),
+
+                                            Container(
+                                              width: 70,
+                                              child: TextFormField(
+                                                controller: selectedQuantity[index],
+                                                keyboardType: TextInputType.number,
+                                                validator: (String value) {
+                                                  if(value.isEmpty)
+                                                  {
+                                                    return "";
+                                                  }
+                                                  return null;
+                                                },
+                                                style: textStyle.copyWith(
+                                                    fontSize: 16,
+                                                    color: Colors.black
+                                                ),
+                                                cursorHeight: 22,
+                                                textAlign: TextAlign.center,
+                                                cursorColor: Colors.grey,
+                                                decoration: InputDecoration(
+                                                  enabledBorder: UnderlineInputBorder(
+                                                    borderRadius: BorderRadius.only(),
+                                                  ),
+                                                  focusedBorder: UnderlineInputBorder(
+                                                    borderRadius: BorderRadius.only(),
+                                                  ),
+                                                  isDense: true,
+                                                  hintText: "Quantity",
+                                                  errorStyle: TextStyle(height: 0,fontSize: 0),
+                                                ),
+                                              ),
+                                            ),
+
+                                            SizedBox(width: 15),
+
+                                            Container(
+                                              width: 70,
+                                              child: TextFormField(
+                                                controller: selectedAmount[index],
+                                                keyboardType: TextInputType.number,
+                                                validator: (String value) {
+                                                  if(value.isEmpty)
+                                                  {
+                                                    return "";
+                                                  }
+                                                  return null;
+                                                },
+                                                style: textStyle.copyWith(
+                                                    fontSize: 16,
+                                                    color: Colors.black
+                                                ),
+                                                cursorHeight: 22,
+                                                textAlign: TextAlign.center,
+                                                cursorColor: Colors.grey,
+                                                decoration: InputDecoration(
+                                                  enabledBorder: UnderlineInputBorder(
+                                                    borderRadius: BorderRadius.only(),
+                                                  ),
+                                                  focusedBorder: UnderlineInputBorder(
+                                                    borderRadius: BorderRadius.only(),
+                                                  ),
+                                                  isDense: true,
+                                                  hintText: "Amount",
+                                                  errorStyle: TextStyle(height: 0,fontSize: 0),
+                                                ),
+                                              ),
+                                            ),
+
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+
+                                  SizedBox(
+                                      height: 50,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                            gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                            borderRadius: round.copyWith()
+                                        ),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+
+                                           if(_formkey2.currentState.validate()){
+
+                                             for(int i=0;i<selectedProductList.length;i++){
+
+                                               var product = {
+                                                 "pid":"${selectedProductList[i].clProductId}",
+                                                 "color_id":"${selectedProductList[i].colors[0].clColorId}",
+                                                 "color_code":"${selectedProductList[i].colors[0].clColorCode}",
+                                                 "sku":"${selectedProductList[i].colors[0].skuCode}",
+                                                 "amount":"${selectedAmount[i].text}",
+                                                 "qty":"${selectedQuantity[i].text}"
+                                               };
+                                               viewProduct.add(product);
+                                             }
+
+                                             Navigator.pop(context);
+                                             Navigator.pop(context);
+                                             Navigator.pop(context);
+
+                                           }
+
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              elevation: 10,
+                                              primary: Colors.transparent,
+                                              shape: StadiumBorder()
+                                          ),
+                                          child: Text('Add Products',
+                                            textAlign: TextAlign.center,
+                                            style: textStyle.copyWith(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                  ),
+
+                                ],
+                              )
+                            ),
+
+                          ],
+                        )
+                    ),
+                  );
+                }
+            ),
+          );
+        }
+    ).whenComplete(() {
+      setState(() {
         selectedAmount.clear();
         selectedQuantity.clear();
+        selectedProductList.clear();
         isSelectAll = false;
-        selected.clear();
-        allQuantity.clear();
-        allAmount.clear();
       });
     });
   }

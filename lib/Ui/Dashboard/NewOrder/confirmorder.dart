@@ -95,14 +95,15 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     };
     await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
 
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return SimpleCustomAlert();
-        }
-    );
-
+    if(_orderProvider.isSuccess == true){
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return SimpleCustomAlert();
+          }
+      );
+    }
 
   }
 
