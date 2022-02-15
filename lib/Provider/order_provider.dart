@@ -19,6 +19,37 @@ class OrderProvider with ChangeNotifier
       if(value["st"] == "success")
       {
         isSuccess = true;
+
+       orderList.clear();
+       incompleteOrderList.clear();
+       completeOrderList.clear();
+
+        var data2 = {
+          "uid":"${data["uid"]}",
+          "from_date":"",
+          "to_date":"",
+          "status":""
+        };
+
+        var data3 = {
+          "uid":"${data["uid"]}",
+          "from_date":"",
+          "to_date":"",
+          "status":"Delivered"
+        };
+
+        var data4 = {
+          "uid":"${data["uid"]}",
+          "from_date":"",
+          "to_date":"",
+          "status":"Pending"
+        };
+
+
+       getAllOrders(data2, "/getOrder/1");
+       getCompleteOrders(data3, "/getOrder/1");
+       getIncompleteOrders(data4, "/getOrder/1");
+
         notifyListeners();
       }
       else

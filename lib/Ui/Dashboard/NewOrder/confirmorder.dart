@@ -58,7 +58,12 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   }
 
   int page = 1;
+  bool isloading = false;
   getOrders() async {
+
+    setState(() {
+      isloading = true;
+    });
 
     setState(() {
       _orderProvider.orderList.clear();
@@ -124,7 +129,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                   height: 70,
                   color: AppColors.white,
                   child:
-                  _orderProvider.isLoaded == false
+                  _orderProvider.isLoaded == false || isloading == true
                       ?
                   Center(
                       child: SpinKitThreeBounce(
@@ -499,6 +504,7 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
           Navigator.pop(context);
           Navigator.pop(context);
           Navigator.pop(context);
+
         }
     );
   }

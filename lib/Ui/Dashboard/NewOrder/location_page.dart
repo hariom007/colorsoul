@@ -237,7 +237,8 @@ class _LocationPageState extends State<LocationPage> {
                     ),
                   ),
                   SizedBox(height: height*0.01),
-                  Expanded(
+
+                  /*Expanded(
                     child: Container(
                       color: AppColors.white,
                       padding: EdgeInsets.only(left: 15,right: 15,bottom: 50),
@@ -251,6 +252,8 @@ class _LocationPageState extends State<LocationPage> {
                       ),
                     ),
                   )
+                  */
+
                 ],
               ),
             ),
