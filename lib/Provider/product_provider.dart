@@ -1,4 +1,5 @@
 import 'package:colorsoul/Api%20Handler/ApiHandler.dart';
+import 'package:colorsoul/Model/Group_Model.dart';
 import 'package:colorsoul/Model/Product_Category_Model.dart';
 import 'package:colorsoul/Model/Product_Model.dart';
 import 'package:flutter/material.dart';
@@ -138,6 +139,54 @@ class ProductProvider with ChangeNotifier
 
         Fluttertoast.showToast(
             msg: "Product Get List Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+
+  List<GroupModel> groupList = [];
+  getGroupList(url) async
+  {
+
+    isLoaded = false;
+    groupList.clear();
+    notifyListeners();
+
+    await ApiHandler.get(url).then((value){
+      List<GroupModel> list;
+
+      if(value["st"] == "success")
+      {
+        isSuccess = true;
+
+        var items = value["data"];
+
+        List client = items as List;
+        list  = client.map<GroupModel>((json) => GroupModel.fromJson(json)).toList();
+        groupList.addAll(list);
+
+        notifyListeners();
+      }
+      else
+      {
+        isSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Get Group List Error !!",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

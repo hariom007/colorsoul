@@ -56,7 +56,7 @@ class _NewOrderState extends State<NewOrder> {
     _productProvider = Provider.of<ProductProvider>(context, listen: false);
 
     getRetailer();
-    getProducts();
+    getGroup();
 
   }
 
@@ -91,20 +91,162 @@ class _NewOrderState extends State<NewOrder> {
 
   }
 
-  getProducts() async {
+  getGroup() async {
+    setState(() {
+      isLoaded = false;
+    });
+
+    await _productProvider.getGroupList('/getProductGroup');
+
+    setState(() {
+      isLoaded = true;
+    });
+  }
+
+
+  String groupId;
+  getProducts(BuildContext context) async {
     setState(() {
       isLoaded = false;
     });
 
     var data ={
       "search_term" : "",
+      "group_id":"$groupId"
     };
     await _productProvider.getSearchProducts(data,'/searchProductByKeyword');
     setState(() {
       isLoaded = true;
     });
 
+    addNewItem(context);
+
   }
+
+  selectGroup(BuildContext context) {
+
+    bool isLoading = false;
+
+    showModalBottomSheet(
+        enableDrag: false,
+        isScrollControlled:true,
+        backgroundColor: Colors.white,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        builder: (context) {
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+
+                  return Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                      height: MediaQuery.of(context).size.height-100,
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: [
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10,right: 10),
+                            child: Row(
+                              children: [
+
+                                Expanded(
+                                  child: Text(
+                                    "Select Product Group",
+                                    style: textStyle.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16
+                                    ),
+                                  ),
+                                ),
+
+                                InkWell(
+                                  onTap: (){
+
+                                    Navigator.pop(context);
+
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(Icons.close),
+                                  ),
+                                )
+
+
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 20),
+
+                          Expanded(
+                            child:
+                            isLoading == true
+                                ?
+                            SpinKitThreeBounce(
+                              color: AppColors.black,
+                              size: 25.0,
+                            )
+                                :
+                            ListView.builder(
+                              padding: EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
+                              itemCount: _productProvider.groupList.length,
+                              shrinkWrap: true,
+                              itemBuilder:(context, index){
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 10),
+                                  child: InkWell(
+                                    onTap: (){
+
+                                      setState((){
+                                        groupId = _productProvider.groupList[index].id;
+                                      });
+                                      getProducts(context);
+
+                                    },
+                                    child: Card(
+                                        elevation: 10,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: round1.copyWith()
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(top: 5,bottom: 6),
+                                          child: ListTile(
+                                            leading: Text('${_productProvider.groupList[index].name}',
+                                              textAlign: TextAlign.center,
+                                              style: textStyle.copyWith(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            )
+                                          ),
+                                        )
+
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+
+                        ],
+                      )
+                  );
+                }
+            ),
+          );
+        }
+    ).whenComplete(() {
+      setState(() {
+        print("Group");
+      });
+    });
+  }
+
 
   ProductModel selectedProduct;
   addNewItem(BuildContext context) {
@@ -133,7 +275,8 @@ class _NewOrderState extends State<NewOrder> {
                     });
 
                     var data ={
-                      "search_term" : "${value}",
+                      "group_id":"$groupId",
+                      "search_term" : "${value}"
                     };
                     await _productProvider.getSearchProducts(data,'/searchProductByKeyword');
 
@@ -241,6 +384,7 @@ class _NewOrderState extends State<NewOrder> {
                                 child: InkWell(
                                   onTap: (){
 
+/*
                                     selectedProduct = productData;
                                     for(int i =0;i<selectedProduct.colors.length;i++){
 
@@ -251,13 +395,16 @@ class _NewOrderState extends State<NewOrder> {
                                       selected.add(false);
 
                                     }
+*/
 
 /*
                                     selectedQuantity = List.filled(selectedProduct.colors.length, TextEditingController());
                                     selectedAmount = List.filled(selectedProduct.colors.length, TextEditingController());
 */
 
+/*
                                     selectColors(context);
+*/
 
 
                                   },
@@ -896,8 +1043,6 @@ class _NewOrderState extends State<NewOrder> {
     });
   }
 
-
-
   List viewProduct = [];
 
   List finalProduct = [];
@@ -1440,7 +1585,8 @@ class _NewOrderState extends State<NewOrder> {
                                               InkWell(
                                                 onTap: (){
 
-                                                  addNewItem(context);
+                                                  selectGroup(context);
+                                                  //addNewItem(context);
 
                                                 },
                                                 child: Padding(
