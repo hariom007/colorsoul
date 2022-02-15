@@ -227,7 +227,9 @@ class _AddDistributersState extends State<AddDistributers> {
                         child: ElevatedButton(
                           onPressed: () {
 
-                            if(_formkey.currentState.validate()){
+                            sendImage();
+
+                            /*if(_formkey.currentState.validate()){
 
                               if(address == null){
 
@@ -269,7 +271,7 @@ class _AddDistributersState extends State<AddDistributers> {
                                 }
 
                               }
-                            }
+                            }*/
                           },
                           style: ElevatedButton.styleFrom(
                               elevation: 10,
