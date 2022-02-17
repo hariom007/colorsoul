@@ -47,7 +47,7 @@ class _AddDistributersState extends State<AddDistributers> {
   TextEditingController _personMobileController = new TextEditingController();
   TextEditingController _personTelephoneController = new TextEditingController();
 
-  String address,city,state,latitude,logitude,pincode;
+  String address = "",city = "",state = "",latitude = "0.0",logitude = "0.0",pincode = "";
 
   TimeOfDay time;
   DateTime _selectedstarttime = DateTime.now();
@@ -87,7 +87,7 @@ class _AddDistributersState extends State<AddDistributers> {
 
   }
 
-  String imageUrl;
+  String imageUrl = "";
 
   sendImage() async {
 
@@ -124,6 +124,9 @@ class _AddDistributersState extends State<AddDistributers> {
       });
 
     }
+    else{
+      addDistributor();
+    }
 
   }
 
@@ -140,7 +143,7 @@ class _AddDistributersState extends State<AddDistributers> {
       "business_type":"${businessTypeController.text}",
       "gst_no":"${businessGSTController.text}",
       "address":"$address",
-      "home_address":_addressNoController.text,
+      "home_address":"${_addressNoController.text}",
       "landmark":"${_addressController.text}",
       "city":"$city",
       "state":"$state",

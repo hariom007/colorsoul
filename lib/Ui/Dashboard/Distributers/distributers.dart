@@ -507,9 +507,9 @@ class _DistributorsState extends State<Distributors> {
                                                   var lat = distributorData.latitude;
                                                   var lon = distributorData.longitude;
 
-                                                  if(distributorData.latitude == '' || distributorData.longitude == ''){
-                                                    lat = '19.0760';
-                                                    lon = '72.8777';
+                                                  if(lat == "" || lat == null){
+                                                    lat = "0.0";
+                                                    lon = "0.0";
                                                   }
 
                                                   Navigator.push(
