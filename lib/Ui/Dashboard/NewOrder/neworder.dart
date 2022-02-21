@@ -796,7 +796,7 @@ class _NewOrderState extends State<NewOrder> {
                             ),
 */
 
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
 
                             Expanded(
                               child:
@@ -857,100 +857,101 @@ class _NewOrderState extends State<NewOrder> {
                                       thickness: 1.2
                                   ),
 
-                                  ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    padding: EdgeInsets.only(top: 10,left: 10,right: 10),
-                                    itemCount: selectedProductList.length,
-                                    shrinkWrap: true,
-                                    itemBuilder:(context, index){
-                                      var productData = selectedProductList[index];
+                                  Expanded(
+                                    child: ListView.builder(
+                                      padding: EdgeInsets.only(top: 10,left: 10,right: 10),
+                                      itemCount: selectedProductList.length,
+                                      shrinkWrap: true,
+                                      itemBuilder:(context, index){
+                                        var productData = selectedProductList[index];
 
-                                      return Padding(
-                                        padding: const EdgeInsets.only(bottom: 20),
-                                        child: Row(
-                                          children: [
+                                        return Padding(
+                                          padding: const EdgeInsets.only(bottom: 20),
+                                          child: Row(
+                                            children: [
 
-                                            Expanded(
-                                              child: Text(
-                                                "${productData.clProductShortname}",
-                                                style: textStyle.copyWith(
-                                                  color: AppColors.black,
+                                              Expanded(
+                                                child: Text(
+                                                  "${productData.clProductShortname}",
+                                                  style: textStyle.copyWith(
+                                                    color: AppColors.black,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
 
-                                            Container(
-                                              width: 70,
-                                              child: TextFormField(
-                                                controller: selectedQuantity[index],
-                                                keyboardType: TextInputType.number,
-                                                validator: (String value) {
-                                                  if(value.isEmpty)
-                                                  {
-                                                    return "";
-                                                  }
-                                                  return null;
-                                                },
-                                                style: textStyle.copyWith(
-                                                    fontSize: 16,
-                                                    color: Colors.black
-                                                ),
-                                                cursorHeight: 22,
-                                                textAlign: TextAlign.center,
-                                                cursorColor: Colors.grey,
-                                                decoration: InputDecoration(
-                                                  enabledBorder: UnderlineInputBorder(
-                                                    borderRadius: BorderRadius.only(),
+                                              Container(
+                                                width: 70,
+                                                child: TextFormField(
+                                                  controller: selectedQuantity[index],
+                                                  keyboardType: TextInputType.number,
+                                                  validator: (String value) {
+                                                    if(value.isEmpty)
+                                                    {
+                                                      return "";
+                                                    }
+                                                    return null;
+                                                  },
+                                                  style: textStyle.copyWith(
+                                                      fontSize: 16,
+                                                      color: Colors.black
                                                   ),
-                                                  focusedBorder: UnderlineInputBorder(
-                                                    borderRadius: BorderRadius.only(),
+                                                  cursorHeight: 22,
+                                                  textAlign: TextAlign.center,
+                                                  cursorColor: Colors.grey,
+                                                  decoration: InputDecoration(
+                                                    enabledBorder: UnderlineInputBorder(
+                                                      borderRadius: BorderRadius.only(),
+                                                    ),
+                                                    focusedBorder: UnderlineInputBorder(
+                                                      borderRadius: BorderRadius.only(),
+                                                    ),
+                                                    isDense: true,
+                                                    hintText: "Quantity",
+                                                    errorStyle: TextStyle(height: 0,fontSize: 0),
                                                   ),
-                                                  isDense: true,
-                                                  hintText: "Quantity",
-                                                  errorStyle: TextStyle(height: 0,fontSize: 0),
-                                                ),
-                                              ),
-                                            ),
-
-                                            SizedBox(width: 15),
-
-                                            Container(
-                                              width: 70,
-                                              child: TextFormField(
-                                                controller: selectedAmount[index],
-                                                keyboardType: TextInputType.number,
-                                                validator: (String value) {
-                                                  if(value.isEmpty)
-                                                  {
-                                                    return "";
-                                                  }
-                                                  return null;
-                                                },
-                                                style: textStyle.copyWith(
-                                                    fontSize: 16,
-                                                    color: Colors.black
-                                                ),
-                                                cursorHeight: 22,
-                                                textAlign: TextAlign.center,
-                                                cursorColor: Colors.grey,
-                                                decoration: InputDecoration(
-                                                  enabledBorder: UnderlineInputBorder(
-                                                    borderRadius: BorderRadius.only(),
-                                                  ),
-                                                  focusedBorder: UnderlineInputBorder(
-                                                    borderRadius: BorderRadius.only(),
-                                                  ),
-                                                  isDense: true,
-                                                  hintText: "Amount",
-                                                  errorStyle: TextStyle(height: 0,fontSize: 0),
                                                 ),
                                               ),
-                                            ),
 
-                                          ],
-                                        ),
-                                      );
-                                    },
+                                              SizedBox(width: 15),
+
+                                              Container(
+                                                width: 70,
+                                                child: TextFormField(
+                                                  controller: selectedAmount[index],
+                                                  keyboardType: TextInputType.number,
+                                                  validator: (String value) {
+                                                    if(value.isEmpty)
+                                                    {
+                                                      return "";
+                                                    }
+                                                    return null;
+                                                  },
+                                                  style: textStyle.copyWith(
+                                                      fontSize: 16,
+                                                      color: Colors.black
+                                                  ),
+                                                  cursorHeight: 22,
+                                                  textAlign: TextAlign.center,
+                                                  cursorColor: Colors.grey,
+                                                  decoration: InputDecoration(
+                                                    enabledBorder: UnderlineInputBorder(
+                                                      borderRadius: BorderRadius.only(),
+                                                    ),
+                                                    focusedBorder: UnderlineInputBorder(
+                                                      borderRadius: BorderRadius.only(),
+                                                    ),
+                                                    isDense: true,
+                                                    hintText: "Amount",
+                                                    errorStyle: TextStyle(height: 0,fontSize: 0),
+                                                  ),
+                                                ),
+                                              ),
+
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
 
                                   SizedBox(
