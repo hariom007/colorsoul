@@ -1,21 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:colorsoul/Model/Product_Model.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
-import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/confirmorder.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:dropdown_below/dropdown_below.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Values/appColors.dart';
 import '../../../Values/components.dart';
 
