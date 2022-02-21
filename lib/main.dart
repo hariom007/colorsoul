@@ -9,8 +9,6 @@ import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Provider/task_provider.dart';
 import 'package:colorsoul/Provider/todo_provider.dart';
 import 'package:colorsoul/Ui/Pin/pin.dart';
-import 'package:colorsoul/Ui/profile_page.dart';
-import 'package:colorsoul/locater.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

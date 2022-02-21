@@ -277,6 +277,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
 
+
                 Padding(
                   padding: const EdgeInsets.only(top: 70),
                   child: Center(

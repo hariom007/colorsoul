@@ -1,3 +1,4 @@
+import 'package:colorsoul/Ui/Dashboard/NewOrder/sales_order.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/neworder.dart';
 import 'package:flutter/material.dart';
@@ -149,6 +150,23 @@ class _DashboardState extends State<Dashboard> {
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => ToDo()));
               }
+            ),
+            SpeedDialChild(
+                child: Image.asset("assets/images/cartbox.png",width: 24,height: 24),
+                labelWidget: Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Text(
+                      "Create Distributor Order",
+                      style: textStyle.copyWith(
+                          color: AppColors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold
+                      )
+                  ),
+                ),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SalesOrder()));
+                }
             ),
             SpeedDialChild(
               child: Image.asset("assets/images/cartbox.png",width: 24,height: 24),

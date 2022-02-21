@@ -7,22 +7,23 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ConfirmOrder extends StatefulWidget {
+class NormalOrder extends StatefulWidget {
 
   List productList = [];
-  String orderid,retailerId,address,orderDate,totalAmount,totalIgst,totalCgst,totalSgst;
+  String orderid,retailerId,address,orderDate,totalAmount;
 
-  ConfirmOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,
-    this.totalAmount,this.orderDate,this.totalCgst,this.totalIgst,this.totalSgst
+  NormalOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,
+    this.totalAmount,this.orderDate
   }) : super(key: key);
 
   @override
-  _ConfirmOrderState createState() => _ConfirmOrderState();
+  _NormalOrderState createState() => _NormalOrderState();
 }
 
-class _ConfirmOrderState extends State<ConfirmOrder> {
+class _NormalOrderState extends State<NormalOrder> {
 
   OrderProvider _orderProvider;
+  TextEditingController noteController = TextEditingController();
 
   @override
   void initState() {
@@ -36,20 +37,16 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     String userId = sharedPreferences.get("userId");
 
     var data = {
+      "id":"",
       "uid":"$userId",
-      "sales_bill_no":"${widget.orderid}",
-      "sales_date":"${widget.orderDate}",
-      "distributor_id":"${widget.retailerId}",
-      "cl_group_color":"",
-      "state":"Gujarat",
+      "retailer_id":"${widget.retailerId}",
+      "address":"${widget.address}",
+      "order_date":"${widget.orderDate}",
       "items": widget.productList,
-      "discount":"2",
       "total":"${widget.totalAmount}",
-      "total_cgst":"${widget.totalCgst}",
-      "total_igst":"${widget.totalIgst}",
-      "total_sgst":"${widget.totalSgst}",
-      "pay_mode": []
+      "note":"${noteController.text}"
     };
+
 
     //print(data);
 
@@ -243,17 +240,17 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                   Text(
                                     "Order Amount",
                                     style: textStyle.copyWith(
-                                      color: AppColors.black,
-                                      fontSize: 18
+                                        color: AppColors.black,
+                                        fontSize: 18
                                     ),
                                   ),
                                   SizedBox(height: 30),
                                   Text(
                                     "₹ ${widget.totalAmount}",
                                     style: textStyle.copyWith(
-                                      color: AppColors.black,
-                                      fontSize: 34,
-                                      fontWeight: FontWeight.bold
+                                        color: AppColors.black,
+                                        fontSize: 34,
+                                        fontWeight: FontWeight.bold
                                     ),
                                   ),
                                   Text(
@@ -272,9 +269,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                     ),
                                   ),*/
                                   Divider(
-                                    height: 20,
-                                    color: Color.fromRGBO(185, 185, 185, 0.75),
-                                    thickness: 1.2
+                                      height: 20,
+                                      color: Color.fromRGBO(185, 185, 185, 0.75),
+                                      thickness: 1.2
                                   ),
                                   Row(
                                     children: [
@@ -282,9 +279,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                         child: Text(
                                           "Item Code",
                                           style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold
+                                              color: AppColors.black,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold
                                           ),
                                         ),
                                       ),
@@ -315,9 +312,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                     ],
                                   ),
                                   Divider(
-                                    height: 20,
-                                    color: Color.fromRGBO(185, 185, 185, 0.75),
-                                    thickness: 1.2
+                                      height: 20,
+                                      color: Color.fromRGBO(185, 185, 185, 0.75),
+                                      thickness: 1.2
                                   ),
 
                                   ListView.builder(
@@ -333,7 +330,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                           children: [
                                             Expanded(
                                               child: Text(
-                                                "${productData['name']}",
+                                                "${productData['sku']}",
                                                 style: textStyle.copyWith(
                                                   color: AppColors.black,
                                                 ),
@@ -352,7 +349,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                             Container(
                                               width: 80,
                                               child: Text(
-                                                "${productData['price']}",
+                                                "${productData['amount']}",
                                                 textAlign: TextAlign.center,
                                                 style: textStyle.copyWith(
                                                   color: AppColors.black,
@@ -366,9 +363,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                   ),
 
                                   Divider(
-                                    height: 20,
-                                    color: Color.fromRGBO(185, 185, 185, 0.75),
-                                    thickness: 1.2
+                                      height: 20,
+                                      color: Color.fromRGBO(185, 185, 185, 0.75),
+                                      thickness: 1.2
                                   ),
                                   SizedBox(height: 10),
 
@@ -388,9 +385,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                             Text(
                                               "₹ ${widget.totalAmount}",
                                               style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold
+                                                  color: AppColors.black,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold
                                               ),
                                             )
                                           ],
@@ -432,9 +429,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                         Text(
                                           "Total Amount",
                                           style: textStyle.copyWith(
-                                            color: AppColors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold
+                                              color: AppColors.black,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold
                                           ),
                                         ),
                                         Expanded(child: Container()),
@@ -450,85 +447,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                     ),
                                   ),
 
-                                  SizedBox(height: 10),
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 10),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          "Total Igst",
-                                          style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                        Expanded(child: Container()),
-                                        Text(
-                                          "₹ ${widget.totalIgst}",
-                                          style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-
-                                  SizedBox(height: 10),
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 10),
-                                    child: Row(
-                                      children: [
-                                        Expanded(child: Container()),
-                                        Text(
-                                          "Cgst  -  ",
-                                          style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontSize: 16,
-                                          ),
-                                        ),
-                                        Text(
-                                          "₹ ${widget.totalCgst}",
-                                          style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-
-                                  SizedBox(height: 10),
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 10),
-                                    child: Row(
-                                      children: [
-                                        Expanded(child: Container()),
-                                        Text(
-                                          "Sgst  - ",
-                                          style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontSize: 16,
-                                          ),
-                                        ),
-                                        Text(
-                                          "₹ ${widget.totalSgst}",
-                                          style: textStyle.copyWith(
-                                              color: AppColors.black,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-
-
                                   SizedBox(height: 20),
-                                  /*Align(
+                                  Align(
                                     alignment: Alignment.topLeft,
                                     child: Text(
                                       "Remark",
@@ -554,7 +474,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                       ),
                                       isDense: true
                                     )
-                                  ),*/
+                                  ),
                                   SizedBox(height: height*0.01),
                                 ],
                               ),
@@ -583,7 +503,7 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
     super.initState();
     Timer(
         Duration(milliseconds: 1000),
-        () {
+            () {
           Navigator.pop(context);
           Navigator.pop(context);
           Navigator.pop(context);
@@ -611,13 +531,13 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
         width: width/1.4,
         child: Center(
           child: Text(
-            "Order Confirmed",
-            textAlign: TextAlign.center,
-            style: textStyle.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black
-            )
+              "Order Confirmed",
+              textAlign: TextAlign.center,
+              style: textStyle.copyWith(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black
+              )
           ),
         ),
       ),

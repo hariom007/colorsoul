@@ -41,6 +41,10 @@ class ProductModel {
     this.clProductCreatedDate,
     this.clProductUpdatedDate,
     this.isDeleted,
+    this.hsnCode,
+    this.hsnIgst,
+    this.hsnCgst,
+    this.hsnSgst,
     this.clCategoryName,
     this.clSubcategoryName,
     this.colors,
@@ -77,6 +81,10 @@ class ProductModel {
   DateTime clProductCreatedDate;
   String clProductUpdatedDate;
   String isDeleted;
+  String hsnCode;
+  String hsnIgst;
+  String hsnCgst;
+  String hsnSgst;
   String clCategoryName;
   String clSubcategoryName;
   List<ApiColor> colors;
@@ -113,6 +121,10 @@ class ProductModel {
     clProductCreatedDate: DateTime.parse(json["cl_product_created_date"]),
     clProductUpdatedDate: json["cl_product_updated_date"],
     isDeleted: json["is_deleted"],
+    hsnCode: json["hsn_code"],
+    hsnIgst: json["hsn_igst"],
+    hsnCgst: json["hsn_cgst"],
+    hsnSgst: json["hsn_sgst"],
     clCategoryName: json["cl_category_name"],
     clSubcategoryName: json["cl_subcategory_name"],
     colors: List<ApiColor>.from(json["colors"].map((x) => ApiColor.fromJson(x))),
@@ -150,6 +162,10 @@ class ProductModel {
     "cl_product_created_date": clProductCreatedDate.toIso8601String(),
     "cl_product_updated_date": clProductUpdatedDate,
     "is_deleted": isDeleted,
+    "hsn_code": hsnCode,
+    "hsn_igst": hsnIgst,
+    "hsn_cgst": hsnCgst,
+    "hsn_sgst": hsnSgst,
     "cl_category_name": clCategoryName,
     "cl_subcategory_name": clSubcategoryName,
     "colors": List<dynamic>.from(colors.map((x) => x.toJson())),
