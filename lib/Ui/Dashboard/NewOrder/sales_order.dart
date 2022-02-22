@@ -1505,7 +1505,27 @@ class _SalesOrderState extends State<SalesOrder> {
                                             ),
                                             showSearchBox: true,
                                             showClearButton: true,
-
+                                            searchFieldProps: TextFieldProps(
+                                                decoration: InputDecoration(
+                                                  contentPadding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                                  hintText: "Search Retailer",
+                                                  suffixIcon: Icon(Icons.search,color: AppColors.black),
+                                                  enabledBorder: OutlineInputBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                        bottomLeft: Radius.circular(30),
+                                                        bottomRight: Radius.circular(30),
+                                                        topRight: Radius.circular(30)
+                                                    ),
+                                                  ),
+                                                  focusedBorder: OutlineInputBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                        bottomLeft: Radius.circular(30),
+                                                        bottomRight: Radius.circular(30),
+                                                        topRight: Radius.circular(30)
+                                                    ),
+                                                  ),
+                                                )
+                                            ),
                                           ),
 
                                           Visibility(
