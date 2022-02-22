@@ -94,7 +94,7 @@ class _LocationPageState extends State<LocationPage> {
     String finalAddress = "${first.addressLine},${first.locality}/${first.subAdminArea}/${first.adminArea}/${first.postalCode}/${coordinates.latitude}/${coordinates.longitude}";
 
     Navigator.pop(context,"$finalAddress");
-   // Navigator.pop(context,"$finalAddress");
+   Navigator.pop(context,"$finalAddress");
 
   }
 

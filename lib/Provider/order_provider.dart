@@ -79,6 +79,7 @@ class OrderProvider with ChangeNotifier
 
 
   List<OrderModel> orderList = [];
+  String allOrderCount,completeOrderCount,incompleteOrderCount;
   getAllOrders(data,url) async
   {
 

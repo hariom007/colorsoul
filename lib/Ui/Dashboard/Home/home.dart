@@ -740,6 +740,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                                   children: [
                                                     SizedBox(height: height*0.01,),
                                                     Text(
+                                                      allOrder.address == ""
+                                                          ?
+                                                          ""
+                                                          :
                                                       '${allOrder.address}',
                                                       maxLines: 2,
                                                       overflow: TextOverflow.ellipsis,

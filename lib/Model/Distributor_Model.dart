@@ -62,7 +62,7 @@ class DistributorModel {
     businessName: json["business_name"],
     businessType: json["business_type"],
     gstNo: json["gst_no"],
-    address: json["address"],
+    address: json["address"] == null ? "" : json["address"],
     homeAddress: json["home_address"],
     landmark: json["landmark"],
     pincode: json["pincode"],
