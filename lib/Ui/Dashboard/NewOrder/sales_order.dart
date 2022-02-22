@@ -1484,7 +1484,6 @@ class _SalesOrderState extends State<SalesOrder> {
                                                 isvisible1 = true;
                                               });
 
-
                                             },
                                             dropdownSearchDecoration: InputDecoration(
                                               contentPadding: EdgeInsets.only(top: 3,bottom: 3,left: 15),

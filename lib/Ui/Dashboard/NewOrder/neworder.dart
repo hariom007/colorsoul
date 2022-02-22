@@ -330,9 +330,7 @@ class _NewOrderState extends State<NewOrder> {
                     };
                     await _productProvider.getSearchProducts(data,'/searchProductByKeyword');
 
-                    setState((){
                       isLoading = false;
-                    });
 
                   }
 
@@ -387,6 +385,8 @@ class _NewOrderState extends State<NewOrder> {
                                   child: TextField(
                                     onSubmitted: (value){
 
+                                      FocusScope.of(context).requestFocus(new FocusNode());
+
                                       setState((){
                                         _productProvider.searchProductList.clear();
                                       });
@@ -399,6 +399,9 @@ class _NewOrderState extends State<NewOrder> {
                                     onChanged: (value){
 
                                       if(value == "" || value == null){
+                                        setState((){
+                                          _productProvider.searchProductList.clear();
+                                        });
                                         getProducts("");
                                       }
 
@@ -426,6 +429,7 @@ class _NewOrderState extends State<NewOrder> {
 
                                     setState((){
                                       _productProvider.searchProductList.clear();
+                                      FocusScope.of(context).requestFocus(new FocusNode());
                                     });
 
                                     if(_productProvider.isLoaded == true){
