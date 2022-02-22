@@ -97,6 +97,7 @@ class DistributorProvider with ChangeNotifier
 
   bool isDistributorLoaded = true;
   List<DistributorModel> onlyDistributorList = [];
+  var distributorValue;
   getOnlyDistributor(data,url) async
   {
 
@@ -111,6 +112,7 @@ class DistributorProvider with ChangeNotifier
       {
         isSuccess = true;
 
+        distributorValue = value['data'];
         var items = value["data"];
 
         List client = items as List;

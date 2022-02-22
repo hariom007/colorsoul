@@ -420,6 +420,8 @@ class _DistributorsState extends State<Distributors> {
                                                                   closetime: "${distributorData.closeTime}",
                                                                   type: "${distributorData.type}",
                                                                   id: distributorData.id,
+                                                                  state: distributorData.state,
+                                                                  city: distributorData.city,
                                                                 ))
                                                             );
 
@@ -531,6 +533,8 @@ class _DistributorsState extends State<Distributors> {
                                                         closetime: "${distributorData.closeTime}",
                                                         type: "${distributorData.type}",
                                                         id: "${distributorData.id}",
+                                                        city: "${distributorData.city}",
+                                                        state: "${distributorData.state}",
                                                       ))
                                                   );
 

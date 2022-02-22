@@ -1,12 +1,15 @@
+import 'package:colorsoul/Model/Distributor_Model.dart';
 import 'package:colorsoul/Model/Product_Model.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/confirmorder.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:dropdown_below/dropdown_below.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +23,7 @@ class SalesOrder extends StatefulWidget {
   _SalesOrderState createState() => _SalesOrderState();
 }
 
-class TypeModel{
+class TypeModel {
   String id;
   String name;
   String address;
@@ -28,8 +31,29 @@ class TypeModel{
   String mobile;
   String business_name;
 
+  TypeModel({this.id, this.address, this.name, this.state,this.mobile,this.business_name});
 
-  TypeModel(this.id, this.name, this.address,this.state, this.mobile,this.business_name);
+  factory TypeModel.fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    return TypeModel(
+      id: json["id"],
+      name: json["name"],
+      address: json["createdAt"],
+      state: json["name"],
+      mobile: json["avatar"],
+      business_name: json["avatar"],
+    );
+  }
+
+  static List<TypeModel> fromJsonList(items) {
+    if (items == null) return null;
+
+    List client = items as List;
+    return client.map<TypeModel>((json) => TypeModel.fromJson(json)).toList();
+  }
+
+  @override
+  String toString() => name;
 }
 
 class _SalesOrderState extends State<SalesOrder> {
@@ -54,14 +78,14 @@ class _SalesOrderState extends State<SalesOrder> {
     _distributorProvider = Provider.of<DistributorProvider>(context, listen: false);
     _productProvider = Provider.of<ProductProvider>(context, listen: false);
 
-    getRetailer();
+    //getRetailer("Text");
     getGroup();
 
   }
 
   bool isLoaded = true;
   String selectedRetailerId,selectedRetailerName,selectedRetailerAddress,selectedRetailerState,orderAddress,selectedRetailerMobile;
-  getRetailer() async {
+  Future<List<TypeModel>> getRetailer(filter) async {
 
     setState(() {
       isLoaded = false;
@@ -75,20 +99,28 @@ class _SalesOrderState extends State<SalesOrder> {
     await _distributorProvider.getOnlyDistributor(data,'/getDistributorRetailerByType');
     if(_distributorProvider.isSuccess == true){
 
-      var result  = _distributorProvider.onlyDistributorList;
+      var result  = _distributorProvider.distributorValue;
       var singleDistributor;
 
-      for (var abc in result) {
+      /*for (var abc in result) {
         singleDistributor = TypeModel(abc.id,abc.name,abc.address,abc.state,abc.mobile,abc.businessName);
         distributor_List.add(singleDistributor);
       }
-    }
+      */
 
+      setState(() {
+        isLoaded = true;
+      });
+
+      return TypeModel.fromJsonList(result);
+
+    }
     setState(() {
       isLoaded = true;
     });
 
   }
+
 
   getGroup() async {
     setState(() {
@@ -275,6 +307,7 @@ class _SalesOrderState extends State<SalesOrder> {
   addNewItem() {
 
     bool isLoading = false;
+
     TextEditingController searchController = TextEditingController();
 
     showModalBottomSheet(
@@ -291,11 +324,13 @@ class _SalesOrderState extends State<SalesOrder> {
             child: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
 
-/*                  getProducts(String value) async {
+                  getProducts(String value) async {
 
                     setState((){
                       isLoading = true;
                     });
+
+                    _productProvider.searchProductList.clear();
 
                     var data ={
                       "group_id":"$groupId",
@@ -307,7 +342,7 @@ class _SalesOrderState extends State<SalesOrder> {
                       isLoading = false;
                     });
 
-                  }*/
+                  }
 
                   return Container(
                       padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
@@ -376,12 +411,8 @@ class _SalesOrderState extends State<SalesOrder> {
                                 setState((){
                                   _productProvider.searchProductList.clear();
                                 });
-                                if(_productProvider.isLoaded == true){
-                                  //getProducts(value);
-                                }
-                                else{
 
-                                }
+                                getProducts(value);
 
                               },
                             ),
@@ -1284,7 +1315,10 @@ class _SalesOrderState extends State<SalesOrder> {
                                                 fontSize: 16
                                             ),
                                           ),
+
+/*
                                           SizedBox(height: 5),
+
                                           Container(
                                               decoration: BoxDecoration(
                                                 border: Border.all(
@@ -1349,7 +1383,52 @@ class _SalesOrderState extends State<SalesOrder> {
                                                 ),
                                               )
                                           ),
+*/
 
+                                          SizedBox(height: 5),
+
+                                          DropdownSearch<TypeModel>(
+                                            mode: Mode.BOTTOM_SHEET,
+                                            label: "$selectedRetailerName",
+                                            onFind: (String filter) => getRetailer(filter),
+                                            itemAsString: (TypeModel u) => u.name != "" ? u.name : u.business_name != "" ? u.business_name : u.mobile,
+                                            onChanged: (TypeModel t) {
+                                              //print(t);
+
+                                              setState(() {
+                                                selectedRetailerId = t.id;
+                                                selectedRetailerName = t.name;
+                                                selectedRetailerAddress = t.address;
+                                                selectedRetailerState = t.state;
+                                                orderAddress = t.address;
+                                                selectedRetailerMobile = t.mobile;
+                                                isvisible = true;
+                                                isvisible1 = true;
+                                              });
+
+
+                                            },
+                                            dropdownSearchDecoration: InputDecoration(
+                                              contentPadding: EdgeInsets.only(top: 3,bottom: 3,left: 15),
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.only(
+                                                      bottomLeft: Radius.circular(30),
+                                                      bottomRight: Radius.circular(30),
+                                                      topRight: Radius.circular(30)
+                                                  ),
+                                                ),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.only(
+                                                      bottomLeft: Radius.circular(30),
+                                                      bottomRight: Radius.circular(30),
+                                                      topRight: Radius.circular(30)
+                                                  ),
+                                                ),
+                                            ),
+                                            showSearchBox: true,
+                                            showClearButton: true,
+
+                                          ),
 
                                           Visibility(
                                             visible: isvisible,
@@ -1433,7 +1512,9 @@ class _SalesOrderState extends State<SalesOrder> {
                                               ),
                                             ),
                                           ),
+
                                           SizedBox(height: height*0.02),
+
                                           Divider(
                                               color: Color.fromRGBO(185, 185, 185, 0.75),
                                               thickness: 1.3

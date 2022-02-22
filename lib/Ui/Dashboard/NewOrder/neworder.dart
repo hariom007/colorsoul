@@ -5,6 +5,7 @@ import 'package:colorsoul/Ui/Dashboard/NewOrder/confirmorder.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/normal_order.dart';
 import 'package:dropdown_below/dropdown_below.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -19,15 +20,37 @@ class NewOrder extends StatefulWidget  {
   _NewOrderState createState() => _NewOrderState();
 }
 
-class TypeModel{
+class TypeModel {
   String id;
   String name;
   String address;
+  String state;
   String mobile;
   String business_name;
 
+  TypeModel({this.id, this.address, this.name, this.state,this.mobile,this.business_name});
 
-  TypeModel(this.id, this.name, this.address, this.mobile,this.business_name);
+  factory TypeModel.fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    return TypeModel(
+      id: json["id"],
+      name: json["name"],
+      address: json["createdAt"],
+      state: json["name"],
+      mobile: json["avatar"],
+      business_name: json["avatar"],
+    );
+  }
+
+  static List<TypeModel> fromJsonList(items) {
+    if (items == null) return null;
+
+    List client = items as List;
+    return client.map<TypeModel>((json) => TypeModel.fromJson(json)).toList();
+  }
+
+  @override
+  String toString() => name;
 }
 
 class _NewOrderState extends State<NewOrder> {
@@ -50,14 +73,14 @@ class _NewOrderState extends State<NewOrder> {
     _distributorProvider = Provider.of<DistributorProvider>(context, listen: false);
     _productProvider = Provider.of<ProductProvider>(context, listen: false);
 
-    getRetailer();
+    //getRetailer();
     getGroup();
 
   }
 
   bool isLoaded = true;
-  String selectedRetailerId,selectedRetailerName,selectedRetailerAddress,orderAddress,selectedRetailerMobile;
-  getRetailer() async {
+  String selectedRetailerId,selectedRetailerName = "Select Retailer",selectedRetailerAddress,orderAddress,selectedRetailerMobile;
+  Future<List<TypeModel>>getRetailer() async {
 
     setState(() {
       isLoaded = false;
@@ -71,13 +94,21 @@ class _NewOrderState extends State<NewOrder> {
     await _distributorProvider.getOnlyDistributor(data,'/getDistributorRetailerByType');
     if(_distributorProvider.isSuccess == true){
 
+      var result  = _distributorProvider.distributorValue;
+
+      setState(() {
+        isLoaded = true;
+      });
+
+      return TypeModel.fromJsonList(result);
+/*
       var result  = _distributorProvider.onlyDistributorList;
       var singleDistributor;
 
       for (var abc in result) {
         singleDistributor = TypeModel(abc.id,abc.name,abc.address,abc.mobile,abc.businessName);
         distributor_List.add(singleDistributor);
-      }
+      }*/
     }
 
     setState(() {
@@ -287,7 +318,7 @@ class _NewOrderState extends State<NewOrder> {
             child: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
 
-/*                  getProducts(String value) async {
+                  getProducts(String value) async {
 
                     setState((){
                       isLoading = true;
@@ -303,7 +334,7 @@ class _NewOrderState extends State<NewOrder> {
                       isLoading = false;
                     });
 
-                  }*/
+                  }
 
                   return Container(
                       padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
@@ -373,7 +404,7 @@ class _NewOrderState extends State<NewOrder> {
                                   _productProvider.searchProductList.clear();
                                 });
                                 if(_productProvider.isLoaded == true){
-                                  //getProducts(value);
+                                  getProducts(value);
                                 }
                                 else{
 
@@ -1232,7 +1263,9 @@ class _NewOrderState extends State<NewOrder> {
                                           ),
                                           SizedBox(height: 5),
                                           SizedBox(height: height*0.01),
-                                          Container(
+
+
+                                          /*Container(
                                               decoration: BoxDecoration(
                                                 border: Border.all(
                                                     color: AppColors.black
@@ -1294,7 +1327,52 @@ class _NewOrderState extends State<NewOrder> {
                                                   ),
                                                 ),
                                               )
+                                          ),*/
+
+                                          DropdownSearch<TypeModel>(
+                                            mode: Mode.BOTTOM_SHEET,
+                                            label: "$selectedRetailerName",
+                                            onFind: (String filter) => getRetailer(),
+                                            itemAsString: (TypeModel u) =>
+                                            u.name != ""
+                                                ? "${u.name}" : u.business_name != "" ? "${u.business_name}" : "${u.mobile}",
+                                            onChanged: (TypeModel t) {
+                                              //print(t);
+
+                                              setState(() {
+                                                selectedRetailerId = t.id;
+                                                selectedRetailerName = t.name;
+                                                selectedRetailerAddress = t.address;
+                                                orderAddress = t.address;
+                                                selectedRetailerMobile = t.mobile;
+                                                isvisible = true;
+                                                isvisible1 = true;
+                                              });
+
+                                            },
+                                            dropdownSearchDecoration: InputDecoration(
+                                              contentPadding: EdgeInsets.only(top: 3,bottom: 3,left: 15),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.only(
+                                                    bottomLeft: Radius.circular(30),
+                                                    bottomRight: Radius.circular(30),
+                                                    topRight: Radius.circular(30)
+                                                ),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.only(
+                                                    bottomLeft: Radius.circular(30),
+                                                    bottomRight: Radius.circular(30),
+                                                    topRight: Radius.circular(30)
+                                                ),
+                                              ),
+                                            ),
+                                            showSearchBox: true,
+                                            showClearButton: true,
+
                                           ),
+
+
                                           Visibility(
                                             visible: isvisible,
                                             child: Padding(
@@ -1377,7 +1455,9 @@ class _NewOrderState extends State<NewOrder> {
                                               ),
                                             ),
                                           ),
+
                                           SizedBox(height: height*0.02),
+
                                           Divider(
                                               color: Color.fromRGBO(185, 185, 185, 0.75),
                                               thickness: 2
@@ -1392,6 +1472,7 @@ class _NewOrderState extends State<NewOrder> {
                                             ),
                                           ),
                                           SizedBox(height: height*0.01),
+
                                           TextFormField(
                                               style: textStyle.copyWith(
                                                   color: AppColors.black
@@ -1426,6 +1507,7 @@ class _NewOrderState extends State<NewOrder> {
                                                   isDense: true
                                               )
                                           ),
+
                                           Visibility(
                                             visible: isvisible1,
                                             child: Padding(
@@ -1475,6 +1557,7 @@ class _NewOrderState extends State<NewOrder> {
                                               ),
                                             ),
                                           ),
+
                                           SizedBox(height: height*0.03),
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,

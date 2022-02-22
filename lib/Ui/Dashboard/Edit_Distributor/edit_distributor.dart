@@ -30,10 +30,10 @@ class TypeModel{
 
 class EditDistributers extends StatefulWidget {
 
-  String distributor_name,distributor_address,distributor_image,latitude,longitude,home_address,distributor_gst,landmark,
+  String distributor_name,distributor_address,distributor_image,latitude,longitude,home_address,distributor_gst,landmark,city,state,
       person_name,person_mobile,person_tel,opentime,closetime,business_type,type,id;
   EditDistributers({Key key, this.distributor_name,this.distributor_address,this.distributor_image,this.latitude,this.longitude,this.distributor_gst,this.landmark,
-    this.person_name,this.person_mobile,this.person_tel,this.opentime,this.closetime,this.business_type,this.type,this.id,this.home_address
+    this.person_name,this.person_mobile,this.person_tel,this.opentime,this.closetime,this.business_type,this.type,this.id,this.home_address,this.city,this.state
   }) : super(key: key);
 
   @override
@@ -112,6 +112,8 @@ class _EditDistributersState extends State<EditDistributers> {
     _closeTimeController.text = widget.closetime;
     businessTypeController.text = widget.business_type;
     businessGSTController.text = widget.distributor_gst;
+    city = widget.city;
+    state = widget.state;
     print(widget.id);
 
   }
@@ -166,7 +168,7 @@ class _EditDistributersState extends State<EditDistributers> {
       "uid":"$userId",
       "type": widget.type == 'Distributor' ? "Distributor" : "Retailer",
       "parent_id": widget.type == 'Distributor' ? "" : "$selectedDistributorId",
-      "business_name":"${businessNameController.text}",
+      "business_name":businessNameController.text,
       "business_type":"${businessTypeController.text}",
       "gst_no":"${businessGSTController.text}",
       "address":"$address",
@@ -177,8 +179,8 @@ class _EditDistributersState extends State<EditDistributers> {
       "pincode":"$pincode",
       "latitude":"$latitude",
       "longitude":"$logitude",
-      "name":"${_personNameController.text}",
-      "mobile":"${_personMobileController.text}",
+      "name":_personNameController.text,
+      "mobile":_personMobileController.text,
       "telephone":"${_personTelephoneController.text}",
       "open_time":"${_openTimeController.text}",
       "close_time":"${_closeTimeController.text}",

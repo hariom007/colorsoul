@@ -30,6 +30,7 @@ class DistributorModel {
     this.image,
     this.isApproved,
     this.state,
+    this.city
   });
 
   String id;
@@ -52,6 +53,7 @@ class DistributorModel {
   String image;
   String isApproved;
   String state;
+  String city;
 
   factory DistributorModel.fromJson(Map<String, dynamic> json) => DistributorModel(
     id: json["id"],
@@ -74,6 +76,7 @@ class DistributorModel {
     image: json["image"],
     isApproved: json["isApproved"],
     state: json["state"],
+    city: json["city"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -97,5 +100,6 @@ class DistributorModel {
     "image": image,
     "isApproved": isApproved,
     "state": state,
+    "city": city,
   };
 }
