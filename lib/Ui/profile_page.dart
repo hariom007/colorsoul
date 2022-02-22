@@ -97,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
         compressFormat: ImageCompressFormat.jpg,
         androidUiSettings: AndroidUiSettings(
             initAspectRatio: CropAspectRatioPreset.original,
-            toolbarWidgetColor: AppColors.white
+            toolbarWidgetColor: AppColors.black
         )
     );
     setState(() {

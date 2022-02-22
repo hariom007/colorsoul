@@ -386,7 +386,6 @@ class _NewOrderState extends State<NewOrder> {
                                     onSubmitted: (value){
 
                                       FocusScope.of(context).requestFocus(new FocusNode());
-
                                       setState((){
                                         _productProvider.searchProductList.clear();
                                       });
