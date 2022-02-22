@@ -84,7 +84,7 @@ class _SalesOrderState extends State<SalesOrder> {
   }
 
   bool isLoaded = true;
-  String selectedRetailerId,selectedRetailerName,selectedRetailerAddress,selectedRetailerState,orderAddress,selectedRetailerMobile;
+  String selectedRetailerId,selectedRetailerName = "Select Distributor",selectedRetailerAddress,selectedRetailerState,orderAddress,selectedRetailerMobile;
   Future<List<TypeModel>> getRetailer(filter) async {
 
     setState(() {
@@ -386,6 +386,7 @@ class _SalesOrderState extends State<SalesOrder> {
 
                           SizedBox(height: 20),
 
+                        /*
                           Padding(
                             padding: const EdgeInsets.only(left: 10,right: 10),
                             child: TextFormField(
@@ -415,6 +416,83 @@ class _SalesOrderState extends State<SalesOrder> {
                                 getProducts(value);
 
                               },
+                            ),
+                          ),
+                        */
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10,right: 10),
+                            child: Row(
+                              children: [
+
+                                Expanded(
+                                  child: TextField(
+                                    onSubmitted: (value){
+
+                                      setState((){
+                                        _productProvider.searchProductList.clear();
+                                      });
+
+                                      if(_productProvider.isLoaded == true){
+                                        getProducts(searchController.text);
+                                      }
+
+                                    },
+                                    onChanged: (value){
+
+                                      if(value == "" || value == null){
+                                        getProducts("");
+                                      }
+
+                                    },
+                                    controller: searchController,
+                                    style: textStyle.copyWith(
+                                        color: AppColors.black
+                                    ),
+                                    cursorColor: AppColors.black,
+                                    cursorHeight: 22,
+                                    decoration: fieldStyle1.copyWith(
+                                        hintText: "Search Product",
+                                        hintStyle: textStyle.copyWith(
+                                            color: AppColors.black
+                                        ),
+                                        isDense: true
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(width: 10),
+
+                                InkWell(
+                                  onTap: (){
+
+                                    setState((){
+                                      _productProvider.searchProductList.clear();
+                                    });
+
+                                    if(_productProvider.isLoaded == true){
+                                      getProducts(searchController.text);
+                                    }
+
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                          bottomRight: Radius.circular(20),
+                                          topRight: Radius.circular(20),
+                                          bottomLeft: Radius.circular(20),
+                                        ),
+                                        border: Border.all(color: AppColors.black)
+                                    ),
+                                    height: 50,width: 60,
+                                    child: IconButton(
+                                      icon: new Image.asset('assets/images/locater/search.png',width: 20,height: 20),
+                                      onPressed: null,
+                                    ),
+                                  ),
+                                ),
+
+                              ],
                             ),
                           ),
 

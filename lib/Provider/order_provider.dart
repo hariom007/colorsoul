@@ -1,5 +1,6 @@
 import 'package:colorsoul/Api%20Handler/ApiHandler.dart';
 import 'package:colorsoul/Model/Order_Model.dart';
+import 'package:colorsoul/Model/Sales_Order_Model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -252,6 +253,56 @@ class OrderProvider with ChangeNotifier
     });
 
   }
+
+
+
+  List<SalesOrderModel> salesOrderList = [];
+  getSalesOrders(data,url) async
+  {
+
+    isLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+      List<SalesOrderModel> list;
+
+      print(value);
+      if(value["st"] == "success")
+      {
+        isSuccess = true;
+
+        var items = value["data"];
+
+        List client = items as List;
+        list  = client.map<SalesOrderModel>((json) => SalesOrderModel.fromJson(json)).toList();
+        salesOrderList.addAll(list);
+
+        notifyListeners();
+      }
+      else
+      {
+        isSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Order Get List Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
 
 
 }

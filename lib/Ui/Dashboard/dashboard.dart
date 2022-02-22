@@ -1,4 +1,5 @@
 import 'package:colorsoul/Ui/Dashboard/NewOrder/sales_order.dart';
+import 'package:colorsoul/Ui/Dashboard/OrderList/Sales_order_screen.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/neworder.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,8 @@ class _DashboardState extends State<Dashboard> {
    final pages = <Widget>[
     Home(),
     Distributors(),
-    Products(),
+    //Products(),
+     SalesOrderList(),
     OrderList(),
   ];
 
