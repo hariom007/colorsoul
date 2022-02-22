@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final distributorModel = distributorModelFromJson(jsonString);
+
 import 'dart:convert';
 
 List<DistributorModel> distributorModelFromJson(String str) => List<DistributorModel>.from(json.decode(str).map((x) => DistributorModel.fromJson(x)));
@@ -13,11 +17,11 @@ class DistributorModel {
     this.businessType,
     this.gstNo,
     this.address,
-    this.latitude,
-    this.longitude,
-    this.home_address,
+    this.homeAddress,
     this.landmark,
     this.pincode,
+    this.latitude,
+    this.longitude,
     this.name,
     this.mobile,
     this.telephone,
@@ -25,7 +29,7 @@ class DistributorModel {
     this.closeTime,
     this.image,
     this.isApproved,
-    this.parentName,
+    this.state,
   });
 
   String id;
@@ -35,9 +39,9 @@ class DistributorModel {
   String businessType;
   String gstNo;
   String address;
-  String pincode;
-  String home_address;
+  String homeAddress;
   String landmark;
+  String pincode;
   String latitude;
   String longitude;
   String name;
@@ -47,7 +51,7 @@ class DistributorModel {
   String closeTime;
   String image;
   String isApproved;
-  String parentName;
+  String state;
 
   factory DistributorModel.fromJson(Map<String, dynamic> json) => DistributorModel(
     id: json["id"],
@@ -57,7 +61,7 @@ class DistributorModel {
     businessType: json["business_type"],
     gstNo: json["gst_no"],
     address: json["address"],
-    home_address: json["home_address"],
+    homeAddress: json["home_address"],
     landmark: json["landmark"],
     pincode: json["pincode"],
     latitude: json["latitude"],
@@ -69,7 +73,7 @@ class DistributorModel {
     closeTime: json["close_time"],
     image: json["image"],
     isApproved: json["isApproved"],
-    parentName: json["parent_name"],
+    state: json["state"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -80,7 +84,7 @@ class DistributorModel {
     "business_type": businessType,
     "gst_no": gstNo,
     "address": address,
-    "home_address": home_address,
+    "home_address": homeAddress,
     "landmark": landmark,
     "pincode": pincode,
     "latitude": latitude,
@@ -92,6 +96,6 @@ class DistributorModel {
     "close_time": closeTime,
     "image": image,
     "isApproved": isApproved,
-    "parent_name": parentName,
+    "state": state,
   };
 }

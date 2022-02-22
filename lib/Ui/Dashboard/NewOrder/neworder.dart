@@ -1094,7 +1094,6 @@ class _NewOrderState extends State<NewOrder> {
                             for(int i=0;i<FinalProduct.length;i++){
                               double singleAmount = double.parse(FinalProduct[i]['amount']) * double.parse(FinalProduct[i]['qty']);
                               FinalAmount = FinalAmount + singleAmount;
-
                             }
 
                             Navigator.push(context, MaterialPageRoute(builder: (context) => NormalOrder(

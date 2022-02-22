@@ -24,11 +24,12 @@ class TypeModel{
   String id;
   String name;
   String address;
+  String state;
   String mobile;
   String business_name;
 
 
-  TypeModel(this.id, this.name, this.address, this.mobile,this.business_name);
+  TypeModel(this.id, this.name, this.address,this.state, this.mobile,this.business_name);
 }
 
 class _SalesOrderState extends State<SalesOrder> {
@@ -59,7 +60,7 @@ class _SalesOrderState extends State<SalesOrder> {
   }
 
   bool isLoaded = true;
-  String selectedRetailerId,selectedRetailerName,selectedRetailerAddress,orderAddress,selectedRetailerMobile;
+  String selectedRetailerId,selectedRetailerName,selectedRetailerAddress,selectedRetailerState,orderAddress,selectedRetailerMobile;
   getRetailer() async {
 
     setState(() {
@@ -78,7 +79,7 @@ class _SalesOrderState extends State<SalesOrder> {
       var singleDistributor;
 
       for (var abc in result) {
-        singleDistributor = TypeModel(abc.id,abc.name,abc.address,abc.mobile,abc.businessName);
+        singleDistributor = TypeModel(abc.id,abc.name,abc.address,abc.state,abc.mobile,abc.businessName);
         distributor_List.add(singleDistributor);
       }
     }
@@ -1001,6 +1002,8 @@ class _SalesOrderState extends State<SalesOrder> {
 
   final _formkey = GlobalKey<FormState>();
 
+
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -1119,6 +1122,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                   Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmOrder(
                                       orderid: salesIdController.text,
                                       retailerId: selectedRetailerId,
+                                      state: selectedRetailerState,
                                       address: orderAddress,
                                       orderDate: _textEditingController1.text,
                                       totalAmount: "${FinalAmount}",
@@ -1262,7 +1266,6 @@ class _SalesOrderState extends State<SalesOrder> {
                                               ),
                                               cursorColor: AppColors.black,
                                               cursorHeight: 22,
-                                              readOnly: true,
                                               decoration: fieldStyle1.copyWith(
                                                   hintText: "Add Sales Id",
                                                   hintStyle: textStyle.copyWith(
@@ -1318,6 +1321,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                                         selectedRetailerId = t.id;
                                                         selectedRetailerName = t.name;
                                                         selectedRetailerAddress = t.address;
+                                                        selectedRetailerState = t.state;
                                                         orderAddress = t.address;
                                                         selectedRetailerMobile = t.mobile;
                                                         isvisible = true;
@@ -1652,7 +1656,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                     ),
 
                                     Divider(
-                                        height: 20,
+                                        height: 15,
                                         color: Color.fromRGBO(185, 185, 185, 0.75),
                                         thickness: 1.2
                                     ),

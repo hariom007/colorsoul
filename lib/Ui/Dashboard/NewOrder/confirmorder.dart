@@ -10,9 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ConfirmOrder extends StatefulWidget {
 
   List productList = [];
-  String orderid,retailerId,address,orderDate,totalAmount,totalIgst,totalCgst,totalSgst;
+  String orderid,retailerId,state,address,orderDate,totalAmount,totalIgst,totalCgst,totalSgst;
 
-  ConfirmOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,
+  ConfirmOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,this.state,
     this.totalAmount,this.orderDate,this.totalCgst,this.totalIgst,this.totalSgst
   }) : super(key: key);
 
@@ -30,7 +30,17 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     _orderProvider = Provider.of<OrderProvider>(context, listen: false);
   }
 
+  List paymentMethods = [];
+
   createOrder() async {
+
+    String grandTotal =
+    roundingController.text == "" || roundingController.text == "+" || roundingController.text == "-"
+        ?
+    "${double.parse("${widget.totalAmount}")+double.parse("${widget.totalIgst}")}"
+        :
+    "${double.parse("${widget.totalAmount}")+double.parse("${widget.totalIgst}")+double.parse("${roundingController.text}")}";
+
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.get("userId");
@@ -41,19 +51,19 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       "sales_date":"${widget.orderDate}",
       "distributor_id":"${widget.retailerId}",
       "cl_group_color":"",
-      "state":"Gujarat",
+      "state": widget.state,
       "items": widget.productList,
       "discount":"2",
-      "total":"${widget.totalAmount}",
+      "total":"$grandTotal",
       "total_cgst":"${widget.totalCgst}",
       "total_igst":"${widget.totalIgst}",
       "total_sgst":"${widget.totalSgst}",
-      "pay_mode": []
+      "pay_mode": paymentMethods
     };
 
     //print(data);
 
-    _orderProvider.insertOrder(data, "/createOrders");
+    _orderProvider.insertOrder(data, "/add_salesorder");
     if(_orderProvider.isSuccess == true){
 
       getOrders();
@@ -117,6 +127,482 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
 
   }
 
+  bool isCash = false,isCheque = false,isCard = false,isVoucher = false;
+  TextEditingController cashAmountController = TextEditingController();
+  TextEditingController cashDetailsController = TextEditingController();
+
+  TextEditingController chequeAmountController = TextEditingController();
+  TextEditingController chequeDetailsController = TextEditingController();
+
+  TextEditingController cardAmountController = TextEditingController();
+  TextEditingController cardDetailsController = TextEditingController();
+
+  TextEditingController voucherAmountController = TextEditingController();
+  TextEditingController voucherDetailsController = TextEditingController();
+
+  TextEditingController roundingController = TextEditingController(text: "0");
+
+
+  selectPaymentMethod() {
+
+    final _formkey2 = GlobalKey<FormState>();
+
+    showModalBottomSheet(
+        enableDrag: false,
+        isScrollControlled:true,
+        backgroundColor: Colors.white,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        builder: (context) {
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+
+                  return Form(
+                    key: _formkey2,
+                    child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+                        height: MediaQuery.of(context).size.height-100,
+                        width: MediaQuery.of(context).size.width,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                              Row(
+                                children: [
+
+                                  Expanded(
+                                    child: Text(
+                                      "Select Payment Method",
+                                      style: textStyle.copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16
+                                      ),
+                                    ),
+                                  ),
+
+                                  InkWell(
+                                    onTap: (){
+
+                                      Navigator.pop(context);
+
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(Icons.close),
+                                    ),
+                                  )
+
+
+                                ],
+                              ),
+
+                              SizedBox(height: 20),
+
+                              Row(
+                                children: [
+
+                                  Container(
+                                      width: 25,
+                                      height: 25,
+                                      child: Checkbox(
+                                          value: isCash,
+                                          checkColor: AppColors.white,
+                                          activeColor: AppColors.black,
+                                          onChanged: (value){
+                                            setState((){
+                                              isCash = !isCash;
+                                            });
+                                          })
+                                  ),
+
+                                  SizedBox(width: 20),
+
+                                  Text(
+                                    'Cash',
+                                    textAlign: TextAlign.center,
+                                    style: textStyle.copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.black
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+
+                              isCash == true
+                                  ?
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+
+                                  SizedBox(height: MediaQuery.of(context).size.width*0.03),
+
+                                  TextFormField(
+                                      controller: cashAmountController,
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black
+                                      ),
+                                      cursorColor: AppColors.black,
+                                      cursorHeight: 22,
+                                      decoration: fieldStyle1.copyWith(
+                                          hintText: "Amount",
+                                          hintStyle: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          isDense: true
+                                      )
+                                  ),
+
+                                  SizedBox(height: 10),
+
+                                  TextFormField(
+                                      controller: cardDetailsController,
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black
+                                      ),
+                                      cursorColor: AppColors.black,
+                                      cursorHeight: 22,
+                                      decoration: fieldStyle1.copyWith(
+                                          hintText: "Details",
+                                          hintStyle: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          isDense: true
+                                      )
+                                  ),
+
+                                ],
+                              ):SizedBox(),
+
+                              SizedBox(height: 20),
+
+                              Row(
+                                children: [
+
+                                  Container(
+                                      width: 25,
+                                      height: 25,
+                                      child: Checkbox(
+                                          value: isCheque,
+                                          checkColor: AppColors.white,
+                                          activeColor: AppColors.black,
+                                          onChanged: (value){
+                                            setState((){
+                                              isCheque = !isCheque;
+                                            });
+                                          })
+                                  ),
+
+                                  SizedBox(width: 20),
+
+                                  Text(
+                                    'Cheque',
+                                    textAlign: TextAlign.center,
+                                    style: textStyle.copyWith(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.black
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+
+                              isCheque == true
+                                  ?
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+
+                                  SizedBox(height: MediaQuery.of(context).size.width*0.03),
+
+                                  TextFormField(
+                                      controller: chequeAmountController,
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black
+                                      ),
+                                      cursorColor: AppColors.black,
+                                      cursorHeight: 22,
+                                      decoration: fieldStyle1.copyWith(
+                                          hintText: "Amount",
+                                          hintStyle: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          isDense: true
+                                      )
+                                  ),
+                                  SizedBox(height: 10),
+                                  TextFormField(
+                                      controller: chequeDetailsController,
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black
+                                      ),
+                                      cursorColor: AppColors.black,
+                                      cursorHeight: 22,
+                                      decoration: fieldStyle1.copyWith(
+                                          hintText: "Details",
+                                          hintStyle: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          isDense: true
+                                      )
+                                  ),
+
+                                ],
+                              ):SizedBox(),
+
+                              SizedBox(height: 20),
+
+                              Row(
+                                children: [
+
+                                  Container(
+                                      width: 25,
+                                      height: 25,
+                                      child: Checkbox(
+                                          value: isCard,
+                                          checkColor: AppColors.white,
+                                          activeColor: AppColors.black,
+                                          onChanged: (value){
+                                            setState((){
+                                              isCard = !isCard;
+                                            });
+                                          })
+                                  ),
+
+                                  SizedBox(width: 20),
+
+                                  Text(
+                                    'Card',
+                                    textAlign: TextAlign.center,
+                                    style: textStyle.copyWith(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.black
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+
+                              isCard == true
+                                  ?
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+
+                                  SizedBox(height: MediaQuery.of(context).size.width*0.03),
+
+                                  TextFormField(
+                                      controller: cardAmountController,
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black
+                                      ),
+                                      cursorColor: AppColors.black,
+                                      cursorHeight: 22,
+                                      decoration: fieldStyle1.copyWith(
+                                          hintText: "Amount",
+                                          hintStyle: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          isDense: true
+                                      )
+                                  ),
+                                  SizedBox(height: 10),
+                                  TextFormField(
+                                      controller: cardDetailsController,
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black
+                                      ),
+                                      cursorColor: AppColors.black,
+                                      cursorHeight: 22,
+                                      decoration: fieldStyle1.copyWith(
+                                          hintText: "Details",
+                                          hintStyle: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          isDense: true
+                                      )
+                                  ),
+
+                                ],
+                              ):SizedBox(),
+
+                              SizedBox(height: 20),
+
+                              Row(
+                                children: [
+
+                                  Container(
+                                      width: 25,
+                                      height: 25,
+                                      child: Checkbox(
+                                          value: isVoucher,
+                                          checkColor: AppColors.white,
+                                          activeColor: AppColors.black,
+                                          onChanged: (value){
+                                            setState((){
+                                              isVoucher = !isVoucher;
+                                            });
+                                          })
+                                  ),
+
+                                  SizedBox(width: 20),
+
+                                  Text(
+                                    'Voucher',
+                                    textAlign: TextAlign.center,
+                                    style: textStyle.copyWith(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.black
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+
+
+                              isVoucher == true
+                                  ?
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+
+                                  SizedBox(height: MediaQuery.of(context).size.width*0.03),
+
+                                  TextFormField(
+                                      controller: voucherAmountController,
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black
+                                      ),
+                                      cursorColor: AppColors.black,
+                                      cursorHeight: 22,
+                                      decoration: fieldStyle1.copyWith(
+                                          hintText: "Amount",
+                                          hintStyle: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          isDense: true
+                                      )
+                                  ),
+                                  SizedBox(height: 10),
+                                  TextFormField(
+                                      controller: voucherDetailsController,
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black
+                                      ),
+                                      cursorColor: AppColors.black,
+                                      cursorHeight: 22,
+                                      decoration: fieldStyle1.copyWith(
+                                          hintText: "Details",
+                                          hintStyle: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          isDense: true
+                                      )
+                                  ),
+
+                                ],
+                              ):SizedBox(),
+
+                              SizedBox(height: 20),
+
+                              SizedBox(
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                        gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                        borderRadius: round.copyWith()
+                                    ),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+
+
+                                        if(isCash == true){
+
+                                          var data = {
+                                            "mode":"cash",
+                                            "amount":"${cashAmountController.text}",
+                                            "note":"${cashDetailsController.text}"
+                                          };
+                                          paymentMethods.add(data);
+                                        }
+
+                                        if(isCheque == true){
+
+                                          var data = {
+                                            "mode":"cheque",
+                                            "amount":"${chequeAmountController.text}",
+                                            "note":"${chequeDetailsController.text}"
+                                          };
+                                          paymentMethods.add(data);
+                                        }
+
+                                        if(isCard == true){
+
+                                          var data = {
+                                            "mode":"card",
+                                            "amount":"${cardAmountController.text}",
+                                            "note":"${cardDetailsController.text}"
+                                          };
+                                          paymentMethods.add(data);
+                                        }
+
+                                        if(isVoucher == true){
+
+                                          var data = {
+                                            "mode":"voucher",
+                                            "amount":"${voucherAmountController.text}",
+                                            "note":"${voucherDetailsController.text}"
+                                          };
+                                          paymentMethods.add(data);
+                                        }
+
+                                        Navigator.pop(context);
+                                        createOrder();
+
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                          elevation: 10,
+                                          primary: Colors.transparent,
+                                          shape: StadiumBorder()
+                                      ),
+                                      child: Text('Confirm',
+                                        textAlign: TextAlign.center,
+                                        style: textStyle.copyWith(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                              ),
+
+                            ],
+                          ),
+                        )
+                    ),
+                  );
+                }
+            ),
+          );
+        }
+    ).whenComplete(() {
+      setState(() {
+
+      });
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +642,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                           child: ElevatedButton(
                             onPressed: () {
 
-                              createOrder();
+                              selectPaymentMethod();
+                              //createOrder();
 
                             },
                             style: ElevatedButton.styleFrom(
@@ -247,7 +734,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                       fontSize: 18
                                     ),
                                   ),
-                                  SizedBox(height: 30),
+                                  SizedBox(height: 20),
                                   Text(
                                     "₹ ${widget.totalAmount}",
                                     style: textStyle.copyWith(
@@ -260,11 +747,11 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                     "___",
                                     style: textStyle.copyWith(
                                       color: AppColors.black,
-                                      fontSize: 34,
+                                      fontSize: 20,
                                       // fontWeight: FontWeight.bold
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   /*Text(
                                     "Delivery Date : December 18, 2021",
                                     style: textStyle.copyWith(
@@ -451,19 +938,24 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                   ),
 
                                   SizedBox(height: 10),
+
+                                  widget.state == "Maharashtra"
+                                  ?
+                                      SizedBox()
+                                  :
                                   Padding(
                                     padding: EdgeInsets.only(right: 10),
                                     child: Row(
                                       children: [
+                                        Expanded(child: Container()),
                                         Text(
-                                          "Total Igst",
+                                          "Total Igst  -  ",
                                           style: textStyle.copyWith(
                                               color: AppColors.black,
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold
                                           ),
                                         ),
-                                        Expanded(child: Container()),
                                         Text(
                                           "₹ ${widget.totalIgst}",
                                           style: textStyle.copyWith(
@@ -477,6 +969,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                   ),
 
                                   SizedBox(height: 10),
+
+                                  widget.state == "Maharashtra"
+                                      ?
                                   Padding(
                                     padding: EdgeInsets.only(right: 10),
                                     child: Row(
@@ -486,7 +981,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                           "Cgst  -  ",
                                           style: textStyle.copyWith(
                                               color: AppColors.black,
-                                              fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
                                           ),
                                         ),
                                         Text(
@@ -499,9 +995,13 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                         )
                                       ],
                                     ),
-                                  ),
+                                  )
+                                  :
+                                      SizedBox(),
 
                                   SizedBox(height: 10),
+                                  widget.state == "Maharashtra"
+                                      ?
                                   Padding(
                                     padding: EdgeInsets.only(right: 10),
                                     child: Row(
@@ -512,6 +1012,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                           style: textStyle.copyWith(
                                               color: AppColors.black,
                                               fontSize: 16,
+                                              fontWeight: FontWeight.bold
                                           ),
                                         ),
                                         Text(
@@ -524,8 +1025,91 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                         )
                                       ],
                                     ),
+                                  )
+                                      :
+                                  SizedBox(),
+
+                                  SizedBox(height: 15),
+
+                                  Row(
+                                    children: [
+
+                                      Expanded(child: Container()),
+
+                                      Text(
+                                        "Rounding  - ",
+                                        style: textStyle.copyWith(
+                                            color: AppColors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+
+
+                                      Container(
+                                        width: 100,
+                                        child: TextFormField(
+                                          controller: roundingController,
+                                          keyboardType: TextInputType.number,
+                                          style: textStyle.copyWith(
+                                              fontSize: 16,
+                                              color: AppColors.black
+                                          ),
+                                          cursorHeight: 22,
+                                          textAlign: TextAlign.center,
+                                          cursorColor: Colors.grey,
+                                          decoration: InputDecoration(
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderRadius: BorderRadius.only(),
+                                            ),
+                                            focusedBorder: UnderlineInputBorder(
+                                              borderRadius: BorderRadius.only(),
+                                            ),
+                                            isDense: true,
+                                            hintText: "Rounding",
+                                            errorStyle: TextStyle(height: 0,fontSize: 0),
+                                          ),
+                                          onChanged: (value){
+                                            setState(() {
+                                              print("$value");
+                                            });
+                                          },
+                                        ),
+                                      ),
+
+                                    ],
                                   ),
 
+                                  SizedBox(height: 15),
+
+                                  Padding(
+                                    padding: EdgeInsets.only(right: 10),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Grand Amount",
+                                          style: textStyle.copyWith(
+                                              color: AppColors.black,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                        Expanded(child: Container()),
+                                        Text(
+                                          roundingController.text == "" || roundingController.text == "+" || roundingController.text == "-"
+                                              ?
+                                          "₹ ${double.parse("${widget.totalAmount}")+double.parse("${widget.totalIgst}")}"
+                                              :
+                                          "₹ ${double.parse("${widget.totalAmount}")+double.parse("${widget.totalIgst}")+double.parse("${roundingController.text}")}",
+                                          style: textStyle.copyWith(
+                                              color: AppColors.black,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
 
                                   SizedBox(height: 20),
                                   /*Align(
