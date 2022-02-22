@@ -78,14 +78,13 @@ class _SalesOrderState extends State<SalesOrder> {
     _distributorProvider = Provider.of<DistributorProvider>(context, listen: false);
     _productProvider = Provider.of<ProductProvider>(context, listen: false);
 
-    //getRetailer("Text");
-    getGroup();
+    getRetailer();
 
   }
 
   bool isLoaded = true;
   String selectedRetailerId,selectedRetailerName = "Select Distributor",selectedRetailerAddress,selectedRetailerState,orderAddress,selectedRetailerMobile;
-  Future<List<TypeModel>> getRetailer(filter) async {
+  getRetailer() async {
 
     setState(() {
       isLoaded = false;
@@ -99,21 +98,11 @@ class _SalesOrderState extends State<SalesOrder> {
     await _distributorProvider.getOnlyDistributor(data,'/getDistributorRetailerByType');
     if(_distributorProvider.isSuccess == true){
 
-      var result  = _distributorProvider.distributorValue;
-      var singleDistributor;
-
-      /*for (var abc in result) {
-        singleDistributor = TypeModel(abc.id,abc.name,abc.address,abc.state,abc.mobile,abc.businessName);
-        distributor_List.add(singleDistributor);
-      }
-      */
-
       setState(() {
         isLoaded = true;
       });
 
-      return TypeModel.fromJsonList(result);
-
+      getGroup();
     }
     setState(() {
       isLoaded = true;
@@ -1465,19 +1454,20 @@ class _SalesOrderState extends State<SalesOrder> {
 
                                           SizedBox(height: 5),
 
-                                          DropdownSearch<TypeModel>(
+                                          DropdownSearch<DistributorModel>(
                                             mode: Mode.BOTTOM_SHEET,
-                                            label: "$selectedRetailerName",
-                                            onFind: (String filter) => getRetailer(filter),
-                                            itemAsString: (TypeModel u) => u.name != "" ? u.name : u.business_name != "" ? u.business_name : u.mobile,
-                                            onChanged: (TypeModel t) {
-                                              //print(t);
+                                            hint: "Select Distributor",
+                                            items: _distributorProvider.onlyDistributorList,
+                                            itemAsString: (DistributorModel u) =>
+                                            u.name != ""
+                                                ? "${u.name}" : u.businessName != "" ? "${u.businessName}" : "${u.mobile}",
+                                            onChanged: (DistributorModel t) {
+                                              print(t);
 
                                               setState(() {
                                                 selectedRetailerId = t.id;
                                                 selectedRetailerName = t.name;
                                                 selectedRetailerAddress = t.address;
-                                                selectedRetailerState = t.state;
                                                 orderAddress = t.address;
                                                 selectedRetailerMobile = t.mobile;
                                                 isvisible = true;
@@ -1487,23 +1477,22 @@ class _SalesOrderState extends State<SalesOrder> {
                                             },
                                             dropdownSearchDecoration: InputDecoration(
                                               contentPadding: EdgeInsets.only(top: 3,bottom: 3,left: 15),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.only(
-                                                      bottomLeft: Radius.circular(30),
-                                                      bottomRight: Radius.circular(30),
-                                                      topRight: Radius.circular(30)
-                                                  ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.only(
+                                                    bottomLeft: Radius.circular(30),
+                                                    bottomRight: Radius.circular(30),
+                                                    topRight: Radius.circular(30)
                                                 ),
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.only(
-                                                      bottomLeft: Radius.circular(30),
-                                                      bottomRight: Radius.circular(30),
-                                                      topRight: Radius.circular(30)
-                                                  ),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.only(
+                                                    bottomLeft: Radius.circular(30),
+                                                    bottomRight: Radius.circular(30),
+                                                    topRight: Radius.circular(30)
                                                 ),
+                                              ),
                                             ),
                                             showSearchBox: true,
-                                            showClearButton: true,
                                             searchFieldProps: TextFieldProps(
                                                 decoration: InputDecoration(
                                                   contentPadding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),

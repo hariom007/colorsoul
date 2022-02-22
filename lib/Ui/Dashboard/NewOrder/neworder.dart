@@ -1,3 +1,4 @@
+import 'package:colorsoul/Model/Distributor_Model.dart';
 import 'package:colorsoul/Model/Product_Model.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Provider/product_provider.dart';
@@ -73,14 +74,13 @@ class _NewOrderState extends State<NewOrder> {
     _distributorProvider = Provider.of<DistributorProvider>(context, listen: false);
     _productProvider = Provider.of<ProductProvider>(context, listen: false);
 
-    //getRetailer();
-    getGroup();
+    getRetailer();
 
   }
 
-  bool isLoaded = true;
+  bool isLoaded = false;
   String selectedRetailerId,selectedRetailerName = "Select Retailer",selectedRetailerAddress,orderAddress,selectedRetailerMobile;
-  Future<List<TypeModel>>getRetailer() async {
+  getRetailer() async {
 
     setState(() {
       isLoaded = false;
@@ -94,21 +94,12 @@ class _NewOrderState extends State<NewOrder> {
     await _distributorProvider.getOnlyDistributor(data,'/getDistributorRetailerByType');
     if(_distributorProvider.isSuccess == true){
 
-      var result  = _distributorProvider.distributorValue;
-
+      // var result  = _distributorProvider.distributorValue;
+      //
       setState(() {
         isLoaded = true;
       });
-
-      return TypeModel.fromJsonList(result);
-/*
-      var result  = _distributorProvider.onlyDistributorList;
-      var singleDistributor;
-
-      for (var abc in result) {
-        singleDistributor = TypeModel(abc.id,abc.name,abc.address,abc.mobile,abc.businessName);
-        distributor_List.add(singleDistributor);
-      }*/
+      getGroup();
     }
 
     setState(() {
@@ -1372,15 +1363,15 @@ class _NewOrderState extends State<NewOrder> {
                                               )
                                           ),*/
 
-                                          DropdownSearch<TypeModel>(
+                                          DropdownSearch<DistributorModel>(
                                             mode: Mode.BOTTOM_SHEET,
-                                            label: "$selectedRetailerName",
-                                            onFind: (String filter) => getRetailer(),
-                                            itemAsString: (TypeModel u) =>
+                                            hint: "Select Retailer",
+                                            items: _distributorProvider.onlyDistributorList,
+                                            itemAsString: (DistributorModel u) =>
                                             u.name != ""
-                                                ? "${u.name}" : u.business_name != "" ? "${u.business_name}" : "${u.mobile}",
-                                            onChanged: (TypeModel t) {
-                                              //print(t);
+                                                ? "${u.name}" : u.businessName != "" ? "${u.businessName}" : "${u.mobile}",
+                                            onChanged: (DistributorModel t) {
+                                              print(t);
 
                                               setState(() {
                                                 selectedRetailerId = t.id;
@@ -1411,7 +1402,6 @@ class _NewOrderState extends State<NewOrder> {
                                               ),
                                             ),
                                             showSearchBox: true,
-                                            showClearButton: true,
                                             searchFieldProps: TextFieldProps(
                                               decoration: InputDecoration(
                                                 contentPadding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),

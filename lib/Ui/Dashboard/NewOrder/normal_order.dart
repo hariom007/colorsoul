@@ -367,6 +367,7 @@ class _NormalOrderState extends State<NormalOrder> {
                                       color: Color.fromRGBO(185, 185, 185, 0.75),
                                       thickness: 1.2
                                   ),
+
                                   SizedBox(height: 10),
 
                                   Padding(
