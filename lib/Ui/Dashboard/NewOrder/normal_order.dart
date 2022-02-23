@@ -246,10 +246,10 @@ class _NormalOrderState extends State<NormalOrder> {
                                   ),
                                   SizedBox(height: 30),
                                   Text(
-                                    "₹ ${widget.totalAmount}",
+                                    "₹ ${double.parse(widget.totalAmount).toStringAsFixed(2)}",
                                     style: textStyle.copyWith(
                                         color: AppColors.black,
-                                        fontSize: 34,
+                                        fontSize: 32,
                                         fontWeight: FontWeight.bold
                                     ),
                                   ),
@@ -384,7 +384,7 @@ class _NormalOrderState extends State<NormalOrder> {
                                             ),
                                             Expanded(child: Container()),
                                             Text(
-                                              "₹ ${widget.totalAmount}",
+                                              "₹ ${double.parse(widget.totalAmount).toStringAsFixed(2)}",
                                               style: textStyle.copyWith(
                                                   color: AppColors.black,
                                                   fontSize: 16,
@@ -437,7 +437,8 @@ class _NormalOrderState extends State<NormalOrder> {
                                         ),
                                         Expanded(child: Container()),
                                         Text(
-                                          "₹ ${widget.totalAmount}",
+                                          "₹ ${double.parse(widget.totalAmount).toStringAsFixed(2)}",
+                                          //"₹ ${widget.totalAmount}",
                                           style: textStyle.copyWith(
                                               color: AppColors.black,
                                               fontSize: 22,

@@ -690,7 +690,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                   ),
                                   SizedBox(height: 20),
                                   Text(
-                                    "₹ ${widget.totalAmount}",
+                                    "₹ ${double.parse(widget.totalAmount).toStringAsFixed(2)}",
+                                    //"₹ ${widget.totalAmount}",
                                     style: textStyle.copyWith(
                                       color: AppColors.black,
                                       fontSize: 34,
@@ -827,7 +828,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                             ),
                                             Expanded(child: Container()),
                                             Text(
-                                              "₹ ${widget.totalAmount}",
+                                              "₹ ${double.parse(widget.totalAmount).toStringAsFixed(2)}",
+                                              //"₹ ${widget.totalAmount}",
                                               style: textStyle.copyWith(
                                                 color: AppColors.black,
                                                 fontSize: 16,
@@ -880,7 +882,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                         ),
                                         Expanded(child: Container()),
                                         Text(
-                                          "₹ ${widget.totalAmount}",
+                                          "₹ ${double.parse(widget.totalAmount).toStringAsFixed(2)}",
+                                          //"₹ ${widget.totalAmount}",
                                           style: textStyle.copyWith(
                                               color: AppColors.black,
                                               fontSize: 22,
@@ -1056,9 +1059,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                         Text(
                                           roundingController.text == "" || roundingController.text == "+" || roundingController.text == "-"
                                               ?
-                                          "₹ ${double.parse("${widget.totalAmount}")+double.parse("${widget.totalIgst}")}"
-                                              :
-                                          "₹ ${double.parse("${widget.totalAmount}")+double.parse("${widget.totalIgst}")+double.parse("${roundingController.text}")}",
+                                          "₹ ${double.parse("${double.parse("${widget.totalAmount}")+double.parse("${widget.totalIgst}")}").toStringAsFixed(2)}"
+                                            :
+                                          "₹ ${double.parse("${double.parse("${widget.totalAmount}")+double.parse("${widget.totalIgst}")+double.parse("${roundingController.text}")}").toStringAsFixed(2)}",
                                           style: textStyle.copyWith(
                                               color: AppColors.black,
                                               fontSize: 22,
