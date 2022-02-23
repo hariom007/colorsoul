@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:colorsoul/Model/Distributor_Model.dart';
 import 'package:colorsoul/Model/Product_Model.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
@@ -15,6 +17,22 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../Values/appColors.dart';
 import '../../../Values/components.dart';
+
+
+class Debouncer {
+  final int milliseconds;
+  VoidCallback action;
+  Timer _timer;
+
+  Debouncer({this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
+}
 
 class SalesOrder extends StatefulWidget {
   const SalesOrder({Key key}) : super(key: key);
@@ -162,6 +180,9 @@ class _SalesOrderState extends State<SalesOrder> {
 
                       setState(() {
 
+                        showProductList = _productProvider.searchProductList;
+                        searchNewProductList = _productProvider.searchProductList;
+
                         for(int i = 0;i<_productProvider.searchProductList.length;i++){
                           print(i);
                           var data = {
@@ -288,15 +309,19 @@ class _SalesOrderState extends State<SalesOrder> {
     });
   }
 
+  List<ProductModel> searchNewProductList = [];
+  List<ProductModel> showProductList = [];
 
   bool selectAll = false;
   List checkBoxList = [];
 
   List<ProductModel> selectedProductList = [];
+
+  final _debouncer = Debouncer(milliseconds: 10);
+
   addNewItem() {
 
     bool isLoading = false;
-
     TextEditingController searchController = TextEditingController();
 
     showModalBottomSheet(
@@ -319,17 +344,13 @@ class _SalesOrderState extends State<SalesOrder> {
                       isLoading = true;
                     });
 
-                    _productProvider.searchProductList.clear();
-
                     var data ={
                       "group_id":"$groupId",
                       "search_term" : "${value}"
                     };
                     await _productProvider.getSearchProducts(data,'/searchProductByKeyword');
 
-                    setState((){
-                      isLoading = false;
-                    });
+                    isLoading = false;
 
                   }
 
@@ -375,40 +396,6 @@ class _SalesOrderState extends State<SalesOrder> {
 
                           SizedBox(height: 20),
 
-                        /*
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10,right: 10),
-                            child: TextFormField(
-                              controller: searchController,
-                              style: textStyle.copyWith(
-                                  color: AppColors.black
-                              ),
-                              cursorColor: AppColors.black,
-                              cursorHeight: 22,
-                              decoration: fieldStyle1.copyWith(
-                                  hintText: "Search Product",
-                                  hintStyle: textStyle.copyWith(
-                                      color: AppColors.black
-                                  ),
-                                  prefixIcon: new IconButton(
-                                    icon: new Image.asset('assets/images/locater/search.png',width: 20,height: 20),
-                                    onPressed: null,
-                                  ),
-                                  isDense: true
-                              ),
-                              onChanged: (value){
-
-                                setState((){
-                                  _productProvider.searchProductList.clear();
-                                });
-
-                                getProducts(value);
-
-                              },
-                            ),
-                          ),
-                        */
-
                           Padding(
                             padding: const EdgeInsets.only(left: 10,right: 10),
                             child: Row(
@@ -418,20 +405,34 @@ class _SalesOrderState extends State<SalesOrder> {
                                   child: TextField(
                                     onSubmitted: (value){
 
+                                      FocusScope.of(context).requestFocus(new FocusNode());
                                       setState((){
-                                        _productProvider.searchProductList.clear();
-                                      });
 
-                                      if(_productProvider.isLoaded == true){
-                                        getProducts(searchController.text);
-                                      }
+                                        _debouncer.run(() {
+                                          setState(() {
+                                            _productProvider.searchProductList = searchNewProductList.where((u) => (u.clProductName.toLowerCase().contains(value.toLowerCase())))
+                                                .toList();
+                                            isLoaded == false;
+                                          });
+                                        });
+
+                                      });
 
                                     },
                                     onChanged: (value){
 
-                                      if(value == "" || value == null){
-                                        getProducts("");
-                                      }
+                                      setState((){
+
+                                        _debouncer.run(() {
+                                          setState(() {
+                                            _productProvider.searchProductList = searchNewProductList.where((u) => (u.clProductName.toLowerCase().contains(value.toLowerCase())))
+                                                .toList();
+                                            isLoaded == false;
+                                          });
+                                        });
+
+                                      });
+
 
                                     },
                                     controller: searchController,
@@ -455,13 +456,18 @@ class _SalesOrderState extends State<SalesOrder> {
                                 InkWell(
                                   onTap: (){
 
+                                    FocusScope.of(context).requestFocus(new FocusNode());
                                     setState((){
-                                      _productProvider.searchProductList.clear();
-                                    });
 
-                                    if(_productProvider.isLoaded == true){
-                                      getProducts(searchController.text);
-                                    }
+                                      _debouncer.run(() {
+                                        setState(() {
+                                          _productProvider.searchProductList = searchNewProductList.where((u) => (u.clProductName.toLowerCase().contains(searchController.text.toLowerCase())))
+                                              .toList();
+                                          isLoaded == false;
+                                        });
+                                      });
+
+                                    });
 
                                   },
                                   child: Container(
@@ -597,14 +603,20 @@ class _SalesOrderState extends State<SalesOrder> {
                                                             activeColor: AppColors.black,
                                                             onChanged: (value){
 
-                                                              print(value);
+                                                              //print(value);
 
                                                               setState((){
+
+                                                                if(value == false){
+                                                                  selectAll = false;
+                                                                }
+
                                                                 var data = {
                                                                   "id":"${checkBoxList[index2]["id"]}",
                                                                   "value":value
                                                                 };
                                                                 checkBoxList[index2] = data;
+
                                                               });
 
                                                             }),
@@ -643,11 +655,11 @@ class _SalesOrderState extends State<SalesOrder> {
                                       for(int i=0;i<checkBoxList.length;i++){
                                         if(checkBoxList[i]['value'] == true){
 
-                                          for(int j=0;j< _productProvider.searchProductList.length;j++){
+                                          for(int j=0;j<  showProductList.length;j++){
 
-                                            if(checkBoxList[i]['id'] == _productProvider.searchProductList[j].clProductId){
+                                            if(checkBoxList[i]['id'] == showProductList[j].clProductId){
 
-                                              selectedProductList.add(_productProvider.searchProductList[j]);
+                                              selectedProductList.add(showProductList[j]);
                                               selectedQuantity.add(TextEditingController());
                                               selectedAmount.add(TextEditingController());
                                             }
@@ -1927,7 +1939,9 @@ class _SalesOrderState extends State<SalesOrder> {
 
     if (newSelectedDate != null) {
       _selectedDate = newSelectedDate;
-      _textEditingController1 = TextEditingController(text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+      setState(() {
+        _textEditingController1 = TextEditingController(text: DateFormat('yyyy-MM-dd').format(_selectedDate));
+      });
     }
   }
 

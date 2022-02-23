@@ -3,6 +3,7 @@ import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,7 +52,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       "sales_date":"${widget.orderDate}",
       "distributor_id":"${widget.retailerId}",
       "cl_group_color":"",
-      "state": widget.state,
+      "state": widget.state == null ? "" : widget.state,
       "items": widget.productList,
       "discount":"2",
       "total":"$grandTotal",
@@ -61,59 +62,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       "pay_mode": paymentMethods
     };
 
-    //print(data);
+    print(data);
 
     _orderProvider.insertOrder(data, "/add_salesorder");
-    if(_orderProvider.isSuccess == true){
-
-      getOrders();
-
-    }
-
-  }
-
-  int page = 1;
-  bool isloading = false;
-  getOrders() async {
-
-    setState(() {
-      isloading = true;
-    });
-
-    setState(() {
-      _orderProvider.orderList.clear();
-      _orderProvider.incompleteOrderList.clear();
-      _orderProvider.completeOrderList.clear();
-    });
-
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String userId = sharedPreferences.get("userId");
-
-    var data = {
-      "uid":"$userId",
-      "from_date":"",
-      "to_date":"",
-      "status":""
-    };
-    await _orderProvider.getAllOrders(data,'/getOrder/$page');
-
-
-    var data1 = {
-      "uid":"$userId",
-      "from_date":"",
-      "to_date":"",
-      "status":"Pending"
-    };
-    await _orderProvider.getIncompleteOrders(data1,'/getOrder/$page');
-
-
-    var data2 = {
-      "uid":"$userId",
-      "from_date":"",
-      "to_date":"",
-      "status":"Delivered"
-    };
-    await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
 
     if(_orderProvider.isSuccess == true){
       showDialog(
@@ -126,6 +77,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     }
 
   }
+
+  int page = 1;
+  bool isloading = false;
 
   bool isCash = false,isCheque = false,isCard = false,isVoucher = false;
   TextEditingController cashAmountController = TextEditingController();
@@ -1050,6 +1004,10 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                         width: 100,
                                         child: TextFormField(
                                           controller: roundingController,
+                                          inputFormatters: <TextInputFormatter>[
+                                            //FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d*')),
+                                            FilteringTextInputFormatter.allow(RegExp(r'(^\-?\d*\.?\d*)'))
+                                          ],
                                           keyboardType: TextInputType.number,
                                           style: textStyle.copyWith(
                                               fontSize: 16,

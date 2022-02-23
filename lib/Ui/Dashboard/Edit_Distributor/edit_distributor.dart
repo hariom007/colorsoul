@@ -192,6 +192,7 @@ class _EditDistributersState extends State<EditDistributers> {
     await _distributorProvider.insertDistributor(data,'/createDistributorRetailer');
     if(_distributorProvider.isSuccess == true){
       Navigator.pop(context,'Refresh');
+      Navigator.pop(context,'Refresh');
     }
 
   }

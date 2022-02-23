@@ -600,6 +600,10 @@ class _NewOrderState extends State<NewOrder> {
 
                                                               print(value);
 
+                                                              if(value == false){
+                                                                selectAll = false;
+                                                              }
+
                                                               setState((){
                                                                 var data = {
                                                                   "id":"${checkBoxList[index2]["id"]}",
@@ -1878,7 +1882,9 @@ class _NewOrderState extends State<NewOrder> {
 
     if (newSelectedDate != null) {
       _selectedDate = newSelectedDate;
-      _textEditingController1 = TextEditingController(text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+      setState(() {
+        _textEditingController1 = TextEditingController(text: DateFormat('yyyy-MM-dd').format(_selectedDate));
+      });
     }
   }
 

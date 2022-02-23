@@ -17,6 +17,7 @@ class OrderProvider with ChangeNotifier
     notifyListeners();
 
     await ApiHandler.post(data,url).then((value){
+      print(value);
       if(value["st"] == "success")
       {
         isSuccess = true;
@@ -50,7 +51,6 @@ class OrderProvider with ChangeNotifier
        getAllOrders(data2, "/getOrder/1");
        getCompleteOrders(data3, "/getOrder/1");
        getIncompleteOrders(data4, "/getOrder/1");
-
         notifyListeners();
       }
       else
