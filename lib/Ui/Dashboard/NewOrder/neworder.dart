@@ -174,6 +174,7 @@ class _NewOrderState extends State<NewOrder> {
                       "search_term" : "",
                       "group_id":"$groupId"
                     };
+                    print(data);
                     await _productProvider.getSearchProducts(data,'/searchProductByKeyword');
                     if(_productProvider.isSuccess == true){
 
