@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:colorsoul/Model/Distributor_Model.dart';
 import 'package:colorsoul/Model/Product_Model.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
@@ -15,6 +17,22 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../Values/appColors.dart';
 import '../../../Values/components.dart';
+
+
+class Debouncer {
+  final int milliseconds;
+  VoidCallback action;
+  Timer _timer;
+
+  Debouncer({this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
+}
 
 class NewOrder extends StatefulWidget  {
   @override
@@ -123,6 +141,8 @@ class _NewOrderState extends State<NewOrder> {
 
   String groupId;
 
+  List<ProductModel> searchNewProductList = [];
+  List<ProductModel> showProductList = [];
 
   selectGroup(BuildContext context) {
 
@@ -158,6 +178,9 @@ class _NewOrderState extends State<NewOrder> {
                     if(_productProvider.isSuccess == true){
 
                       setState(() {
+
+                        showProductList = _productProvider.searchProductList;
+                        searchNewProductList = _productProvider.searchProductList;
 
                         for(int i = 0;i<_productProvider.searchProductList.length;i++){
                           print(i);
@@ -290,6 +313,7 @@ class _NewOrderState extends State<NewOrder> {
   List checkBoxList = [];
 
   List<ProductModel> selectedProductList = [];
+  final _debouncer = Debouncer(milliseconds: 10);
   addNewItem() {
 
     bool isLoading = false;
@@ -378,22 +402,32 @@ class _NewOrderState extends State<NewOrder> {
 
                                       FocusScope.of(context).requestFocus(new FocusNode());
                                       setState((){
-                                        _productProvider.searchProductList.clear();
-                                      });
 
-                                      if(_productProvider.isLoaded == true){
-                                        getProducts(searchController.text);
-                                      }
+                                        _debouncer.run(() {
+                                          setState(() {
+                                            _productProvider.searchProductList = searchNewProductList.where((u) => (u.clProductName.toLowerCase().contains(value.toLowerCase())))
+                                                .toList();
+                                            isLoaded == false;
+                                          });
+                                        });
+
+                                      });
 
                                     },
                                     onChanged: (value){
 
-                                      if(value == "" || value == null){
-                                        setState((){
-                                          _productProvider.searchProductList.clear();
+                                      setState((){
+
+                                        _debouncer.run(() {
+                                          setState(() {
+                                            _productProvider.searchProductList = searchNewProductList.where((u) => (u.clProductName.toLowerCase().contains(value.toLowerCase())))
+                                                .toList();
+                                            isLoaded == false;
+                                          });
                                         });
-                                        getProducts("");
-                                      }
+
+                                      });
+
 
                                     },
                                     controller: searchController,
@@ -417,14 +451,18 @@ class _NewOrderState extends State<NewOrder> {
                                 InkWell(
                                   onTap: (){
 
+                                    FocusScope.of(context).requestFocus(new FocusNode());
                                     setState((){
-                                      _productProvider.searchProductList.clear();
-                                      FocusScope.of(context).requestFocus(new FocusNode());
-                                    });
 
-                                    if(_productProvider.isLoaded == true){
-                                      getProducts(searchController.text);
-                                    }
+                                      _debouncer.run(() {
+                                        setState(() {
+                                          _productProvider.searchProductList = searchNewProductList.where((u) => (u.clProductName.toLowerCase().contains(searchController.text.toLowerCase())))
+                                              .toList();
+                                          isLoaded == false;
+                                        });
+                                      });
+
+                                    });
 
                                   },
                                   child: Container(
@@ -606,11 +644,11 @@ class _NewOrderState extends State<NewOrder> {
                                       for(int i=0;i<checkBoxList.length;i++){
                                         if(checkBoxList[i]['value'] == true){
 
-                                          for(int j=0;j< _productProvider.searchProductList.length;j++){
+                                          for(int j=0;j<  showProductList.length;j++){
 
-                                            if(checkBoxList[i]['id'] == _productProvider.searchProductList[j].clProductId){
+                                            if(checkBoxList[i]['id'] == showProductList[j].clProductId){
 
-                                              selectedProductList.add(_productProvider.searchProductList[j]);
+                                              selectedProductList.add(showProductList[j]);
                                               selectedQuantity.add(TextEditingController());
                                               selectedAmount.add(TextEditingController());
                                             }
