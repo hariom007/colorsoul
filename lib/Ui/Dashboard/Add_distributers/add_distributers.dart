@@ -67,7 +67,7 @@ class _AddDistributersState extends State<AddDistributers> {
         compressFormat: ImageCompressFormat.jpg,
         androidUiSettings: AndroidUiSettings(
             initAspectRatio: CropAspectRatioPreset.original,
-            toolbarWidgetColor: AppColors.white
+            toolbarWidgetColor: AppColors.black
         )
     );
     setState(() {
