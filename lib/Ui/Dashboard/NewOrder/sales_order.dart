@@ -9,6 +9,7 @@ import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:dropdown_below/dropdown_below.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -523,9 +524,9 @@ class _SalesOrderState extends State<SalesOrder> {
 
                                             selectAll = !selectAll;
 
-                                            for(int i = 0;i<_productProvider.searchProductList.length;i++){
+                                            for(int i = 0;i<searchNewProductList.length;i++){
                                               var data = {
-                                                "id":"${_productProvider.searchProductList[i].clProductId}",
+                                                "id":"${searchNewProductList[i].clProductId}",
                                                 "value": selectAll
                                               };
                                               checkBoxList.add(data);
@@ -554,12 +555,56 @@ class _SalesOrderState extends State<SalesOrder> {
                               itemCount: _productProvider.searchProductList.length,
                               shrinkWrap: true,
                               itemBuilder:(context, index){
+
                                 var productData = _productProvider.searchProductList[index];
 
                                 return Padding(
                                   padding: EdgeInsets.only(bottom: 10),
                                   child: InkWell(
                                     onTap: (){
+
+                                      checkBoxList[index]["value"] = !checkBoxList[index]["value"];
+
+                                      setState((){
+                                        var data = {
+                                          "id":"${checkBoxList[index]["id"]}",
+                                          "value":checkBoxList[index]["value"]
+                                        };
+                                        checkBoxList[index] = data;
+                                      });
+
+
+                                      if(checkBoxList[index]['value'] == true){
+
+                                        for(int i=0;i<checkBoxList.length;i++){
+
+                                          if(checkBoxList[i]["value"] == false){
+                                            setState((){
+                                              selectAll = false;
+                                            });
+                                            break;
+                                          }
+                                          else{
+                                            selectAll = true;
+                                          }
+
+                                        }
+
+                                      }
+                                      else{
+
+                                        for(int i=0;i<checkBoxList.length;i++){
+
+                                          if(checkBoxList[i]["value"] == true){
+                                            setState((){
+                                              selectAll = false;
+                                            });
+                                            break;
+                                          }
+
+                                        }
+
+                                      }
 
 
                                     },
@@ -603,21 +648,46 @@ class _SalesOrderState extends State<SalesOrder> {
                                                             activeColor: AppColors.black,
                                                             onChanged: (value){
 
-                                                              //print(value);
-
                                                               setState((){
-
-                                                                if(value == false){
-                                                                  selectAll = false;
-                                                                }
-
                                                                 var data = {
                                                                   "id":"${checkBoxList[index2]["id"]}",
                                                                   "value":value
                                                                 };
                                                                 checkBoxList[index2] = data;
-
                                                               });
+
+                                                              if(checkBoxList[index]['value'] == true){
+
+                                                                for(int i=0;i<checkBoxList.length;i++){
+
+                                                                  if(checkBoxList[i]["value"] == false){
+                                                                    setState((){
+                                                                      selectAll = false;
+                                                                    });
+                                                                    break;
+                                                                  }
+                                                                  else{
+                                                                    selectAll = true;
+                                                                  }
+
+                                                                }
+
+                                                              }
+                                                              else{
+
+                                                                for(int i=0;i<checkBoxList.length;i++){
+
+                                                                  if(checkBoxList[i]["value"] == true){
+                                                                    setState((){
+                                                                      selectAll = false;
+                                                                    });
+                                                                    break;
+                                                                  }
+
+                                                                }
+
+                                                              }
+
 
                                                             }),
                                                       )
@@ -803,6 +873,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                           fontSize: 16,
                                           color: Colors.black
                                       ),
+                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                       cursorHeight: 22,
                                       cursorColor: Colors.grey,
                                       decoration: InputDecoration(

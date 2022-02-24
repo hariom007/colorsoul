@@ -10,6 +10,7 @@ import 'package:colorsoul/Ui/Dashboard/NewOrder/normal_order.dart';
 import 'package:dropdown_below/dropdown_below.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -519,9 +520,9 @@ class _NewOrderState extends State<NewOrder> {
 
                                           selectAll = !selectAll;
 
-                                          for(int i = 0;i<_productProvider.searchProductList.length;i++){
+                                          for(int i = 0;i<searchNewProductList.length;i++){
                                             var data = {
-                                              "id":"${_productProvider.searchProductList[i].clProductId}",
+                                              "id":"${searchNewProductList[i].clProductId}",
                                               "value": selectAll
                                             };
                                             checkBoxList.add(data);
@@ -550,12 +551,56 @@ class _NewOrderState extends State<NewOrder> {
                               itemCount: _productProvider.searchProductList.length,
                               shrinkWrap: true,
                               itemBuilder:(context, index){
+
                                 var productData = _productProvider.searchProductList[index];
 
                                 return Padding(
                                   padding: EdgeInsets.only(bottom: 10),
                                   child: InkWell(
                                     onTap: (){
+
+                                      checkBoxList[index]["value"] = !checkBoxList[index]["value"];
+
+                                      setState((){
+                                        var data = {
+                                          "id":"${checkBoxList[index]["id"]}",
+                                          "value":checkBoxList[index]["value"]
+                                        };
+                                        checkBoxList[index] = data;
+                                      });
+
+
+                                      if(checkBoxList[index]['value'] == true){
+
+                                        for(int i=0;i<checkBoxList.length;i++){
+
+                                          if(checkBoxList[i]["value"] == false){
+                                            setState((){
+                                              selectAll = false;
+                                            });
+                                            break;
+                                          }
+                                          else{
+                                            selectAll = true;
+                                          }
+
+                                        }
+
+                                      }
+                                      else{
+
+                                        for(int i=0;i<checkBoxList.length;i++){
+
+                                          if(checkBoxList[i]["value"] == true){
+                                            setState((){
+                                              selectAll = false;
+                                            });
+                                            break;
+                                          }
+
+                                        }
+
+                                      }
 
 
                                     },
@@ -607,19 +652,37 @@ class _NewOrderState extends State<NewOrder> {
                                                                 checkBoxList[index2] = data;
                                                               });
 
-                                                              for(int i=0;i<checkBoxList.length;i++){
+                                                              if(checkBoxList[index]['value'] == true){
 
-                                                                if(checkBoxList[i]["value"] == false){
-                                                                  selectAll = false;
-                                                                }
-                                                                else{
-                                                                  selectAll = true;
+                                                                for(int i=0;i<checkBoxList.length;i++){
+
+                                                                  if(checkBoxList[i]["value"] == false){
+                                                                    setState((){
+                                                                      selectAll = false;
+                                                                    });
+                                                                    break;
+                                                                  }
+                                                                  else{
+                                                                    selectAll = true;
+                                                                  }
+
                                                                 }
 
                                                               }
+                                                              else{
 
-                                                              print(value);
+                                                                for(int i=0;i<checkBoxList.length;i++){
 
+                                                                  if(checkBoxList[i]["value"] == true){
+                                                                    setState((){
+                                                                      selectAll = false;
+                                                                    });
+                                                                    break;
+                                                                  }
+
+                                                                }
+
+                                                              }
 
 
                                                             }),
@@ -806,6 +869,7 @@ class _NewOrderState extends State<NewOrder> {
                                           fontSize: 16,
                                           color: Colors.black
                                       ),
+                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                       cursorHeight: 22,
                                       cursorColor: Colors.grey,
                                       decoration: InputDecoration(
