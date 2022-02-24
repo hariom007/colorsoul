@@ -146,4 +146,45 @@ class DistributorProvider with ChangeNotifier
   }
 
 
+  var distributorData;
+  getDistributorDetails(data,url) async
+  {
+
+    isDistributorLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      if(value["st"] == "success")
+      {
+        isSuccess = true;
+
+        distributorData = value['data'];
+        notifyListeners();
+      }
+      else
+      {
+        isSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Distributor Get List Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isDistributorLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+
 }

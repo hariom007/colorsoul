@@ -517,24 +517,7 @@ class _DistributorsState extends State<Distributors> {
                                                   Navigator.push(
                                                       context,
                                                       MaterialPageRoute(builder: (context) => Details(
-                                                        distributor_name: distributorData.businessName,
-                                                        distributor_address: distributorData.address,
-                                                        distributor_image: distributorData.image,
-                                                        distributor_gst: distributorData.gstNo,
-                                                        latitude: lat,
-                                                        longitude: lon,
-                                                        home_address:distributorData.homeAddress,
-                                                        person_name: distributorData.name,
-                                                        person_mobile: distributorData.mobile,
-                                                        person_tel: distributorData.telephone,
-                                                        business_type: distributorData.businessType,
-                                                        time: "${distributorData.openTime} - ${distributorData.closeTime}",
-                                                        opentime: "${distributorData.openTime}",
-                                                        closetime: "${distributorData.closeTime}",
-                                                        type: "${distributorData.type}",
                                                         id: "${distributorData.id}",
-                                                        city: "${distributorData.city}",
-                                                        state: "${distributorData.state}",
                                                       ))
                                                   );
 
