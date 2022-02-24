@@ -599,12 +599,6 @@ class _NewOrderState extends State<NewOrder> {
                                                             activeColor: AppColors.black,
                                                             onChanged: (value){
 
-                                                              print(value);
-
-                                                              if(value == false){
-                                                                selectAll = false;
-                                                              }
-
                                                               setState((){
                                                                 var data = {
                                                                   "id":"${checkBoxList[index2]["id"]}",
@@ -612,6 +606,21 @@ class _NewOrderState extends State<NewOrder> {
                                                                 };
                                                                 checkBoxList[index2] = data;
                                                               });
+
+                                                              for(int i=0;i<checkBoxList.length;i++){
+
+                                                                if(checkBoxList[i]["value"] == false){
+                                                                  selectAll = false;
+                                                                }
+                                                                else{
+                                                                  selectAll = true;
+                                                                }
+
+                                                              }
+
+                                                              print(value);
+
+
 
                                                             }),
                                                       )

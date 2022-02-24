@@ -79,7 +79,7 @@ class OrderProvider with ChangeNotifier
 
 
   List<OrderModel> orderList = [];
-  String allOrderCount,completeOrderCount,incompleteOrderCount;
+  String allOrderCount = "",completeOrderCount = "",incompleteOrderCount = "";
   getAllOrders(data,url) async
   {
 
@@ -94,6 +94,7 @@ class OrderProvider with ChangeNotifier
         isSuccess = true;
 
         var items = value["data"];
+        allOrderCount = "${value["total_result"]}";
 
         List client = items as List;
         list  = client.map<OrderModel>((json) => OrderModel.fromJson(json)).toList();
@@ -140,6 +141,8 @@ class OrderProvider with ChangeNotifier
         isSuccess = true;
 
         var items = value["data"];
+        completeOrderCount = "${value["total_result"]}";
+
 
         List client = items as List;
         list  = client.map<OrderModel>((json) => OrderModel.fromJson(json)).toList();
@@ -186,6 +189,7 @@ class OrderProvider with ChangeNotifier
         isSuccess = true;
 
         var items = value["data"];
+        incompleteOrderCount = "${value["total_result"]}";
 
         List client = items as List;
         list  = client.map<OrderModel>((json) => OrderModel.fromJson(json)).toList();

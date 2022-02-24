@@ -220,17 +220,8 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                       )]
                                   ),
                                   child:
-                                  _orderProvider.isLoaded == false
-                                      ?
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: SpinKitThreeBounce(
-                                      color: AppColors.white,
-                                      size: 25.0,
-                                    ),
-                                  )
-                                      :
-                                  Text('(${_orderProvider.orderList.length})',
+
+                                  Text('(${_orderProvider.allOrderCount})',
                                     textAlign: TextAlign.center,
                                     style: textStyle.copyWith(
                                         fontSize: 14,
@@ -274,17 +265,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                       )]
                                   ),
                                   child:
-                                  _orderProvider.isLoaded == false
-                                      ?
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: SpinKitThreeBounce(
-                                      color: AppColors.black,
-                                      size: 25.0,
-                                    ),
-                                  )
-                                      :
-                                  Text('(${_orderProvider.completeOrderList.length})',
+                                  Text('(${_orderProvider.completeOrderCount})',
                                     textAlign: TextAlign.center,
                                     style: textStyle.copyWith(
                                         fontSize: 14,
@@ -328,17 +309,8 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                       )]
                                   ),
                                   child:
-                                  _orderProvider.isLoaded == false
-                                      ?
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: SpinKitThreeBounce(
-                                      color: AppColors.black,
-                                      size: 25.0,
-                                    ),
-                                  )
-                                      :
-                                  Text('(${_orderProvider.incompleteOrderList.length})',
+
+                                  Text('(${_orderProvider.incompleteOrderCount})',
                                     textAlign: TextAlign.center,
                                     style: textStyle.copyWith(
                                         fontSize: 14,
