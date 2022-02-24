@@ -14,7 +14,9 @@ class ApiHandler {
         'Authorization':'4ccda7514adc0f13595a585205fb9761'
       };
 
-      var baseUrl = Uri.http('colorsoul.koffeekodes.com','/admin/Api$url');
+
+      //var baseUrl = Uri.http('colorsoul.koffeekodes.com','/admin/Api$url');
+      var baseUrl = Uri.https('console.colorsoul.co','/admin/Api$url');
 
       http.Response response = await http.post(
           baseUrl,
@@ -86,7 +88,8 @@ class ApiHandler {
 
   static Future<dynamic> get(url) async {
 
-      var baseUrl = Uri.http('colorsoul.koffeekodes.com','/admin/Api$url');
+      var baseUrl = Uri.https('console.colorsoul.co','/admin/Api$url');
+      //var baseUrl = Uri.http('colorsoul.koffeekodes.com','/admin/Api$url');
 
       _setHeadersGet()=> {
         'Content-type': 'application/json',
@@ -162,7 +165,8 @@ class ApiHandler {
 
   static Future<dynamic> getWithParams(url,params) async {
 
-    var baseUrl = Uri.http('colorsoul.koffeekodes.com','/admin/Api$url');
+    var baseUrl = Uri.https('console.colorsoul.co','/admin/Api$url');
+    //var baseUrl = Uri.http('colorsoul.koffeekodes.com','/admin/Api$url');
 
       _setHeadersGet()=> {
         'Content-type': 'application/json',
