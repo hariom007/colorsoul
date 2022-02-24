@@ -147,10 +147,11 @@ class DistributorProvider with ChangeNotifier
 
 
   var distributorData;
+  bool isDistributorDataLoaded = true;
   getDistributorDetails(data,url) async
   {
 
-    isDistributorLoaded = false;
+    isDistributorDataLoaded = false;
     notifyListeners();
 
     await ApiHandler.post(data,url).then((value){
@@ -179,7 +180,7 @@ class DistributorProvider with ChangeNotifier
 
       }
 
-      isDistributorLoaded = true;
+      isDistributorDataLoaded = true;
       notifyListeners();
 
     });

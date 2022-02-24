@@ -184,6 +184,9 @@ class _DetailsState extends State<Details> {
     city = "${_distributorProvider.distributorData['city']}";
     state = "${_distributorProvider.distributorData['state']}";
 
+    print("long $longitude");
+    print("lat $latitude");
+
   }
 
 
@@ -195,7 +198,20 @@ class _DetailsState extends State<Details> {
     _feedBackProvider = Provider.of<FeedBackProvider>(context, listen: true);
     _distributorProvider = Provider.of<DistributorProvider>(context, listen: true);
 
-    return Scaffold(
+    return
+      _distributorProvider.isDistributorDataLoaded == false
+          ?
+      Scaffold(
+        backgroundColor: AppColors.black,
+        body: Center(
+          child:  SpinKitThreeBounce(
+            color: AppColors.white,
+            size: 25.0,
+          ),
+        ),
+      )
+      :
+      Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.black,
           leading: Padding(
@@ -286,7 +302,15 @@ class _DetailsState extends State<Details> {
                     markers: _markers,
                     initialCameraPosition: CameraPosition(
                         target: LatLng(
+                            latitude == null || latitude == "" || latitude == "null"
+                            ?
+                            19.0760
+                                :
                             double.parse(latitude),
+                            longitude == null || longitude == "" || longitude == "null"
+                                ?
+                            72.8777
+                            :
                             double.parse(longitude)
                             // double.parse(widget.latitude) == null ? 19.0760 : double.parse(widget.latitude),
                             // double.parse(widget.longitude) == null ? 72.8777 : double.parse(widget.longitude)
