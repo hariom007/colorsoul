@@ -1519,7 +1519,8 @@ class _NewOrderState extends State<NewOrder> {
                                             ),
                                             showSearchBox: true,
                                             searchFieldProps: TextFieldProps(
-                                              decoration: InputDecoration(
+                                                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'([a-zA-Z])')),],
+                                                decoration: InputDecoration(
                                                 contentPadding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
                                                 hintText: "Search Retailer",
                                                 suffixIcon: Icon(Icons.search,color: AppColors.black),
