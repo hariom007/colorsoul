@@ -1262,7 +1262,7 @@ class _NewOrderState extends State<NewOrder> {
                                               return (u.name.toLowerCase().contains(value.toLowerCase()) || u.businessName.toLowerCase().contains(value.toLowerCase()));
                                             })
                                                 .toList();
-                                            isLoaded == false;
+                                            isLoaded == true;
                                           });
                                         });
 
@@ -1279,7 +1279,7 @@ class _NewOrderState extends State<NewOrder> {
                                               return (u.name.toLowerCase().contains(value.toLowerCase()) || u.businessName.toLowerCase().contains(value.toLowerCase()));
                                             })
                                                 .toList();
-                                            isLoaded == false;
+                                            isLoaded == true;
                                           });
                                         });
 
@@ -1317,7 +1317,7 @@ class _NewOrderState extends State<NewOrder> {
                                             return (u.name.toLowerCase().contains(value.toLowerCase()) || u.businessName.toLowerCase().contains(value.toLowerCase()));
                                           })
                                               .toList();
-                                          isLoaded == false;
+                                          isLoaded == true;
                                         });
                                       });
 
@@ -1787,8 +1787,6 @@ class _NewOrderState extends State<NewOrder> {
                                                   color: AppColors.black
                                               ),
                                               onTap: () async {
-
-                                                getRetailer();
 
                                                 selectDistributor();
 

@@ -1842,8 +1842,6 @@ class _SalesOrderState extends State<SalesOrder> {
                                               ),
                                               onTap: () async {
 
-                                                getRetailer();
-
                                                 selectDistributor();
 
                                               },
