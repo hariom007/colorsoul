@@ -259,6 +259,50 @@ class OrderProvider with ChangeNotifier
 
   }
 
+  insertSalesOrder(data,url) async
+  {
+
+    isLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+      print(value);
+      if(value["st"] == "success")
+      {
+        isSuccess = true;
+
+        salesOrderList.clear();
+
+        var data2 = {
+          "uid":"${data["uid"]}",
+        };
+
+        getSalesOrders(data2, "/get_salesorder/1");
+        notifyListeners();
+      }
+      else
+      {
+        isSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Insert Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
 
 
   List<SalesOrderModel> salesOrderList = [];

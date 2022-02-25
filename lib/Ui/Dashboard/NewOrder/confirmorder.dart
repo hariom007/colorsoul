@@ -64,7 +64,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
 
     print(data);
 
-    _orderProvider.insertOrder(data, "/add_salesorder");
+    _orderProvider.insertSalesOrder(data, "/add_salesorder");
 
     if(_orderProvider.isSuccess == true){
       showDialog(

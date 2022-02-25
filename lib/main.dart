@@ -84,7 +84,6 @@ class _splashState extends State<splash> {
       "password": "$password"
     };
 
-
     await _authProvider.loginApi(data,'/login');
     if(_authProvider.isSuccess == true){
 
