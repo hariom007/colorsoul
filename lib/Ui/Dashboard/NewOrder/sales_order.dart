@@ -1184,6 +1184,242 @@ class _SalesOrderState extends State<SalesOrder> {
   final _formkey = GlobalKey<FormState>();
 
 
+  List<DistributorModel> searchNewDistributor = [];
+
+  selectDistributor(){
+
+    TextEditingController searchController = TextEditingController();
+
+    showModalBottomSheet(
+        enableDrag: false,
+        isScrollControlled: true,
+        isDismissible: true,
+        backgroundColor: Colors.white,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        builder: (context) {
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+
+                  return Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                      height: MediaQuery.of(context).size.height-100,
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: [
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10,right: 10),
+                            child: Row(
+                              children: [
+
+                                Expanded(
+                                  child: Text(
+                                    "Select Distributor",
+                                    style: textStyle.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16
+                                    ),
+                                  ),
+                                ),
+
+                                InkWell(
+                                  onTap: (){
+
+                                    Navigator.pop(context);
+
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(Icons.close),
+                                  ),
+                                )
+
+
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 20),
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10,right: 10),
+                            child: Row(
+                              children: [
+
+                                Expanded(
+                                  child: TextField(
+                                    onSubmitted: (value){
+
+                                      FocusScope.of(context).requestFocus(new FocusNode());
+                                      setState((){
+
+                                        _debouncer.run(() {
+                                          setState(() {
+                                            _distributorProvider.onlyDistributorList = searchNewDistributor.where((u) {
+                                              return (u.name.toLowerCase().contains(value.toLowerCase()) || u.businessName.toLowerCase().contains(value.toLowerCase()));
+                                            })
+                                                .toList();
+                                            isLoaded == false;
+                                          });
+                                        });
+
+                                      });
+
+                                    },
+                                    onChanged: (value){
+
+                                      setState((){
+
+                                        _debouncer.run(() {
+                                          setState(() {
+                                            _distributorProvider.onlyDistributorList = searchNewDistributor.where((u) {
+                                              return (u.name.toLowerCase().contains(value.toLowerCase()) || u.businessName.toLowerCase().contains(value.toLowerCase()));
+                                            })
+                                                .toList();
+                                            isLoaded == false;
+                                          });
+                                        });
+
+                                      });
+
+
+                                    },
+                                    controller: searchController,
+                                    style: textStyle.copyWith(
+                                        color: AppColors.black
+                                    ),
+                                    cursorColor: AppColors.black,
+                                    cursorHeight: 22,
+                                    decoration: fieldStyle1.copyWith(
+                                        hintText: "Search Distributor",
+                                        hintStyle: textStyle.copyWith(
+                                            color: AppColors.black
+                                        ),
+                                        isDense: true
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(width: 10),
+
+                                InkWell(
+                                  onTap: (){
+
+                                    FocusScope.of(context).requestFocus(new FocusNode());
+                                    setState((){
+
+                                      _debouncer.run(() {
+                                        setState(() {
+                                          _distributorProvider.onlyDistributorList = searchNewDistributor.where((u) {
+                                            return (u.name.toLowerCase().contains(value.toLowerCase()) || u.businessName.toLowerCase().contains(value.toLowerCase()));
+                                          })
+                                              .toList();
+                                          isLoaded == false;
+                                        });
+                                      });
+
+                                    });
+
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                          bottomRight: Radius.circular(20),
+                                          topRight: Radius.circular(20),
+                                          bottomLeft: Radius.circular(20),
+                                        ),
+                                        border: Border.all(color: AppColors.black)
+                                    ),
+                                    height: 50,width: 60,
+                                    child: IconButton(
+                                      icon: new Image.asset('assets/images/locater/search.png',width: 20,height: 20),
+                                      onPressed: null,
+                                    ),
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 10),
+
+                          Expanded(
+                            child:
+                            isLoaded == false
+                                ?
+                            SpinKitThreeBounce(
+                              color: AppColors.black,
+                              size: 25.0,
+                            )
+                                :
+                            ListView.builder(
+                              padding: EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
+                              itemCount: _distributorProvider.onlyDistributorList.length,
+                              shrinkWrap: true,
+                              itemBuilder:(context, index){
+                                var t = _distributorProvider.onlyDistributorList[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 10),
+                                  child: InkWell(
+                                    onTap: (){
+
+                                      setState(() {
+                                        selectedRetailerId = t.id;
+                                        selectedRetailerName = t.name;
+                                        selectedRetailerAddress = t.address;
+                                        orderAddress = t.address;
+                                        selectedRetailerMobile = t.mobile;
+                                        isvisible = true;
+                                        isvisible1 = true;
+                                      });
+
+                                    },
+                                    child:
+                                    ListTile(
+                                      leading: Text(
+                                        _distributorProvider.onlyDistributorList[index].name == ""
+                                            ?
+                                        _distributorProvider.onlyDistributorList[index].businessName
+                                            :
+                                        '${_distributorProvider.onlyDistributorList[index].name}',
+                                        textAlign: TextAlign.center,
+                                        style: textStyle.copyWith(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.black
+                                        ),
+                                      ),
+                                      trailing: Icon(Icons.chevron_right),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+
+
+                        ],
+                      )
+                  );
+                }
+            ),
+          );
+        }
+    ).whenComplete(() {
+      setState(() {
+        print("Select Distributor");
+      });
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -1535,7 +1771,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                           ),
 */
 
-                                          SizedBox(height: 5),
+                                         /* SizedBox(height: 5),
 
                                           DropdownSearch<DistributorModel>(
                                             mode: Mode.BOTTOM_SHEET,
@@ -1597,6 +1833,30 @@ class _SalesOrderState extends State<SalesOrder> {
                                                   ),
                                                 )
                                             ),
+                                          ),
+*/
+
+                                          TextFormField(
+                                              style: textStyle.copyWith(
+                                                  color: AppColors.black
+                                              ),
+                                              onTap: () async {
+
+                                                getRetailer();
+
+                                                selectDistributor();
+
+                                              },
+                                              cursorColor: AppColors.black,
+                                              cursorHeight: 22,
+                                              readOnly: true,
+                                              decoration: fieldStyle1.copyWith(
+                                                  hintText: "Select Distributor",
+                                                  hintStyle: textStyle.copyWith(
+                                                      color: AppColors.black
+                                                  ),
+                                                  isDense: true
+                                              )
                                           ),
 
                                           Visibility(
@@ -1990,7 +2250,7 @@ class _SalesOrderState extends State<SalesOrder> {
     DateTime newSelectedDate = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime.now().subtract(Duration(days: 0)),
+        firstDate: DateTime(2020),
         lastDate: DateTime(2100),
         builder: (BuildContext context, Widget child) {
           return Theme(
