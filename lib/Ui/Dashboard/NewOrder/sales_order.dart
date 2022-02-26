@@ -1370,6 +1370,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                   child: InkWell(
                                     onTap: (){
 
+                                      print("click");
                                       setState(() {
                                         selectedRetailerId = t.id;
                                         selectedRetailerName = t.name;
@@ -1379,6 +1380,8 @@ class _SalesOrderState extends State<SalesOrder> {
                                         isvisible = true;
                                         isvisible1 = true;
                                       });
+
+                                      Navigator.pop(context);
 
                                     },
                                     child:
@@ -1836,6 +1839,8 @@ class _SalesOrderState extends State<SalesOrder> {
                                           ),
 */
 
+                                          SizedBox(height: 5),
+
                                           TextFormField(
                                               style: textStyle.copyWith(
                                                   color: AppColors.black
@@ -1867,28 +1872,31 @@ class _SalesOrderState extends State<SalesOrder> {
                                                   SizedBox(height: height*0.02),
                                                   Row(
                                                     children: [
-                                                      RichText(
-                                                          text: TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                    text: "Retailer :- ",
-                                                                    style: textStyle.copyWith(
+                                                      Expanded(
+                                                        child: RichText(
+                                                          maxLines: 2,
+                                                            text: TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                      text: "Retailer :- ",
+                                                                      style: textStyle.copyWith(
+                                                                          fontSize: 16,
+                                                                          color: AppColors.black,
+                                                                          fontWeight: FontWeight.bold
+                                                                      )
+                                                                  ),
+                                                                  TextSpan(
+                                                                      text: "$selectedRetailerName",
+                                                                      style: textStyle.copyWith(
                                                                         fontSize: 16,
+                                                                        overflow: TextOverflow.ellipsis,
                                                                         color: AppColors.black,
-                                                                        fontWeight: FontWeight.bold
-                                                                    )
-                                                                ),
-                                                                TextSpan(
-                                                                    text: "$selectedRetailerName",
-                                                                    style: textStyle.copyWith(
-                                                                      fontSize: 16,
-                                                                      color: AppColors.black,
-                                                                    )
-                                                                )
-                                                              ]
-                                                          )
+                                                                      )
+                                                                  )
+                                                                ]
+                                                            )
+                                                        ),
                                                       ),
-                                                      Expanded(child: Container()),
                                                       InkWell(
                                                           onTap: () {
                                                             setState(() {

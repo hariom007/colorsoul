@@ -1377,6 +1377,8 @@ class _NewOrderState extends State<NewOrder> {
                                         isvisible1 = true;
                                       });
 
+                                      Navigator.pop(context);
+
                                     },
                                     child:
                                     ListTile(
