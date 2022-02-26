@@ -1369,7 +1369,16 @@ class _NewOrderState extends State<NewOrder> {
 
                                       setState(() {
                                         selectedRetailerId = t.id;
-                                        selectedRetailerName = t.name;
+                                        selectedRetailerName = t.name == ""
+                                            ?
+                                        t.businessName  == ""
+                                            ?
+                                        t.mobile
+                                            :
+                                        t.businessName
+                                            :
+                                        t.name;
+
                                         selectedRetailerAddress = t.address;
                                         orderAddress = t.address;
                                         selectedRetailerMobile = t.mobile;

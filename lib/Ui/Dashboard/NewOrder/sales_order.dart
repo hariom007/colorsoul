@@ -1129,6 +1129,10 @@ class _SalesOrderState extends State<SalesOrder> {
                                                     "hsn_code":"${selectedProductList[i].hsnCode}",
                                                   };
                                                   viewProduct.add(product);
+
+                                                  totalAmount = totalAmount + double.parse("${selectedAmount[i].text}");
+                                                  totalQuentity = totalQuentity + int.parse("${selectedQuantity[i].text}");
+
                                                 }
 
                                                 Navigator.pop(context);
@@ -1180,6 +1184,8 @@ class _SalesOrderState extends State<SalesOrder> {
 
   List finalProduct = [];
   double TotalAmount = 0.0;
+  double totalAmount = 0.0;
+  int totalQuentity = 0;
 
   final _formkey = GlobalKey<FormState>();
 
@@ -1373,7 +1379,15 @@ class _SalesOrderState extends State<SalesOrder> {
                                       print("click");
                                       setState(() {
                                         selectedRetailerId = t.id;
-                                        selectedRetailerName = t.name;
+                                        selectedRetailerName = t.name == ""
+                                            ?
+                                        t.businessName  == ""
+                                            ?
+                                        t.mobile
+                                            :
+                                        t.businessName
+                                            :
+                                        t.name;
                                         selectedRetailerAddress = t.address;
                                         orderAddress = t.address;
                                         selectedRetailerMobile = t.mobile;
@@ -2235,6 +2249,47 @@ class _SalesOrderState extends State<SalesOrder> {
                                         );
                                       },
                                     ),
+
+                                    SizedBox(height: 10),
+
+                                    viewProduct.length == 0
+                                        ?
+                                    SizedBox(height: 10)
+                                        :
+                                    Row(
+                                      children: [
+
+
+                                        Expanded(
+                                          child: Container(
+                                            width: 130,
+                                            child: Text(
+                                              "Quantity : $totalQuentity",
+                                              textAlign: TextAlign.center,
+                                              style: textStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        Expanded(
+                                          child: Container(
+                                            child: Text(
+                                              "Amount : ${totalAmount.toStringAsFixed(2)}",
+                                              textAlign: TextAlign.center,
+                                              style: textStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+
 
 
                                     SizedBox(height: height*0.02),
