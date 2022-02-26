@@ -166,13 +166,18 @@ class _DistributorsState extends State<Distributors> {
   }
 
   int page = 1;
+  TextEditingController searchDistributor = TextEditingController();
   getDistributor() async {
 
     setState(() {
       isScrollingDown = true;
     });
 
-    await _distributorProvider.getDistributor('/getDistributorRetailer/$page');
+    var data = {
+      "search_term":"${searchDistributor.text}"
+    };
+
+    await _distributorProvider.getDistributor(data,'/getDistributorRetailer/$page');
 
     setState(() {
       isScrollingDown = false;
@@ -283,271 +288,318 @@ class _DistributorsState extends State<Distributors> {
                       ),
                       child: Padding(
                           padding: EdgeInsets.only(right: 20,left: 20),
-                          child: NotificationListener<OverscrollIndicatorNotification>(
-                            onNotification: (OverscrollIndicatorNotification overscroll) {
-                              overscroll.disallowGlow();
-                              return;
-                            },
-                            child: SingleChildScrollView(
-                              controller: _scrollViewController,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                          child: Column(
+                            children: [
 
-                                  ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    padding: EdgeInsets.only(
-                                        top: 10,
+                              SizedBox(height: 20),
+
+                              TextField(
+                                onSubmitted: (value){
+
+                                  FocusScope.of(context).requestFocus(new FocusNode());
+                                  setState(() {
+                                    page = 1;
+                                    _distributorProvider.distributorList.clear();
+                                  });
+                                  getDistributor();
+
+                                },
+                                onChanged: (value){
+
+                                  if(_distributorProvider.isLoaded == true){
+                                    setState(() {
+                                      page = 1;
+                                      _distributorProvider.distributorList.clear();
+                                    });
+                                    getDistributor();
+                                  }
+
+
+                                },
+                                style: textStyle.copyWith(
+                                    color: AppColors.black
+                                ),
+                                controller: searchDistributor,
+                                cursorColor: AppColors.black,
+                                cursorHeight: 22,
+                                decoration: fieldStyle1.copyWith(
+                                    hintText: "Search Distributor or Retailer",
+                                    hintStyle: textStyle.copyWith(
+                                        color: AppColors.black
                                     ),
-                                    itemCount: _distributorProvider.distributorList.length,
-                                    shrinkWrap: true,
-                                    itemBuilder:(context, index){
-                                      var distributorData = _distributorProvider.distributorList[index];
-                                      return Padding(
-                                        padding: EdgeInsets.only(bottom: 10),
-                                        child: Card(
-                                            elevation: 10,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: round1.copyWith()
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.only(top: 5,bottom: 6),
-                                              child:  ListTile(
-                                                title: Text(
-                                                  "${distributorData.businessName}",
-                                                  style: textStyle.copyWith(
-                                                      fontSize: 18,
-                                                      color: Colors.black,
-                                                      fontWeight: FontWeight.bold
+                                    isDense: true
+                                ),
+                              ),
+
+                              Expanded(
+                                child: NotificationListener<OverscrollIndicatorNotification>(
+                                  onNotification: (OverscrollIndicatorNotification overscroll) {
+                                    overscroll.disallowGlow();
+                                    return;
+                                  },
+                                  child: SingleChildScrollView(
+                                    controller: _scrollViewController,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+
+                                        ListView.builder(
+                                          physics: NeverScrollableScrollPhysics(),
+                                          padding: EdgeInsets.only(
+                                              top: 10,
+                                          ),
+                                          itemCount: _distributorProvider.distributorList.length,
+                                          shrinkWrap: true,
+                                          itemBuilder:(context, index){
+                                            var distributorData = _distributorProvider.distributorList[index];
+                                            return Padding(
+                                              padding: EdgeInsets.only(bottom: 10),
+                                              child: Card(
+                                                  elevation: 10,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius: round1.copyWith()
                                                   ),
-                                                ),
-                                                subtitle: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(height: height*0.012),
-                                                    Row(
-                                                      children: [
-                                                        Image.asset("assets/images/tasks/location1.png",width: 15),
-                                                        SizedBox(width: 10),
-                                                        Flexible(
-                                                          child: Text(
-                                                            "${distributorData.address}",
-                                                            maxLines: 1,
-                                                            overflow: TextOverflow.ellipsis,
-                                                            style: textStyle.copyWith(
-                                                              fontSize: 14,
-                                                              color: Colors.black,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(top: 5,bottom: 6),
+                                                    child:  ListTile(
+                                                      title: Text(
+                                                        "${distributorData.businessName}",
+                                                        style: textStyle.copyWith(
+                                                            fontSize: 18,
+                                                            color: Colors.black,
+                                                            fontWeight: FontWeight.bold
+                                                        ),
+                                                      ),
+                                                      subtitle: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(height: height*0.012),
+                                                          Row(
+                                                            children: [
+                                                              Image.asset("assets/images/tasks/location1.png",width: 15),
+                                                              SizedBox(width: 10),
+                                                              Flexible(
+                                                                child: Text(
+                                                                  "${distributorData.address}",
+                                                                  maxLines: 1,
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                  style: textStyle.copyWith(
+                                                                    fontSize: 14,
+                                                                    color: Colors.black,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      trailing: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+
+                                                          InkWell(
+                                                            onTap: () async {
+
+                                                              Position position = await getGeoLocationPosition();
+
+                                                              String url ='https://www.google.com/maps/dir/?api=1&origin=${position.latitude},${position.longitude}&destination=${distributorData.latitude},${distributorData.longitude}&travelmode=driving&dir_action=navigate';
+                                                              launch(url);
+
+
+                                                            },
+                                                            child: Column(
+                                                              children: [
+                                                                SizedBox(height: 5),
+                                                                Image.asset("assets/images/locater/direction.png",width: 22),
+                                                                SizedBox(height: 10),
+                                                                Text(
+                                                                  "Direction",
+                                                                  style: textStyle.copyWith(
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: AppColors.black
+                                                                  ),
+                                                                )
+                                                              ],
                                                             ),
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                                trailing: Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
 
-                                                    InkWell(
-                                                      onTap: () async {
+                                                          SizedBox(width: 5),
 
-                                                        Position position = await getGeoLocationPosition();
+                                                          PopupMenuButton(
+                                                              elevation: 2,
+                                                              offset: Offset(3,-10),
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius: round1.copyWith()
+                                                              ),
+                                                              color: AppColors.grey1,
+                                                              onSelected: (index) {
+                                                                if(index==3)
+                                                                {
+                                                                  Navigator.push(context, MaterialPageRoute(builder: (context) => FeedbackPage(
+                                                                    distributorId: distributorData.id,
+                                                                  )));
+                                                                }
+                                                                if(index==4)
+                                                                {
+                                                                  var lat = distributorData.latitude;
+                                                                  var lon = distributorData.longitude;
 
-                                                        String url ='https://www.google.com/maps/dir/?api=1&origin=${position.latitude},${position.longitude}&destination=${distributorData.latitude},${distributorData.longitude}&travelmode=driving&dir_action=navigate';
-                                                        launch(url);
+                                                                  if(distributorData.latitude == '' || distributorData.longitude == ''){
+                                                                    lat = '19.0760';
+                                                                    lon = '72.8777';
+                                                                  }
 
 
-                                                      },
-                                                      child: Column(
-                                                        children: [
-                                                          SizedBox(height: 5),
-                                                          Image.asset("assets/images/locater/direction.png",width: 22),
-                                                          SizedBox(height: 10),
-                                                          Text(
-                                                            "Direction",
-                                                            style: textStyle.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color: AppColors.black
-                                                            ),
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(builder: (context) => EditDistributers(
+                                                                        distributor_name: distributorData.businessName,
+                                                                        distributor_address: distributorData.address,
+                                                                        distributor_image: distributorData.image,
+                                                                        distributor_gst: distributorData.gstNo,
+                                                                        latitude: lat,
+                                                                        longitude: lon,
+                                                                        home_address: distributorData.homeAddress,
+                                                                        landmark: distributorData.landmark,
+                                                                        person_name: distributorData.name,
+                                                                        person_mobile: distributorData.mobile,
+                                                                        person_tel: distributorData.telephone,
+                                                                        business_type: distributorData.businessType,
+                                                                        opentime: "${distributorData.openTime}",
+                                                                        closetime: "${distributorData.closeTime}",
+                                                                        type: "${distributorData.type}",
+                                                                        id: distributorData.id,
+                                                                        state: distributorData.state,
+                                                                        city: distributorData.city,
+                                                                      ))
+                                                                  );
+
+                                                                }
+
+                                                              },
+                                                              child: Image.asset("assets/images/details/menu1.png",width: 24,height: 24,color: AppColors.black),
+                                                              itemBuilder: (context) => [
+                                                                PopupMenuItem(
+                                                                  onTap: () {
+                                                                    getImage(ImageSource.gallery,distributorData.id);
+                                                                  },
+                                                                  value: 1,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Image.asset("assets/images/notes/scene.png",width: 20,height: 20),
+                                                                      SizedBox(width: 10),
+                                                                      Text(
+                                                                        "Add Image",
+                                                                        style: textStyle.copyWith(
+                                                                            color: AppColors.black,
+                                                                            fontWeight: FontWeight.bold
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                PopupMenuItem(
+                                                                  onTap: () {
+                                                                    getImage(ImageSource.camera,distributorData.id);
+                                                                  },
+                                                                  value: 2,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Image.asset("assets/images/notes/camera.png",width: 20,height: 20),
+                                                                      SizedBox(width: 10),
+                                                                      Text(
+                                                                        "Take Photo",
+                                                                        style: textStyle.copyWith(
+                                                                            color: AppColors.black,
+                                                                            fontWeight: FontWeight.bold
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                PopupMenuItem(
+                                                                  value: 3,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Image.asset("assets/images/distributors/feedback.png",width: 21,height: 21),
+                                                                      SizedBox(width: 10),
+                                                                      Text(
+                                                                        "Feedback",
+                                                                        style: textStyle.copyWith(
+                                                                            color: AppColors.black,
+                                                                            fontWeight: FontWeight.bold
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                PopupMenuItem(
+                                                                  value: 4,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(Icons.edit,color: AppColors.black,size: 21,),
+                                                                      SizedBox(width: 10),
+                                                                      Text(
+                                                                        "Edit",
+                                                                        style: textStyle.copyWith(
+                                                                            color: AppColors.black,
+                                                                            fontWeight: FontWeight.bold
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ]
                                                           )
                                                         ],
                                                       ),
+                                                      onTap: () {
+
+                                                        var lat = distributorData.latitude;
+                                                        var lon = distributorData.longitude;
+
+                                                        if(lat == "" || lat == "null" || lat == null || lat == "0.0"){
+                                                          lat = "19.0760";
+                                                          lon = "72.8777";
+                                                        }
+
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(builder: (context) => Details(
+                                                              id: "${distributorData.id}",
+                                                            ))
+                                                        );
+
+                                                      },
                                                     ),
-
-                                                    SizedBox(width: 5),
-
-                                                    PopupMenuButton(
-                                                        elevation: 2,
-                                                        offset: Offset(3,-10),
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius: round1.copyWith()
-                                                        ),
-                                                        color: AppColors.grey1,
-                                                        onSelected: (index) {
-                                                          if(index==3)
-                                                          {
-                                                            Navigator.push(context, MaterialPageRoute(builder: (context) => FeedbackPage(
-                                                              distributorId: distributorData.id,
-                                                            )));
-                                                          }
-                                                          if(index==4)
-                                                          {
-                                                            var lat = distributorData.latitude;
-                                                            var lon = distributorData.longitude;
-
-                                                            if(distributorData.latitude == '' || distributorData.longitude == ''){
-                                                              lat = '19.0760';
-                                                              lon = '72.8777';
-                                                            }
-
-
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(builder: (context) => EditDistributers(
-                                                                  distributor_name: distributorData.businessName,
-                                                                  distributor_address: distributorData.address,
-                                                                  distributor_image: distributorData.image,
-                                                                  distributor_gst: distributorData.gstNo,
-                                                                  latitude: lat,
-                                                                  longitude: lon,
-                                                                  home_address: distributorData.homeAddress,
-                                                                  landmark: distributorData.landmark,
-                                                                  person_name: distributorData.name,
-                                                                  person_mobile: distributorData.mobile,
-                                                                  person_tel: distributorData.telephone,
-                                                                  business_type: distributorData.businessType,
-                                                                  opentime: "${distributorData.openTime}",
-                                                                  closetime: "${distributorData.closeTime}",
-                                                                  type: "${distributorData.type}",
-                                                                  id: distributorData.id,
-                                                                  state: distributorData.state,
-                                                                  city: distributorData.city,
-                                                                ))
-                                                            );
-
-                                                          }
-
-                                                        },
-                                                        child: Image.asset("assets/images/details/menu1.png",width: 24,height: 24,color: AppColors.black),
-                                                        itemBuilder: (context) => [
-                                                          PopupMenuItem(
-                                                            onTap: () {
-                                                              getImage(ImageSource.gallery,distributorData.id);
-                                                            },
-                                                            value: 1,
-                                                            child: Row(
-                                                              children: [
-                                                                Image.asset("assets/images/notes/scene.png",width: 20,height: 20),
-                                                                SizedBox(width: 10),
-                                                                Text(
-                                                                  "Add Image",
-                                                                  style: textStyle.copyWith(
-                                                                      color: AppColors.black,
-                                                                      fontWeight: FontWeight.bold
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          PopupMenuItem(
-                                                            onTap: () {
-                                                              getImage(ImageSource.camera,distributorData.id);
-                                                            },
-                                                            value: 2,
-                                                            child: Row(
-                                                              children: [
-                                                                Image.asset("assets/images/notes/camera.png",width: 20,height: 20),
-                                                                SizedBox(width: 10),
-                                                                Text(
-                                                                  "Take Photo",
-                                                                  style: textStyle.copyWith(
-                                                                      color: AppColors.black,
-                                                                      fontWeight: FontWeight.bold
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          PopupMenuItem(
-                                                            value: 3,
-                                                            child: Row(
-                                                              children: [
-                                                                Image.asset("assets/images/distributors/feedback.png",width: 21,height: 21),
-                                                                SizedBox(width: 10),
-                                                                Text(
-                                                                  "Feedback",
-                                                                  style: textStyle.copyWith(
-                                                                      color: AppColors.black,
-                                                                      fontWeight: FontWeight.bold
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          PopupMenuItem(
-                                                            value: 4,
-                                                            child: Row(
-                                                              children: [
-                                                                Icon(Icons.edit,color: AppColors.black,size: 21,),
-                                                                SizedBox(width: 10),
-                                                                Text(
-                                                                  "Edit",
-                                                                  style: textStyle.copyWith(
-                                                                      color: AppColors.black,
-                                                                      fontWeight: FontWeight.bold
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ]
-                                                    )
-                                                  ],
-                                                ),
-                                                onTap: () {
-
-                                                  var lat = distributorData.latitude;
-                                                  var lon = distributorData.longitude;
-
-                                                  if(lat == "" || lat == "null" || lat == null || lat == "0.0"){
-                                                    lat = "19.0760";
-                                                    lon = "72.8777";
-                                                  }
-
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(builder: (context) => Details(
-                                                        id: "${distributorData.id}",
-                                                      ))
-                                                  );
-
-                                                },
+                                                  )
                                               ),
-                                            )
+                                            );
+                                          },
                                         ),
-                                      );
-                                    },
-                                  ),
 
-                                  _distributorProvider.isLoaded == false
-                                      ?
-                                  Container(
-                                    height: 100,
-                                    child: Center(
-                                        child: SpinKitThreeBounce(
-                                          color: AppColors.black,
-                                          size: 25.0,
+                                        _distributorProvider.isLoaded == false
+                                            ?
+                                        Container(
+                                          height: 100,
+                                          child: Center(
+                                              child: SpinKitThreeBounce(
+                                                color: AppColors.black,
+                                                size: 25.0,
+                                              )
+                                          ),
                                         )
+                                            :
+                                            SizedBox(),
+
+                                        SizedBox(height: 40),
+
+                                      ],
                                     ),
-                                  )
-                                      :
-                                      SizedBox(),
-
-                                  SizedBox(height: 40),
-
-                                ],
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           )
                       ),
                     )

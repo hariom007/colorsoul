@@ -1127,6 +1127,10 @@ class _NewOrderState extends State<NewOrder> {
                                                  "hsn_code":"${selectedProductList[i].hsnCode}",
                                                };
                                                viewProduct.add(product);
+
+                                               totalAmount = totalAmount + double.parse("${selectedAmount[i].text}");
+                                               totalQuentity = totalQuentity + int.parse("${selectedQuantity[i].text}");
+
                                              }
 
                                              Navigator.pop(context);
@@ -1175,6 +1179,10 @@ class _NewOrderState extends State<NewOrder> {
   }
 
   List viewProduct = [];
+
+  double totalAmount = 0.0;
+  int totalQuentity = 0;
+
 
   List finalProduct = [];
   double TotalAmount = 0.0;
@@ -1236,7 +1244,6 @@ class _NewOrderState extends State<NewOrder> {
                                     child: Icon(Icons.close),
                                   ),
                                 )
-
 
                               ],
                             ),
@@ -2187,6 +2194,46 @@ class _NewOrderState extends State<NewOrder> {
                                           ),
                                         );
                                       },
+                                    ),
+
+                                    SizedBox(height: 10),
+
+                                    viewProduct.length == 0
+                                        ?
+                                    SizedBox(height: 10)
+                                        :
+                                    Row(
+                                      children: [
+
+
+                                        Expanded(
+                                          child: Container(
+                                            width: 130,
+                                            child: Text(
+                                              "Quantity : $totalQuentity",
+                                              textAlign: TextAlign.center,
+                                              style: textStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        Expanded(
+                                          child: Container(
+                                            child: Text(
+                                              "Amount : ${totalAmount.toStringAsFixed(2)}",
+                                              textAlign: TextAlign.center,
+                                              style: textStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                      ],
                                     ),
 
 
