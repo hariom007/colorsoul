@@ -412,13 +412,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                             ),
                                             onTap: () {
                                               Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
-                                                retailerBusinessName: allOrder.retailerBusinessName,
-                                                retailerAddress: allOrder.retailerAddress,
-                                                retailerMobile: allOrder.retailerMobile,
-                                                orderDate: "${DateFormat('dd, MMM yyyy').format(allOrder.orderDate)}",
-                                                orderAddress: allOrder.address,
-                                                products: allOrder.items,
-                                                totalAmount: allOrder.total,
+                                                orderId: allOrder.id,
                                               )));
                                             },
                                           ),
@@ -508,13 +502,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                             onTap: () {
 
                                               Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
-                                                retailerBusinessName: completedOrder.retailerBusinessName,
-                                                retailerAddress: completedOrder.retailerAddress,
-                                                retailerMobile: completedOrder.retailerMobile,
-                                                orderDate: "${DateFormat('dd, MMM yyyy').format(completedOrder.orderDate)}",
-                                                orderAddress: completedOrder.address,
-                                                products: completedOrder.items,
-                                                totalAmount: completedOrder.total,
+                                                orderId: completedOrder.id,
                                               )));
 
                                             },
@@ -711,13 +699,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                               onTap: () {
 
                                                 Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
-                                                  retailerBusinessName: incompleteOrder.retailerBusinessName,
-                                                  retailerAddress: incompleteOrder.retailerAddress,
-                                                  retailerMobile: incompleteOrder.retailerMobile,
-                                                  orderDate: "${DateFormat('dd, MMM yyyy').format(incompleteOrder.orderDate)}",
-                                                  orderAddress: incompleteOrder.address,
-                                                  products: incompleteOrder.items,
-                                                  totalAmount: incompleteOrder.total,
+                                                  orderId: incompleteOrder.id,
                                                 )));
 
                                               },

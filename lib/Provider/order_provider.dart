@@ -266,7 +266,7 @@ class OrderProvider with ChangeNotifier
     notifyListeners();
 
     await ApiHandler.post(data,url).then((value){
-      print(value);
+     // print(value);
       if(value["st"] == "success")
       {
         isSuccess = true;
@@ -315,7 +315,7 @@ class OrderProvider with ChangeNotifier
     await ApiHandler.post(data,url).then((value){
       List<SalesOrderModel> list;
 
-      print(value);
+     // print(value);
       if(value["st"] == "success")
       {
         isSuccess = true;
@@ -351,6 +351,49 @@ class OrderProvider with ChangeNotifier
     });
 
   }
+
+
+  var orderDetails;
+  getOrderDetails(data,url)async
+  {
+
+    isLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      if(value["st"] == "success")
+      {
+        isSuccess = true;
+        orderDetails = value["order_detail"];
+        print(orderDetails);
+
+        notifyListeners();
+      }
+      else
+      {
+        isSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Order Get List Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
 
 
 
