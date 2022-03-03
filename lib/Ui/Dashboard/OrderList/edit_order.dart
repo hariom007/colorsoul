@@ -7,6 +7,7 @@ import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/confirmorder.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/normal_order.dart';
+import 'package:colorsoul/Ui/Dashboard/OrderList/edit_confirm.dart';
 import 'package:dropdown_below/dropdown_below.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -38,10 +39,17 @@ class Debouncer {
 class EditOrder extends StatefulWidget {
 
   String retailerId,retailerName,retailerAddress;
-  String orderDate;
+  String orderDate,orderId;
   var productList;
 
-  EditOrder({Key key,this.retailerId,this.retailerName,this.retailerAddress}) : super(key: key);
+  EditOrder({Key key,
+    this.orderId,
+    this.retailerId,
+    this.retailerName,
+    this.retailerAddress,
+    this.orderDate,
+    this.productList
+  }) : super(key: key);
 
   @override
   State<EditOrder> createState() => _EditOrderState();
@@ -97,6 +105,34 @@ class _EditOrderState extends State<EditOrder> {
   DistributorProvider _distributorProvider;
   ProductProvider _productProvider;
 
+
+  setdata(){
+
+    setState(() {
+
+      selectedRetailerId = widget.retailerId;
+      selectedRetailerName = widget.retailerName;
+      selectedRetailerAddress = widget.retailerAddress;
+      orderAddress = widget.retailerAddress;
+      selectedRetailerId = widget.retailerId;
+      _textEditingController1 = TextEditingController(text: widget.orderDate);
+
+      viewProduct = widget.productList;
+      isvisible = true;
+      isvisible1 = true;
+
+
+      for(int i=0;i<viewProduct.length;i++){
+
+        totalAmount = totalAmount + double.parse("${viewProduct[i]['amount']}");
+        totalQuentity = totalQuentity + int.parse("${viewProduct[i]['qty']}");
+
+      }
+
+    });
+
+  }
+
   @override
   void initState() {
     super.initState();
@@ -105,10 +141,15 @@ class _EditOrderState extends State<EditOrder> {
 
     getRetailer();
 
+    setdata();
+
   }
 
   bool isLoaded = false;
-  String selectedRetailerId,selectedRetailerName = "Select Retailer",selectedRetailerAddress,orderAddress,selectedRetailerMobile;
+  String selectedRetailerId,selectedRetailerName = "Select Retailer",
+      selectedRetailerAddress,
+      orderAddress,
+      selectedRetailerMobile;
   getRetailer() async {
 
     setState(() {
@@ -1130,10 +1171,6 @@ class _EditOrderState extends State<EditOrder> {
                                                     "sku":"${selectedProductList[i].colors[0].skuCode}",
                                                     "amount":"${selectedAmount[i].text}",
                                                     "qty":"${selectedQuantity[i].text}",
-                                                    "hsnigst":"${selectedProductList[i].hsnIgst}",
-                                                    "hsncgst":"${selectedProductList[i].hsnCgst}",
-                                                    "hsnsgst":"${selectedProductList[i].hsnSgst}",
-                                                    "hsn_code":"${selectedProductList[i].hsnCode}",
                                                   };
                                                   viewProduct.add(product);
 
@@ -1542,7 +1579,8 @@ class _EditOrderState extends State<EditOrder> {
                                     FinalAmount = FinalAmount + singleAmount;
                                   }
 
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => NormalOrder(
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditConfirmOrder(
+                                    orderid: widget.orderId,
                                     retailerId: selectedRetailerId,
                                     address: orderAddress,
                                     orderDate: _textEditingController1.text,
@@ -2076,6 +2114,7 @@ class _EditOrderState extends State<EditOrder> {
                                     ),
 
                                     SizedBox(height: 10),
+
 
                                     viewProduct.length == 0
                                         ?

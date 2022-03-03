@@ -36,11 +36,18 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   }
 
-  String retailerBusinessName,retailerAddress,orderAddress,retailerMobile,orderDate,totalAmount;
+  String
+  retailer_id, retailerBusinessName, retailerAddress, orderAddress,
+      retailerMobile, orderDate, totalAmount;
   var products;
 
 
+  bool isLoading = false;
   getOrders() async {
+
+    setState(() {
+      isLoading= true;
+    });
 
     var data = {
       "id":"${widget.orderId}"
@@ -54,6 +61,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     if(_orderProvider.isSuccess == true){
 
       retailerBusinessName = _orderProvider.orderDetails['name'] == "" ?  _orderProvider.orderDetails['business_name'] : _orderProvider.orderDetails['name'];
+      retailer_id = _orderProvider.orderDetails['retailer_id'];
       retailerAddress = _orderProvider.orderDetails['address'];
       orderAddress = _orderProvider.orderDetails['address'];
       retailerMobile = _orderProvider.orderDetails['mobile'];
@@ -61,7 +69,13 @@ class _OrderDetailsState extends State<OrderDetails> {
       totalAmount = _orderProvider.orderDetails['total'];
       products = _orderProvider.orderDetails['items'];
 
+      print(products);
+
     }
+
+    setState(() {
+      isLoading= false;
+    });
 
   }
 
@@ -78,7 +92,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     return Scaffold(
         backgroundColor: AppColors.black,
         body:
-        _orderProvider.isLoaded == false
+        isLoading == true
             ?
         SpinKitThreeBounce(
           color: AppColors.white,
@@ -123,11 +137,22 @@ class _OrderDetailsState extends State<OrderDetails> {
                         Expanded(child: Container()),
 
                         InkWell(
-                            onTap: (){
+                            onTap: () async {
 
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => EditOrder(
-
+                              final value = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditOrder(
+                                orderId: widget.orderId,
+                                retailerId: retailer_id,
+                                retailerAddress: retailerAddress,
+                                retailerName: retailerBusinessName,
+                                orderDate: orderDate,
+                                productList: products,
                               )));
+
+                              if(value != null){
+
+                                getOrders();
+
+                              }
 
                             },
                             child: Icon(Icons.edit,color: AppColors.white,size: 23)
@@ -345,7 +370,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          "Item Code",
+                                          "Item Name",
                                           style: textStyle.copyWith(
                                             color: AppColors.black,
                                             fontSize: 16,
@@ -398,7 +423,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           children: [
                                             Expanded(
                                               child: Text(
-                                                "${productData['color_code']}",
+                                                "${productData['short']}",
                                                 style: textStyle.copyWith(
                                                   color: AppColors.black,
                                                 ),
