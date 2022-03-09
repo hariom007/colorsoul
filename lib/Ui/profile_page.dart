@@ -490,25 +490,28 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Row(
                     children: [
 
-                      Expanded(
-                        child: Text(
-                            "Address",
-                            style: textStyle.copyWith(
-                                fontSize: 15,
-                                color: AppColors.black
-                            )
-                        ),
+                      Text(
+                          "Address",
+                          style: textStyle.copyWith(
+                              fontSize: 15,
+                              color: AppColors.black
+                          )
                       ),
 
                       SizedBox(width: 30),
 
-                      Text(
-                          "$address",
-                          style: textStyle.copyWith(
-                              fontSize: 15,
-                              color: AppColors.black,
-                              fontWeight: FontWeight.bold
-                          )
+                      Expanded(
+                        child: Text(
+                            "$address",
+                            maxLines: 2,
+                            textAlign: TextAlign.end,
+                            overflow: TextOverflow.clip,
+                            style: textStyle.copyWith(
+                                fontSize: 15,
+                                color: AppColors.black,
+                                fontWeight: FontWeight.bold
+                            )
+                        ),
                       ),
 
                     ],

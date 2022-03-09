@@ -527,14 +527,26 @@ class _AddDistributersState extends State<AddDistributers> {
                                         :
                                     SizedBox(height: height*0.02),
 
-                                        Text(
-                                          "Distributor Business Name",
-                                          style: textStyle.copyWith(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16
-                                          ),
+                                    selectValue == 1
+                                        ?
+                                      Text(
+                                        "Distributor Business Name",
+                                        style: textStyle.copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
                                         ),
+                                      )
+                                    :
+                                      Text(
+                                        "Retailer Business Name",
+                                        style: textStyle.copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16
+                                        ),
+                                      ),
+
                                         SizedBox(height: height*0.01),
                                         TextFormField(
                                           controller: businessNameController,
