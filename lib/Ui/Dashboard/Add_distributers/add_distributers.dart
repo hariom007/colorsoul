@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -54,25 +55,39 @@ class _AddDistributersState extends State<AddDistributers> {
   bool isvisible = false;
   int selectValue = 1;
 
-  File _image;
+  List<File> _image = [];
   final _picker = ImagePicker();
+  bool isLoading = false;
   Future getImage(ImageSource source) async {
-    final XFile photo = await _picker.pickImage(source: source);
-    File cropped = await ImageCropper.cropImage(
-        sourcePath: photo.path,
-        // aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
-        compressQuality: 100,
-        maxWidth: 700,
-        maxHeight: 700,
-        compressFormat: ImageCompressFormat.jpg,
-        androidUiSettings: AndroidUiSettings(
-            initAspectRatio: CropAspectRatioPreset.original,
-            toolbarWidgetColor: AppColors.black
-        )
-    );
+
     setState(() {
-      _image = File(cropped.path);
+      isLoading = true;
     });
+
+    final List<XFile> photo = await _picker.pickMultiImage(
+        maxWidth: MediaQuery
+            .of(context)
+            .size
+            .width,
+        maxHeight: MediaQuery
+            .of(context)
+            .size
+            .height,
+        imageQuality: 100
+    );
+
+    for(int i=0;i<photo.length;i++){
+      setState(() {
+        _image.add(File(photo[i].path));
+      });
+      sendImage(File(photo[i].path));
+
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+
   }
 
   DistributorProvider _distributorProvider;
@@ -87,11 +102,9 @@ class _AddDistributersState extends State<AddDistributers> {
 
   }
 
-  String imageUrl = "";
+  List imageUrl = [];
 
-  sendImage() async {
-
-    _distributorProvider.isLoaded == false;
+  sendImage(File image) async {
 
     Map<String, String> headers = {
       "Accept": "application/json",
@@ -104,7 +117,7 @@ class _AddDistributersState extends State<AddDistributers> {
 
     if(_image != null){
       request.fields['folder'] = selectValue == 1 ? "distributor" : "retailer";
-      request.files.add(await http.MultipartFile.fromPath('file', _image.path));
+      request.files.add(await http.MultipartFile.fromPath('file', image.path));
 
       request.send().then((response) async {
         var res = await response.stream.bytesToString();
@@ -112,20 +125,15 @@ class _AddDistributersState extends State<AddDistributers> {
         var body = json.decode(res);
 
         if (response.statusCode == 200 && body['st'] == "success") {
-          imageUrl = body['file'];
-          addDistributor();
+          imageUrl.add(body['file']);
 
         }
         else{
           print("Image Upload Error");
-          addDistributor();
         }
 
       });
 
-    }
-    else{
-      addDistributor();
     }
 
   }
@@ -155,7 +163,7 @@ class _AddDistributersState extends State<AddDistributers> {
       "telephone":"${_personTelephoneController.text}",
       "open_time":"${_openTimeController.text}",
       "close_time":"${_closeTimeController.text}",
-      "image":"$imageUrl"
+      "image": imageUrl
     };
 
     _distributorProvider.distributorList.clear();
@@ -230,7 +238,7 @@ class _AddDistributersState extends State<AddDistributers> {
                         child: ElevatedButton(
                           onPressed: () {
 
-                            sendImage();
+                            addDistributor();
 
                             /*if(_formkey.currentState.validate()){
 
@@ -962,7 +970,7 @@ class _AddDistributersState extends State<AddDistributers> {
                                                       focusNode: AlwaysDisabledFocusNode(),
                                                       controller: _closeTimeController,
                                                       onTap: () {
-                                                        _pickTime();
+                                                        _pickTime2();
                                                       },
                                                     ),
                                                   ),
@@ -981,43 +989,65 @@ class _AddDistributersState extends State<AddDistributers> {
                                           ),
                                         ),
                                         SizedBox(height: height*0.01),
-                                        InkWell(
-                                          onTap: () {
-                                            getImage(ImageSource.gallery);
-                                          },
-                                          child: Container(
-                                            width: MediaQuery.of(context).size.width,
-                                            decoration: BoxDecoration(
-                                              borderRadius: round.copyWith(),
-                                              border: _image==null ? Border.all(
-                                                color: AppColors.black
-                                              ) : null
-                                            ),
-                                            child: _image==null
-                                                ?
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 10),
-                                              child: Column(
-                                                children: [
-                                                  Image.asset("assets/images/distributors/scene1.png",width: 30,height: 30),
-                                                  SizedBox(height: 10),
-                                                  Text(
-                                                    "Select Photo",
-                                                    style: textStyle.copyWith(
-                                                      color: AppColors.black,
+
+                                          _image.length  == 0
+                                              ?
+                                          InkWell(
+                                              onTap: () {
+                                                getImage(ImageSource.gallery);
+                                              },
+                                              child: Container(
+                                                  width: MediaQuery.of(context).size.width,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius: round.copyWith(),
+                                                      border:Border.all(
+                                                          color: AppColors.black
+                                                      )
+                                                  ),
+                                                  child:
+                                                  Padding(
+                                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                                    child: Column(
+                                                      children: [
+                                                        Image.asset("assets/images/distributors/scene1.png",width: 30,height: 30),
+                                                        SizedBox(height: 10),
+                                                        Text(
+                                                          "Select Photo",
+                                                          style: textStyle.copyWith(
+                                                            color: AppColors.black,
+                                                          ),
+                                                        )
+                                                      ],
                                                     ),
                                                   )
-                                                ],
-                                              ),
-                                            )
-                                                :
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.circular(8),
-                                                child: Image.file(_image,width: MediaQuery.of(context).size.width,fit: BoxFit.fill)
-                                            )
+
+                                              )
+                                          )
+                                              :
+
+                                          StaggeredGridView.countBuilder(
+                                            physics: NeverScrollableScrollPhysics(),
+                                            scrollDirection: Axis.vertical,
+                                            crossAxisCount: 2,
+                                            crossAxisSpacing: 10,
+                                            mainAxisSpacing: 15,
+                                            shrinkWrap: true,
+                                            padding: EdgeInsets.zero,
+                                            itemCount: _image.length,
+                                            staggeredTileBuilder: (index) {
+                                              return StaggeredTile.fit(1);
+                                            },
+                                            itemBuilder: (BuildContext context, int index) {
+                                              return ClipRRect(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  child: Image.file(_image[index],
+                                                      fit: BoxFit.fill)
+                                              );
+                                            },
+
                                           ),
-                                        )
-                                      ],
+
+                                        ],
                                     ),
                                   ),
                                 )
@@ -1054,26 +1084,49 @@ class _AddDistributersState extends State<AddDistributers> {
 
     if(t != null)
     {
-      if(_openTimeController.text.isEmpty)
-      {
+
         setState(() {
           time = t;
           _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
           String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
           _openTimeController = TextEditingController(text: "$starttime");
         });
-      }
-      else
-      {
+
+    }
+  }
+
+  _pickTime2() async{
+    TimeOfDay t = await showTimePicker(
+        context: context,
+        initialTime: time,
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: ColorScheme.dark(
+                primary: Colors.grey,
+                onPrimary: Colors.black,
+                surface: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor: AppColors.white,
+            ),
+            child: child,
+          );
+        }
+    );
+
+    if(t != null)
+    {
         setState(() {
           time = t;
           _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
           String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
           _closeTimeController = TextEditingController(text: "$starttime");
         });
-      }
     }
   }
+
+
 }
 
 class AlwaysDisabledFocusNode extends FocusNode {

@@ -50,7 +50,7 @@ dev_dependencies:
   change_app_package_name: ^1.0.0
 
 flutter_icons:
-  image_path: "assets/images/appIcon.png"
+  image_path: "assets/images/colorsoul_icon.png"
   android: true
   ios: true
   flutter_lints: ^1.0.0

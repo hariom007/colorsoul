@@ -140,7 +140,6 @@ class _DetailsState extends State<Details> {
 
   String distributor_name,
       distributor_address,
-      distributor_image,
       latitude = "19.0760",
       longitude = "72.8777",
       home_address,
@@ -156,6 +155,8 @@ class _DetailsState extends State<Details> {
       opentime,
       closetime,
       type;
+
+  List distributor_image;
 
   getDistributorDetails() async {
 
@@ -248,7 +249,7 @@ class _DetailsState extends State<Details> {
                       MaterialPageRoute(builder: (context) => EditDistributers(
                         distributor_name: "${distributor_name}",
                         distributor_address: "${distributor_address}",
-                        distributor_image: "${distributor_image}",
+                        distributor_image: distributor_image,
                         latitude: lat,
                         longitude: lon,
                         person_name: "${person_name}",

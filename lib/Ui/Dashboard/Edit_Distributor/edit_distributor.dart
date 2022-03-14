@@ -30,8 +30,9 @@ class TypeModel{
 
 class EditDistributers extends StatefulWidget {
 
-  String distributor_name,distributor_address,distributor_image,latitude,longitude,home_address,distributor_gst,landmark,city,state,
+  String distributor_name,distributor_address,latitude,longitude,home_address,distributor_gst,landmark,city,state,
       person_name,person_mobile,person_tel,opentime,closetime,business_type,type,id;
+  List distributor_image;
   EditDistributers({Key key, this.distributor_name,this.distributor_address,this.distributor_image,this.latitude,this.longitude,this.distributor_gst,this.landmark,
     this.person_name,this.person_mobile,this.person_tel,this.opentime,this.closetime,this.business_type,this.type,this.id,this.home_address,this.city,this.state
   }) : super(key: key);
@@ -119,7 +120,7 @@ class _EditDistributersState extends State<EditDistributers> {
   }
 
 
-  String imageUrl;
+  List imageUrl;
 
   sendImage() async {
 
@@ -225,7 +226,6 @@ class _EditDistributersState extends State<EditDistributers> {
   }
 
   final _formkey = GlobalKey<FormState>();
-
 
 
   @override
@@ -993,7 +993,7 @@ class _EditDistributersState extends State<EditDistributers> {
                                                   focusNode: AlwaysDisabledFocusNode(),
                                                   controller: _closeTimeController,
                                                   onTap: () {
-                                                    _pickTime();
+                                                    _pickTime2();
                                                   },
                                                 ),
                                               ),
@@ -1003,6 +1003,7 @@ class _EditDistributersState extends State<EditDistributers> {
                                       ],
                                     ),
                                     SizedBox(height: height*0.01),
+
                                     Text(
                                       "Add Photo",
                                       style: textStyle.copyWith(
@@ -1012,6 +1013,7 @@ class _EditDistributersState extends State<EditDistributers> {
                                       ),
                                     ),
                                     SizedBox(height: height*0.01),
+
                                     InkWell(
                                       onTap: () {
                                         getImage(ImageSource.gallery);
@@ -1048,6 +1050,8 @@ class _EditDistributersState extends State<EditDistributers> {
                                           )
                                       ),
                                     )
+
+
                                   ],
                                 ),
                               ),
@@ -1085,24 +1089,45 @@ class _EditDistributersState extends State<EditDistributers> {
 
     if(t != null)
     {
-      if(_openTimeController.text.isEmpty)
-      {
-        setState(() {
-          time = t;
-          _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
-          String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
-          _openTimeController = TextEditingController(text: "$starttime");
-        });
-      }
-      else
-      {
-        setState(() {
-          time = t;
-          _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
-          String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
-          _closeTimeController = TextEditingController(text: "$starttime");
-        });
-      }
+
+      setState(() {
+        time = t;
+        _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
+        String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
+        _openTimeController = TextEditingController(text: "$starttime");
+      });
+
+    }
+  }
+
+  _pickTime2() async{
+    TimeOfDay t = await showTimePicker(
+        context: context,
+        initialTime: time,
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: ColorScheme.dark(
+                primary: Colors.grey,
+                onPrimary: Colors.black,
+                surface: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor: AppColors.white,
+            ),
+            child: child,
+          );
+        }
+    );
+
+    if(t != null)
+    {
+      setState(() {
+        time = t;
+        _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
+        String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
+        _closeTimeController = TextEditingController(text: "$starttime");
+      });
     }
   }
 }
