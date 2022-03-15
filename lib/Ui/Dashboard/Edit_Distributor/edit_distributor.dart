@@ -86,11 +86,27 @@ class _EditDistributersState extends State<EditDistributers> {
     );
 
     for(int i=0;i<photo.length;i++){
-      setState(() {
-        _image.add(File(photo[i].path));
-      });
-      sendImage(File(photo[i].path));
 
+      if(i > 5){
+
+        Fluttertoast.showToast(
+            msg: "You can upload only 5 Images!!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+        break;
+      }
+      else{
+        setState(() {
+          _image.add(File(photo[i].path));
+        });
+        sendImage(File(photo[i].path));
+      }
     }
 
     setState(() {
