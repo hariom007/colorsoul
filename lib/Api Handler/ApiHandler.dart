@@ -14,7 +14,6 @@ class ApiHandler {
         'Authorization':'4ccda7514adc0f13595a585205fb9761'
       };
 
-
       //var baseUrl = Uri.http('colorsoul.koffeekodes.com','/admin/Api$url');
       var baseUrl = Uri.https('console.colorsoul.co','/admin/Api$url');
 
