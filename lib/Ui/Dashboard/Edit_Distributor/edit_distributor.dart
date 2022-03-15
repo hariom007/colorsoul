@@ -136,7 +136,7 @@ class _EditDistributersState extends State<EditDistributers> {
   }
 
 
-  List imageUrl;
+  List imageUrl = [];
 
   sendImage(File image) async {
 
@@ -191,9 +191,9 @@ class _EditDistributersState extends State<EditDistributers> {
       "address":"$address",
       "home_address": _addressNoController.text,
       "landmark":"${_addressController.text}",
-      "city":"$city",
-      "state":"$state",
-      "pincode":"$pincode",
+      "city":city,
+      "state":state,
+      "pincode":pincode,
       "latitude":"$latitude",
       "longitude":"$logitude",
       "name":_personNameController.text,
@@ -201,9 +201,9 @@ class _EditDistributersState extends State<EditDistributers> {
       "telephone":"${_personTelephoneController.text}",
       "open_time":"${_openTimeController.text}",
       "close_time":"${_closeTimeController.text}",
-      "image":"$imageUrl"
+      "image":imageUrl
     };
-    print(data);
+   // print(jsonEncode(data));
 
     _distributorProvider.distributorList.clear();
     await _distributorProvider.insertDistributor(data,'/createDistributorRetailer');
