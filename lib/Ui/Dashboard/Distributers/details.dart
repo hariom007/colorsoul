@@ -6,6 +6,7 @@ import 'package:colorsoul/Ui/Dashboard/Products/preview.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -169,7 +170,7 @@ class _DetailsState extends State<Details> {
 
     distributor_name = _distributorProvider.distributorData['business_name'];
     distributor_address = _distributorProvider.distributorData['address'];
-    distributor_image = _distributorProvider.distributorData['image'];
+    distributor_image = _distributorProvider.distributorData['image'] == "" ? [] : _distributorProvider.distributorData['image'];
     distributor_gst = _distributorProvider.distributorData['gst_no'];
     latitude = _distributorProvider.distributorData['latitude'];
     longitude = _distributorProvider.distributorData['longitude'];
@@ -470,25 +471,43 @@ class _DetailsState extends State<Details> {
                               ),
                               SizedBox(height: 20),
 
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: CachedNetworkImage(
-                                  imageUrl: "${distributor_image}",
-                                  placeholder: (context, url) => Center(
-                                      child: SpinKitThreeBounce(
-                                        color: AppColors.black,
-                                        size: 25.0,
-                                      )
-                                  ),
-                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                  width: MediaQuery.of(context).size.width,
-                                  fit: BoxFit.fitWidth,
-                                ),
+                              StaggeredGridView.countBuilder(
+                                physics: NeverScrollableScrollPhysics(),
+                                scrollDirection: Axis.vertical,
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 15,
+                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                itemCount: distributor_image.length,
+                                staggeredTileBuilder: (index) {
+                                  return StaggeredTile.fit(1);
+                                },
+                                itemBuilder: (BuildContext context, int index) {
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: CachedNetworkImage(
+                                      imageUrl: "${distributor_image[index]}",
+                                      placeholder: (context, url) => Center(
+                                          child: SpinKitThreeBounce(
+                                            color: AppColors.black,
+                                            size: 25.0,
+                                          )
+                                      ),
+                                      errorWidget: (context, url, error) => Icon(Icons.error),
+                                      width: MediaQuery.of(context).size.width,
+                                      fit: BoxFit.fitWidth,
+                                    ),
+                                  );
+                                },
+
                               ),
+
+
 
                               SizedBox(height: 20),
 
-                              _feedBackProvider.imageFeedBackList.length ==0 && _feedBackProvider.feedBackList.length == 0
+                              _feedBackProvider.imageFeedBackList.length == 0 && _feedBackProvider.feedBackList.length == 0
                               ?
                                   SizedBox()
                               :

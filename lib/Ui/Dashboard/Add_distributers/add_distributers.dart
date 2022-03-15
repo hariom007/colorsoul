@@ -215,7 +215,7 @@ class _AddDistributersState extends State<AddDistributers> {
         bottomNavigationBar: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _distributorProvider.isLoaded == false
+            _distributorProvider.isLoaded == false  || isLoading == true
             ?
             SpinKitThreeBounce(
               color: AppColors.black,

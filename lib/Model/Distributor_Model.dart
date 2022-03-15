@@ -75,7 +75,7 @@ class DistributorModel {
     telephone: json["telephone"],
     openTime: json["open_time"],
     closeTime: json["close_time"],
-    image: List<String>.from(json["image"].map((x) => x)),
+    image: json["image"] == "" ? [] : List<String>.from(json["image"].map((x) => x)),
     isApproved: json["isApproved"],
     parentName: json["parent_name"],
     state: json["state"],
