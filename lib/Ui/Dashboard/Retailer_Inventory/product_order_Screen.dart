@@ -40,7 +40,9 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
     orderAddress = widget.distributor_address;
     for(int i=0;i<widget.selectedAmount.length;i++){
 
-      totalAmount = totalAmount + double.parse("${widget.selectedAmount[i].text}");
+      double singleAmount = double.parse("${widget.selectedAmount[i].text}") * double.parse("${widget.orderQuantity[i].text}");
+      totalAmount = totalAmount + singleAmount;
+
       totalQuentity = totalQuentity + int.parse("${widget.orderQuantity[i].text}");
 
     }
@@ -475,6 +477,22 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
                                               onTap: (){
                                                 setState(() {
                                                   widget.productList.removeAt(index);
+                                                  widget.selectedAmount.removeAt(index);
+                                                  widget.orderQuantity.removeAt(index);
+                                                  widget.selectedQuantity.removeAt(index);
+
+                                                  totalAmount = 0;
+                                                  totalQuentity = 0;
+                                                  for(int i=0;i<widget.selectedAmount.length;i++){
+
+                                                    double singleAmount = double.parse("${widget.selectedAmount[i].text}") * double.parse("${widget.orderQuantity[i].text}");
+                                                    totalAmount = totalAmount + singleAmount;
+
+                                                    totalQuentity = totalQuentity + int.parse("${widget.orderQuantity[i].text}");
+
+                                                  }
+
+
                                                 });
                                               },
                                               child: Icon(Icons.close,size: 20),
