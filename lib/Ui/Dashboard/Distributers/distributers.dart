@@ -4,6 +4,7 @@ import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Provider/feedback_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Distributers/feedback_page.dart';
 import 'package:colorsoul/Ui/Dashboard/Edit_Distributor/edit_distributor.dart';
+import 'package:colorsoul/Ui/Dashboard/Retailer_Inventory/ProductPage.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
@@ -241,7 +242,6 @@ class _DistributorsState extends State<Distributors> {
 
   }
 
-
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -476,20 +476,27 @@ class _DistributorsState extends State<Distributors> {
 
                                                                 }
 
+                                                                if(index==1){
+                                                                  Navigator.push(context, MaterialPageRoute(builder: (context) => RetailerProductPage(
+                                                                    retailerId: distributorData.id,
+                                                                  )));
+                                                                }
+
                                                               },
                                                               child: Image.asset("assets/images/details/menu1.png",width: 24,height: 24,color: AppColors.black),
-                                                              itemBuilder: (context) => [
+                                                              itemBuilder: (context) =>
+                                                              distributorData.type == "Retailer"
+                                                              ?
+                                                              [
+
                                                                 PopupMenuItem(
-                                                                  onTap: () {
-                                                                    getImage(ImageSource.gallery,distributorData.id);
-                                                                  },
                                                                   value: 1,
                                                                   child: Row(
                                                                     children: [
                                                                       Image.asset("assets/images/notes/scene.png",width: 20,height: 20),
                                                                       SizedBox(width: 10),
                                                                       Text(
-                                                                        "Add Image",
+                                                                        "Products",
                                                                         style: textStyle.copyWith(
                                                                             color: AppColors.black,
                                                                             fontWeight: FontWeight.bold
@@ -498,25 +505,7 @@ class _DistributorsState extends State<Distributors> {
                                                                     ],
                                                                   ),
                                                                 ),
-                                                                PopupMenuItem(
-                                                                  onTap: () {
-                                                                    getImage(ImageSource.camera,distributorData.id);
-                                                                  },
-                                                                  value: 2,
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Image.asset("assets/images/notes/camera.png",width: 20,height: 20),
-                                                                      SizedBox(width: 10),
-                                                                      Text(
-                                                                        "Take Photo",
-                                                                        style: textStyle.copyWith(
-                                                                            color: AppColors.black,
-                                                                            fontWeight: FontWeight.bold
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
+
                                                                 PopupMenuItem(
                                                                   value: 3,
                                                                   child: Row(
@@ -533,6 +522,44 @@ class _DistributorsState extends State<Distributors> {
                                                                     ],
                                                                   ),
                                                                 ),
+
+                                                                PopupMenuItem(
+                                                                  value: 4,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(Icons.edit,color: AppColors.black,size: 21,),
+                                                                      SizedBox(width: 10),
+                                                                      Text(
+                                                                        "Edit",
+                                                                        style: textStyle.copyWith(
+                                                                            color: AppColors.black,
+                                                                            fontWeight: FontWeight.bold
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ]
+                                                              :
+                                                              [
+
+                                                                PopupMenuItem(
+                                                                  value: 3,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Image.asset("assets/images/distributors/feedback.png",width: 21,height: 21),
+                                                                      SizedBox(width: 10),
+                                                                      Text(
+                                                                        "Feedback",
+                                                                        style: textStyle.copyWith(
+                                                                            color: AppColors.black,
+                                                                            fontWeight: FontWeight.bold
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+
                                                                 PopupMenuItem(
                                                                   value: 4,
                                                                   child: Row(

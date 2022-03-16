@@ -48,12 +48,63 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
       "note":"${noteController.text}"
     };
     
-    print(jsonEncode(data));
+   // print(jsonEncode(data));
 
     _orderProvider.insertBarcodeOrder(data, "/new_order");
 
+    print("Order page ${_orderProvider.isBarcode}");
     if(_orderProvider.isBarcode == true){
 
+      getOrders();
+      
+    }
+  }
+
+
+  int page = 1;
+  bool isloading = false;
+  getOrders() async {
+
+    setState(() {
+      isloading = true;
+    });
+
+    setState(() {
+      _orderProvider.orderList.clear();
+      _orderProvider.incompleteOrderList.clear();
+      _orderProvider.completeOrderList.clear();
+    });
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":""
+    };
+    await _orderProvider.getAllOrders(data,'/getOrder/$page');
+
+
+    var data1 = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":"Pending"
+    };
+    await _orderProvider.getIncompleteOrders(data1,'/getOrder/$page');
+
+
+    var data2 = {
+      "uid":"$userId",
+      "from_date":"",
+      "to_date":"",
+      "status":"Delivered"
+    };
+    await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
+
+    if(_orderProvider.isSuccess == true){
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -61,9 +112,10 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
             return SimpleCustomAlert();
           }
       );
-
     }
+
   }
+
 
   @override
   Widget build(BuildContext context) {

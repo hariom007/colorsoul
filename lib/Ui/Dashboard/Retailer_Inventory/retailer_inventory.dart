@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:colorsoul/Model/Distributor_Model.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
-import 'package:colorsoul/Ui/Dashboard/Distributers/details.dart';
 import 'package:colorsoul/Ui/Dashboard/Retailer_Inventory/product_order.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';

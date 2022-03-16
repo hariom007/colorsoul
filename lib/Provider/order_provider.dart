@@ -444,14 +444,14 @@ class OrderProvider with ChangeNotifier
   {
 
     isLoaded = false;
-    isBarcode = false;
     notifyListeners();
 
     await ApiHandler.post(data,url).then((value){
-      print(value);
+      print(value["st"]);
       if(value["st"] == "success")
       {
         isBarcode = true;
+        print(isBarcode);
         notifyListeners();
       }
       else

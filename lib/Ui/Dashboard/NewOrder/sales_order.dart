@@ -1130,8 +1130,15 @@ class _SalesOrderState extends State<SalesOrder> {
                                                   };
                                                   viewProduct.add(product);
 
-                                                  totalAmount = totalAmount + double.parse("${selectedAmount[i].text}");
                                                   totalQuentity = totalQuentity + int.parse("${selectedQuantity[i].text}");
+
+                                                  totalAmount =0;
+
+                                                  for(int i=0;i<viewProduct.length;i++){
+                                                    double singleAmount = double.parse(selectedAmount[i].text) * double.parse(selectedQuantity[i].text);
+                                                    totalAmount = totalAmount + singleAmount;
+                                                  }
+
 
                                                 }
 
@@ -2208,7 +2215,20 @@ class _SalesOrderState extends State<SalesOrder> {
                                               InkWell(
                                                 onTap: (){
                                                   setState(() {
+
                                                     viewProduct.removeAt(index);
+
+                                                    totalAmount =0;
+                                                    totalQuentity =0;
+
+                                                    totalQuentity = totalQuentity + int.parse("${productData['qty']}");
+
+                                                    for(int i=0;i<viewProduct.length;i++){
+
+                                                      double singleAmount = double.parse("${productData['amount']}") * double.parse("${productData['qty']}");
+                                                      totalAmount = totalAmount + singleAmount;
+                                                    }
+
                                                   });
                                                 },
                                                 child: Icon(Icons.close,size: 20),
