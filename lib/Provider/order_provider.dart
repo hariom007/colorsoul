@@ -263,10 +263,11 @@ class OrderProvider with ChangeNotifier
   {
 
     isLoaded = false;
+    isSuccess = false;
     notifyListeners();
 
     await ApiHandler.post(data,url).then((value){
-     // print(value);
+      print(value);
       if(value["st"] == "success")
       {
         isSuccess = true;
@@ -377,6 +378,89 @@ class OrderProvider with ChangeNotifier
 
         Fluttertoast.showToast(
             msg: "Order Get List Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+
+  var scanProductDetails;
+  bool isProductSuccess = false;
+  getScanProductDetails(data,url)async
+  {
+
+    isLoaded = false;
+    isProductSuccess= false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      if(value["st"] == "success")
+      {
+        isProductSuccess = true;
+        scanProductDetails = value["product_detail"];
+
+        notifyListeners();
+      }
+      else
+      {
+        isProductSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Product Get List Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+
+  bool isBarcode = false;
+  insertBarcodeOrder(data,url) async
+  {
+
+    isLoaded = false;
+    isBarcode = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+      print(value);
+      if(value["st"] == "success")
+      {
+        isBarcode = true;
+        notifyListeners();
+      }
+      else
+      {
+        isBarcode = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Insert Error !!",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

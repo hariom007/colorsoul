@@ -253,7 +253,25 @@ class _RetailerInventoryState extends State<RetailerInventory> {
                                             return InkWell(
                                               onTap: (){
 
-                                                Navigator.push(context, MaterialPageRoute(builder: (context) => ProductOrder()));
+                                                Navigator.push(context, MaterialPageRoute(builder: (context) => ProductOrder(
+                                                    distributor_name: "${distributorData.name}",
+                                                    distributor_address: "${distributorData.address}",
+                                                    latitude: distributorData.latitude,
+                                                    longitude: distributorData.longitude,
+                                                    person_name: "${distributorData.businessName}",
+                                                    home_address: "${distributorData.homeAddress}",
+                                                    landmark: "${distributorData.landmark}",
+                                                    person_mobile: "${distributorData.mobile}",
+                                                    person_tel: "${distributorData.telephone}",
+                                                    business_type: "${distributorData.businessType}",
+                                                    distributor_gst: "${distributorData.gstNo}",
+                                                    opentime: "${distributorData.openTime}",
+                                                    closetime: "${distributorData.closeTime}",
+                                                    type: "${distributorData.type}",
+                                                    id: "${distributorData.id}",
+                                                    state: "${distributorData.state}",
+                                                    city:"${distributorData.city}"
+                                                )));
 
                                               },
                                               child: Padding(

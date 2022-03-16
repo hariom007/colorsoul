@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+
 import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
@@ -7,21 +9,20 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class NormalOrder extends StatefulWidget {
+class BarcodeConfirmOrder extends StatefulWidget {
 
   List productList = [];
   String orderid,retailerId,address,orderDate,totalAmount;
 
-  NormalOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,
+  BarcodeConfirmOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,
     this.totalAmount,this.orderDate
   }) : super(key: key);
 
   @override
-  _NormalOrderState createState() => _NormalOrderState();
+  State<BarcodeConfirmOrder> createState() => _BarcodeConfirmOrderState();
 }
 
-class _NormalOrderState extends State<NormalOrder> {
-
+class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
   OrderProvider _orderProvider;
   TextEditingController noteController = TextEditingController();
 
@@ -46,61 +47,13 @@ class _NormalOrderState extends State<NormalOrder> {
       "total":"${widget.totalAmount}",
       "note":"${noteController.text}"
     };
-    //print(data);
+    
+    print(jsonEncode(data));
 
-    _orderProvider.insertOrder(data, "/createOrders");
-    if(_orderProvider.isSuccess == true){
+    _orderProvider.insertBarcodeOrder(data, "/new_order");
 
-      getOrders();
+    if(_orderProvider.isBarcode == true){
 
-    }
-
-  }
-
-  int page = 1;
-  bool isloading = false;
-  getOrders() async {
-
-    setState(() {
-      isloading = true;
-    });
-
-    setState(() {
-      _orderProvider.orderList.clear();
-      _orderProvider.incompleteOrderList.clear();
-      _orderProvider.completeOrderList.clear();
-    });
-
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String userId = sharedPreferences.get("userId");
-
-    var data = {
-      "uid":"$userId",
-      "from_date":"",
-      "to_date":"",
-      "status":""
-    };
-    await _orderProvider.getAllOrders(data,'/getOrder/$page');
-
-
-    var data1 = {
-      "uid":"$userId",
-      "from_date":"",
-      "to_date":"",
-      "status":"Pending"
-    };
-    await _orderProvider.getIncompleteOrders(data1,'/getOrder/$page');
-
-
-    var data2 = {
-      "uid":"$userId",
-      "from_date":"",
-      "to_date":"",
-      "status":"Delivered"
-    };
-    await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
-
-    if(_orderProvider.isSuccess == true){
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -108,10 +61,9 @@ class _NormalOrderState extends State<NormalOrder> {
             return SimpleCustomAlert();
           }
       );
+
     }
-
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +81,7 @@ class _NormalOrderState extends State<NormalOrder> {
                   height: 70,
                   color: AppColors.white,
                   child:
-                  _orderProvider.isLoaded == false || isloading == true
+                  _orderProvider.isLoaded == false
                       ?
                   Center(
                       child: SpinKitThreeBounce(
@@ -453,27 +405,27 @@ class _NormalOrderState extends State<NormalOrder> {
                                     child: Text(
                                       "Remark",
                                       style: textStyle.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16
                                       ),
                                     ),
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
-                                    controller: noteController,
-                                    style: textStyle.copyWith(
-                                      color: AppColors.black
-                                    ),
-                                    cursorColor: AppColors.black,
-                                    cursorHeight: 22,
-                                    decoration: fieldStyle1.copyWith(
-                                      hintText: "Add Remark",
-                                      hintStyle: textStyle.copyWith(
-                                        color: AppColors.black
+                                      controller: noteController,
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black
                                       ),
-                                      isDense: true
-                                    )
+                                      cursorColor: AppColors.black,
+                                      cursorHeight: 22,
+                                      decoration: fieldStyle1.copyWith(
+                                          hintText: "Add Remark",
+                                          hintStyle: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          isDense: true
+                                      )
                                   ),
                                   SizedBox(height: height*0.01),
                                 ],
@@ -504,7 +456,6 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
     Timer(
         Duration(milliseconds: 1000),
             () {
-          Navigator.pop(context);
           Navigator.pop(context);
           Navigator.pop(context);
 

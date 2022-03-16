@@ -74,6 +74,7 @@ class TypeModel {
 }
 
 class _NewOrderState extends State<NewOrder> {
+
   TextEditingController _textEditingController1 = new TextEditingController();
   DateTime _selectedDate;
   String value;
@@ -777,7 +778,6 @@ class _NewOrderState extends State<NewOrder> {
   bool isSelectAll = false;
   TextEditingController allQuantity = TextEditingController();
   TextEditingController allPrice = TextEditingController();
-
 
   List<TextEditingController> selectedQuantity = [];
   List<TextEditingController> selectedAmount = [];
