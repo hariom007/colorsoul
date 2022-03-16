@@ -154,7 +154,7 @@ class _DashboardState extends State<Dashboard> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => ToDo()));
               }
             ),
-            SpeedDialChild(
+            /*SpeedDialChild(
                 child: Image.asset("assets/images/home/home1.png",width: 20,height: 20),
                 labelWidget: Padding(
                   padding: EdgeInsets.only(right: 10),
@@ -171,7 +171,7 @@ class _DashboardState extends State<Dashboard> {
 
                   Navigator.push(context, MaterialPageRoute(builder: (context) => RetailerInventory()));
                 }
-            ),
+            ),*/
             SpeedDialChild(
                 child: Image.asset("assets/images/cartbox.png",width: 24,height: 24),
                 labelWidget: Padding(
@@ -203,7 +203,9 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => NewOrder()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => RetailerInventory()));
+
+                //Navigator.push(context, MaterialPageRoute(builder: (context) => NewOrder()));
               }
             ),
             SpeedDialChild(

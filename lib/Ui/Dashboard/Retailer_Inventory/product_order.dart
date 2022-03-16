@@ -91,6 +91,9 @@ class _ProductOrderState extends State<ProductOrder> {
 
   }
 
+  final _formkey = GlobalKey<FormState>();
+
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -118,7 +121,9 @@ class _ProductOrderState extends State<ProductOrder> {
                         child: ElevatedButton(
                           onPressed: () {
 
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BarcodeOrder(
+                            if(_formkey.currentState.validate()){
+
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BarcodeOrder(
                                 distributor_name: "${widget.distributor_name}",
                                 distributor_address: "${widget.distributor_address}",
                                 latitude: widget.latitude,
@@ -136,12 +141,14 @@ class _ProductOrderState extends State<ProductOrder> {
                                 id: "${widget.id}",
                                 state: "${widget.state}",
                                 city:"${widget.city}",
-                              productList: viewProduct,
-                              selectedAmount: selectedAmount,
-                              selectedQuantity: selectedQuantity,
-                              orderQuantity: orderQuantity,
+                                productList: viewProduct,
+                                selectedAmount: selectedAmount,
+                                selectedQuantity: selectedQuantity,
+                                orderQuantity: orderQuantity,
 
-                            )));
+                              )));
+
+                            }
 
                           },
                           style: ElevatedButton.styleFrom(
@@ -163,316 +170,318 @@ class _ProductOrderState extends State<ProductOrder> {
             )
           ]
       ),
-      body: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/Flesh2.png"),
-              fit: BoxFit.fill,
-            )
-        ),
-        child: Column(
-          children: [
+      body: Form(
+        key: _formkey,
+        child: Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/Flesh2.png"),
+                fit: BoxFit.fill,
+              )
+          ),
+          child: Column(
+            children: [
 
-            SizedBox(height: height*0.04),
-            Padding(
-              padding: EdgeInsets.only(left: 15,right: 5),
-              child: Row(
-                children: [
+              SizedBox(height: height*0.04),
+              Padding(
+                padding: EdgeInsets.only(left: 15,right: 5),
+                child: Row(
+                  children: [
 
-                  SizedBox(
-                    width: 30,
-                    child: TextButton(
-                        onPressed: (){
-                          Navigator.pop(context);
-                        },
-                        child: Image.asset("assets/images/tasks/back.png",height: 16)
+                    SizedBox(
+                      width: 30,
+                      child: TextButton(
+                          onPressed: (){
+                            Navigator.pop(context);
+                          },
+                          child: Image.asset("assets/images/tasks/back.png",height: 16)
+                      ),
                     ),
-                  ),
 
-                  SizedBox(width: 10),
+                    SizedBox(width: 10),
 
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        "Add Product",
-                        style: textStyle.copyWith(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          "Add Product",
+                          style: textStyle.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  TextButton(
-                      onPressed: () async {
+                    TextButton(
+                        onPressed: () async {
 
-                        final value = await Navigator.push(context, MaterialPageRoute(builder: (context) => qrScannerPage()));
-                        if(value != null){
-                          setState(() {
-                            barcodeScanRes = value;
-                          });
+                          final value = await Navigator.push(context, MaterialPageRoute(builder: (context) => qrScannerPage()));
+                          if(value != null){
+                            setState(() {
+                              barcodeScanRes = value;
+                            });
 
-                          addProducts();
+                            addProducts();
 
-                        }
+                          }
 
-                      },
-                      child: Image.asset("assets/images/barcodenew.png",height: 30,color: AppColors.white)
-                  ),
-
-                ],
-              ),
-            ),
-            SizedBox(height: height*0.01),
-
-            Expanded(
-              child: Container(
-                color: AppColors.white,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-
-                      SizedBox(height: height*0.02),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          children: [
-
-                            SizedBox(width: 30),
-
-                            Expanded(
-                              child: Text(
-                                "Item Code",
-                                style: textStyle.copyWith(
-                                    color: AppColors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 80,
-                              child: Text(
-                                "Current\nStock",
-                                textAlign: TextAlign.center,
-                                style: textStyle.copyWith(
-                                    color: AppColors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 80,
-                              child: Text(
-                                "Order\nStock",
-                                textAlign: TextAlign.center,
-                                style: textStyle.copyWith(
-                                    color: AppColors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 80,
-                              child: Text(
-                                "Amount",
-                                textAlign: TextAlign.center,
-                                style: textStyle.copyWith(
-                                    color: AppColors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(height: height*0.01),
-
-                      Divider(
-                          height: 20,
-                          color: Color.fromRGBO(185, 185, 185, 0.75),
-                          thickness: 1.2
-                      ),
-
-                      ListView.builder(
-                        padding: EdgeInsets.only(top: 10,left: 10,right: 10),
-                        itemCount: viewProduct.length,
-                        shrinkWrap: true,
-                        itemBuilder:(context, index){
-                          var productData = viewProduct[index];
-
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: Row(
-                              children: [
-
-                                InkWell(
-                                  onTap: (){
-
-                                    setState(() {
-                                      viewProduct.removeAt(index);
-                                      selectedQuantity.removeAt(index);
-                                      orderQuantity.removeAt(index);
-                                      selectedAmount.removeAt(index);
-                                    });
-
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(Icons.close),
-                                  ),
-                                ),
-
-                                SizedBox(width: 10),
-
-                                Expanded(
-                                  child: Text(
-                                    "${productData['sku']}",
-                                    style: textStyle.copyWith(
-                                      color: AppColors.black,
-                                    ),
-                                  ),
-                                ),
-
-                                Container(
-                                  width: 70,
-                                  child: TextFormField(
-                                    controller: selectedQuantity[index],
-                                    keyboardType: TextInputType.number,
-                                    validator: (String value) {
-                                      if(value.isEmpty)
-                                      {
-                                        return "";
-                                      }
-                                      return null;
-                                    },
-                                    style: textStyle.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    cursorHeight: 22,
-                                    textAlign: TextAlign.center,
-                                    cursorColor: Colors.grey,
-                                    decoration: InputDecoration(
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderRadius: BorderRadius.only(),
-                                      ),
-                                      focusedBorder: UnderlineInputBorder(
-                                        borderRadius: BorderRadius.only(),
-                                      ),
-                                      isDense: true,
-                                      errorStyle: TextStyle(height: 0,fontSize: 0),
-                                    ),
-                                    onChanged: (value){
-
-                                      if(productData['stock'] != "0"){
-
-                                        int orderQ = int.parse(productData['stock']) - int.parse(selectedQuantity[index].text);
-                                        setState(() {
-                                          orderQuantity[index] = TextEditingController(
-                                            text: "$orderQ"
-                                          );
-                                        });
-
-                                      }
-
-                                    },
-                                  ),
-                                ),
-
-                                SizedBox(width: 15),
-
-                                Container(
-                                  width: 70,
-                                  child: TextFormField(
-                                    controller: orderQuantity[index],
-                                    keyboardType: TextInputType.number,
-                                    validator: (String value) {
-                                      if(value.isEmpty)
-                                      {
-                                        return "";
-                                      }
-                                      return null;
-                                    },
-                                    style: textStyle.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    cursorHeight: 22,
-                                    textAlign: TextAlign.center,
-                                    cursorColor: Colors.grey,
-                                    decoration: InputDecoration(
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderRadius: BorderRadius.only(),
-                                      ),
-                                      focusedBorder: UnderlineInputBorder(
-                                        borderRadius: BorderRadius.only(),
-                                      ),
-                                      isDense: true,
-                                      hintText: "Quantity",
-                                      errorStyle: TextStyle(height: 0,fontSize: 0),
-                                    ),
-                                  ),
-                                ),
-
-                                SizedBox(width: 15),
-
-                                Container(
-                                  width: 70,
-                                  child: TextFormField(
-                                    controller: selectedAmount[index],
-                                    keyboardType: TextInputType.number,
-                                    validator: (String value) {
-                                      if(value.isEmpty)
-                                      {
-                                        return "";
-                                      }
-                                      return null;
-                                    },
-                                    style: textStyle.copyWith(
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    cursorHeight: 22,
-                                    textAlign: TextAlign.center,
-                                    cursorColor: Colors.grey,
-                                    decoration: InputDecoration(
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderRadius: BorderRadius.only(),
-                                      ),
-                                      focusedBorder: UnderlineInputBorder(
-                                        borderRadius: BorderRadius.only(),
-                                      ),
-                                      isDense: true,
-                                      hintText: "Amount",
-                                      errorStyle: TextStyle(height: 0,fontSize: 0),
-                                    ),
-                                  ),
-                                ),
-
-                              ],
-                            ),
-                          );
                         },
-                      ),
+                        child: Image.asset("assets/images/barcodenew.png",height: 30,color: AppColors.white)
+                    ),
 
-                    ],
-                  ),
+                  ],
                 ),
               ),
+              SizedBox(height: height*0.01),
 
-            )
+              Expanded(
+                child: Container(
+                  color: AppColors.white,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+
+                        SizedBox(height: height*0.02),
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+
+                              SizedBox(width: 30),
+
+                              Expanded(
+                                child: Text(
+                                  "Item Code",
+                                  style: textStyle.copyWith(
+                                      color: AppColors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 80,
+                                child: Text(
+                                  "Current\nStock",
+                                  textAlign: TextAlign.center,
+                                  style: textStyle.copyWith(
+                                      color: AppColors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 80,
+                                child: Text(
+                                  "Order\nStock",
+                                  textAlign: TextAlign.center,
+                                  style: textStyle.copyWith(
+                                      color: AppColors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 80,
+                                child: Text(
+                                  "Amount",
+                                  textAlign: TextAlign.center,
+                                  style: textStyle.copyWith(
+                                      color: AppColors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: height*0.01),
+
+                        Divider(
+                            height: 20,
+                            color: Color.fromRGBO(185, 185, 185, 0.75),
+                            thickness: 1.2
+                        ),
+
+                        ListView.builder(
+                          padding: EdgeInsets.only(top: 10,left: 10,right: 10),
+                          itemCount: viewProduct.length,
+                          shrinkWrap: true,
+                          itemBuilder:(context, index){
+                            var productData = viewProduct[index];
+
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: Row(
+                                children: [
+
+                                  InkWell(
+                                    onTap: (){
+
+                                      setState(() {
+                                        viewProduct.removeAt(index);
+                                        selectedQuantity.removeAt(index);
+                                        orderQuantity.removeAt(index);
+                                        selectedAmount.removeAt(index);
+                                      });
+
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(Icons.close),
+                                    ),
+                                  ),
+
+                                  SizedBox(width: 10),
+
+                                  Expanded(
+                                    child: Text(
+                                      "${productData['sku']}",
+                                      style: textStyle.copyWith(
+                                        color: AppColors.black,
+                                      ),
+                                    ),
+                                  ),
+
+                                  Container(
+                                    width: 70,
+                                    child: TextFormField(
+                                      controller: selectedQuantity[index],
+                                      keyboardType: TextInputType.number,
+                                      validator: (String value) {
+                                        if(value.isEmpty)
+                                        {
+                                          return "";
+                                        }
+                                        return null;
+                                      },
+                                      style: textStyle.copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black
+                                      ),
+                                      cursorHeight: 22,
+                                      textAlign: TextAlign.center,
+                                      cursorColor: Colors.grey,
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderRadius: BorderRadius.only(),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderRadius: BorderRadius.only(),
+                                        ),
+                                        isDense: true,
+                                        errorStyle: TextStyle(height: 0,fontSize: 0),
+                                      ),
+                                      onChanged: (value){
+
+                                        if(productData['stock'] != "0"){
+
+                                          int orderQ = int.parse(productData['stock']) - int.parse(selectedQuantity[index].text);
+                                          setState(() {
+                                            orderQuantity[index] = TextEditingController(
+                                              text: "$orderQ"
+                                            );
+                                          });
+
+                                        }
+
+                                      },
+                                    ),
+                                  ),
+
+                                  SizedBox(width: 15),
+
+                                  Container(
+                                    width: 70,
+                                    child: TextFormField(
+                                      controller: orderQuantity[index],
+                                      keyboardType: TextInputType.number,
+                                      validator: (String value) {
+                                        if(value.isEmpty)
+                                        {
+                                          return "";
+                                        }
+                                        return null;
+                                      },
+                                      style: textStyle.copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black
+                                      ),
+                                      cursorHeight: 22,
+                                      textAlign: TextAlign.center,
+                                      cursorColor: Colors.grey,
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderRadius: BorderRadius.only(),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderRadius: BorderRadius.only(),
+                                        ),
+                                        isDense: true,
+                                        hintText: "Quantity",
+                                        errorStyle: TextStyle(height: 0,fontSize: 0),
+                                      ),
+                                    ),
+                                  ),
+
+                                  SizedBox(width: 15),
+
+                                  Container(
+                                    width: 70,
+                                    child: TextFormField(
+                                      controller: selectedAmount[index],
+                                      keyboardType: TextInputType.number,
+                                      validator: (String value) {
+                                        if(value == "0")
+                                        {
+                                          return "Enter Amount";
+                                        }
+                                      },
+                                      style: textStyle.copyWith(
+                                          fontSize: 16,
+                                          color: Colors.black
+                                      ),
+                                      cursorHeight: 22,
+                                      textAlign: TextAlign.center,
+                                      cursorColor: Colors.grey,
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderRadius: BorderRadius.only(),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderRadius: BorderRadius.only(),
+                                        ),
+                                        isDense: true,
+                                        hintText: "Amount",
+                                        errorStyle: TextStyle(height: 1,fontSize: 10),
+                                      ),
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ),
+
+              )
 
 
 
-          ],
+            ],
+          ),
         ),
       ),
     );
