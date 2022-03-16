@@ -56,7 +56,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
     if(_orderProvider.isBarcode == true){
 
       getOrders();
-      
+
     }
   }
 
@@ -105,6 +105,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
     await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
 
     if(_orderProvider.isSuccess == true){
+
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -133,7 +134,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
                   height: 70,
                   color: AppColors.white,
                   child:
-                  _orderProvider.isLoaded == false
+                  _orderProvider.isLoaded == false || isloading == true
                       ?
                   Center(
                       child: SpinKitThreeBounce(
