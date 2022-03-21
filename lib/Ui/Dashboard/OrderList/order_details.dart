@@ -127,14 +127,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                           ),
                         ),
                         SizedBox(width: 8),
-                        Text(
-                          "${retailerBusinessName}",
-                          style: textStyle.copyWith(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
+                        Expanded(
+                          child: Text(
+                            "${retailerBusinessName}",
+                            style: textStyle.copyWith(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
                           ),
                         ),
-                        Expanded(child: Container()),
 
                         InkWell(
                             onTap: () async {
