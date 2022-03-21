@@ -203,9 +203,8 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => RetailerInventory()));
-
-                //Navigator.push(context, MaterialPageRoute(builder: (context) => NewOrder()));
+                //Navigator.push(context, MaterialPageRoute(builder: (context) => RetailerInventory()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => NewOrder()));
               }
             ),
             SpeedDialChild(

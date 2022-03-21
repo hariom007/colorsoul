@@ -5,6 +5,8 @@ import 'package:colorsoul/Provider/feedback_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Distributers/feedback_page.dart';
 import 'package:colorsoul/Ui/Dashboard/Edit_Distributor/edit_distributor.dart';
 import 'package:colorsoul/Ui/Dashboard/Retailer_Inventory/ProductPage.dart';
+import 'package:colorsoul/Ui/Dashboard/Retailer_Inventory/product_order.dart';
+import 'package:colorsoul/Ui/Dashboard/Retailer_Inventory/retailer_inventory.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
@@ -482,6 +484,30 @@ class _DistributorsState extends State<Distributors> {
                                                                   )));
                                                                 }
 
+                                                                if(index==2){
+
+                                                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProductOrder(
+                                                                      distributor_name: "${distributorData.name}",
+                                                                      distributor_address: "${distributorData.address}",
+                                                                      latitude: distributorData.latitude,
+                                                                      longitude: distributorData.longitude,
+                                                                      person_name: "${distributorData.businessName}",
+                                                                      home_address: "${distributorData.homeAddress}",
+                                                                      landmark: "${distributorData.landmark}",
+                                                                      person_mobile: "${distributorData.mobile}",
+                                                                      person_tel: "${distributorData.telephone}",
+                                                                      business_type: "${distributorData.businessType}",
+                                                                      distributor_gst: "${distributorData.gstNo}",
+                                                                      opentime: "${distributorData.openTime}",
+                                                                      closetime: "${distributorData.closeTime}",
+                                                                      type: "${distributorData.type}",
+                                                                      id: "${distributorData.id}",
+                                                                      state: "${distributorData.state}",
+                                                                      city:"${distributorData.city}"
+                                                                  )));
+
+                                                                }
+
                                                               },
                                                               child: Image.asset("assets/images/details/menu1.png",width: 24,height: 24,color: AppColors.black),
                                                               itemBuilder: (context) =>
@@ -497,6 +523,23 @@ class _DistributorsState extends State<Distributors> {
                                                                       SizedBox(width: 10),
                                                                       Text(
                                                                         "Products",
+                                                                        style: textStyle.copyWith(
+                                                                            color: AppColors.black,
+                                                                            fontWeight: FontWeight.bold
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+
+                                                                PopupMenuItem(
+                                                                  value: 2,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Image.asset("assets/images/notes/scene.png",width: 20,height: 20),
+                                                                      SizedBox(width: 10),
+                                                                      Text(
+                                                                        "New Order",
                                                                         style: textStyle.copyWith(
                                                                             color: AppColors.black,
                                                                             fontWeight: FontWeight.bold
