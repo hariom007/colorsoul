@@ -311,6 +311,7 @@ class _ProductOrderState extends State<ProductOrder> {
                         ),
 
                         ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.only(top: 10,left: 10,right: 10),
                           itemCount: viewProduct.length,
                           shrinkWrap: true,
