@@ -4,6 +4,7 @@ import 'package:colorsoul/Ui/Dashboard/Retailer_Inventory/qr_scanner_page.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
@@ -92,6 +93,9 @@ class _ProductOrderState extends State<ProductOrder> {
   }
 
   final _formkey = GlobalKey<FormState>();
+
+  TextEditingController allQuantity = TextEditingController();
+  TextEditingController allPrice = TextEditingController();
 
 
   @override
@@ -242,6 +246,132 @@ class _ProductOrderState extends State<ProductOrder> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
+
+                        SizedBox(height: 20),
+
+                        Padding(
+                          padding: EdgeInsets.only(left: 10,right: 10),
+                          child: Row(
+                            children: [
+
+                              Expanded(
+                                child: Text(
+                                  "Select All",
+                                  style: textStyle.copyWith(
+                                      color: AppColors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(width: 10),
+
+                              Container(
+                                width: 80,
+                                child: TextFormField(
+                                  controller: allQuantity,
+                                  keyboardType: TextInputType.number,
+                                  style: textStyle.copyWith(
+                                      fontSize: 16,
+                                      color: Colors.black
+                                  ),
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  cursorHeight: 22,
+                                  cursorColor: Colors.grey,
+                                  decoration: InputDecoration(
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderRadius: BorderRadius.only(),
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderRadius: BorderRadius.only(),
+                                    ),
+                                    isDense: true,
+                                    hintText: "Quantity",
+                                    errorStyle: TextStyle(height: 0,fontSize: 0),
+                                  ),
+                                  onChanged: (value){
+
+                                    setState(() {
+                                      orderQuantity.clear();
+                                    });
+                                      for(int i =0;i<viewProduct.length;i++){
+                                        if(value.isEmpty){
+                                          setState(() {
+                                            TextEditingController controller = TextEditingController(text: "0");
+                                            orderQuantity.add(controller);
+                                          });
+
+                                        }
+                                        else{
+                                          setState(() {
+                                            TextEditingController controller = TextEditingController(text: "$value");
+                                            orderQuantity.add(controller);
+                                          });
+
+                                        }
+
+                                      }
+
+                                  },
+                                ),
+                              ),
+
+                              SizedBox(width: 10),
+
+                              Container(
+                                width: 80,
+                                child: TextFormField(
+                                  controller: allPrice,
+                                  keyboardType: TextInputType.number,
+                                  style: textStyle.copyWith(
+                                      fontSize: 16,
+                                      color: Colors.black
+                                  ),
+                                  cursorHeight: 22,
+                                  cursorColor: Colors.grey,
+                                  decoration: InputDecoration(
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderRadius: BorderRadius.only(),
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderRadius: BorderRadius.only(),
+                                    ),
+                                    isDense: true,
+                                    hintText: "Amount",
+                                    errorStyle: TextStyle(height: 0,fontSize: 0),
+                                  ),
+                                  onChanged: (value){
+
+                                    setState((){
+                                      selectedAmount.clear();
+                                    });
+
+                                    for(int i =0;i<viewProduct.length;i++){
+                                        if(value.isEmpty){
+
+                                          setState(() {
+                                            TextEditingController controller = TextEditingController(text: "0");
+                                            selectedAmount.add(controller);
+                                          });
+
+                                        }
+                                        else{
+
+                                          setState(() {
+                                            TextEditingController controller = TextEditingController(text: "$value");
+                                            selectedAmount.add(controller);
+                                          });
+
+                                        }
+                                      }
+
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
 
                         SizedBox(height: height*0.02),
 
@@ -405,9 +535,9 @@ class _ProductOrderState extends State<ProductOrder> {
                                       controller: orderQuantity[index],
                                       keyboardType: TextInputType.number,
                                       validator: (String value) {
-                                        if(value.isEmpty)
+                                        if(value == "0")
                                         {
-                                          return "";
+                                          return "Enter Quantity";
                                         }
                                         return null;
                                       },
@@ -427,7 +557,7 @@ class _ProductOrderState extends State<ProductOrder> {
                                         ),
                                         isDense: true,
                                         hintText: "Quantity",
-                                        errorStyle: TextStyle(height: 0,fontSize: 0),
+                                        errorStyle: TextStyle(height: 1,fontSize: 10),
                                       ),
                                     ),
                                   ),
