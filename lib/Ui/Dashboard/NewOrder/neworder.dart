@@ -188,7 +188,6 @@ class _NewOrderState extends State<NewOrder> {
                         searchNewProductList = _productProvider.searchProductList;
 
                         for(int i = 0;i<_productProvider.searchProductList.length;i++){
-                          print(i);
                           var data = {
                             "id":"${_productProvider.searchProductList[i].clProductId}",
                             "value": false
@@ -198,6 +197,10 @@ class _NewOrderState extends State<NewOrder> {
                         isLoading = false;
 
                       });
+
+                      print(_productProvider.searchProductList.length);
+                      print(viewProduct.length);
+
                       addNewItem();
 
                     }
@@ -728,9 +731,12 @@ class _NewOrderState extends State<NewOrder> {
 
                                             if(checkBoxList[i]['id'] == showProductList[j].clProductId){
 
-                                              selectedProductList.add(showProductList[j]);
-                                              selectedQuantity.add(TextEditingController());
-                                              selectedAmount.add(TextEditingController());
+                                              setState((){
+                                                selectedProductList.add(showProductList[j]);
+                                                selectedQuantity.add(TextEditingController());
+                                                selectedAmount.add(TextEditingController());
+                                              });
+
                                             }
 
                                           }
@@ -1130,14 +1136,16 @@ class _NewOrderState extends State<NewOrder> {
 
                                                totalQuentity = totalQuentity + int.parse("${selectedQuantity[i].text}");
 
-                                               totalAmount =0;
-
-                                               for(int i=0;i<viewProduct.length;i++){
-                                                 double singleAmount = double.parse(selectedAmount[i].text) * double.parse(selectedQuantity[i].text);
-                                                 totalAmount = totalAmount + singleAmount;
-                                               }
-
+                                               double singleAmount = double.parse(selectedAmount[i].text) * double.parse(selectedQuantity[i].text);
+                                               totalAmount = totalAmount + singleAmount;
                                              }
+
+                                             setState((){
+                                               allPrice.clear();
+                                               allQuantity.clear();
+                                               selectAll = false;
+                                             });
+
 
                                              Navigator.pop(context);
                                              Navigator.pop(context);

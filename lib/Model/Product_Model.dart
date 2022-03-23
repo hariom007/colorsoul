@@ -48,6 +48,8 @@ class ProductModel {
     this.clCategoryName,
     this.clSubcategoryName,
     this.colors,
+    this.available_stock,
+    this.rate
   });
 
   String clProductId;
@@ -88,6 +90,8 @@ class ProductModel {
   String clCategoryName;
   String clSubcategoryName;
   List<ApiColor> colors;
+  String available_stock;
+  String rate;
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
     clProductId: json["cl_product_id"],
@@ -128,6 +132,8 @@ class ProductModel {
     clCategoryName: json["cl_category_name"],
     clSubcategoryName: json["cl_subcategory_name"],
     colors: List<ApiColor>.from(json["colors"].map((x) => ApiColor.fromJson(x))),
+    available_stock: json['available_stock'].toString(),
+    rate: json['rate'].toString()
   );
 
   Map<String, dynamic> toJson() => {
@@ -169,6 +175,8 @@ class ProductModel {
     "cl_category_name": clCategoryName,
     "cl_subcategory_name": clSubcategoryName,
     "colors": List<dynamic>.from(colors.map((x) => x.toJson())),
+    "available_stock":available_stock,
+    "rate":rate
   };
 }
 

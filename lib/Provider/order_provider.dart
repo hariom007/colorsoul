@@ -444,6 +444,7 @@ class OrderProvider with ChangeNotifier
   {
 
     isLoaded = false;
+    isBarcode = false;
     notifyListeners();
 
     await ApiHandler.post(data,url).then((value){
@@ -451,12 +452,14 @@ class OrderProvider with ChangeNotifier
       if(value["st"] == "success")
       {
         isBarcode = true;
+        isLoaded = true;
         print(isBarcode);
         notifyListeners();
       }
       else
       {
         isBarcode = false;
+        isLoaded = true;
         notifyListeners();
 
         Fluttertoast.showToast(
@@ -470,9 +473,6 @@ class OrderProvider with ChangeNotifier
         );
 
       }
-
-      isLoaded = true;
-      notifyListeners();
 
     });
 

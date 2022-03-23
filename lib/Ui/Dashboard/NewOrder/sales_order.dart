@@ -339,22 +339,6 @@ class _SalesOrderState extends State<SalesOrder> {
             child: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
 
-                  getProducts(String value) async {
-
-                    setState((){
-                      isLoading = true;
-                    });
-
-                    var data ={
-                      "group_id":"$groupId",
-                      "search_term" : "${value}"
-                    };
-                    await _productProvider.getSearchProducts(data,'/searchProductByKeyword');
-
-                    isLoading = false;
-
-                  }
-
                   return Container(
                       padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                       height: MediaQuery.of(context).size.height-100,
@@ -1132,15 +1116,16 @@ class _SalesOrderState extends State<SalesOrder> {
 
                                                   totalQuentity = totalQuentity + int.parse("${selectedQuantity[i].text}");
 
-                                                  totalAmount =0;
-
-                                                  for(int i=0;i<viewProduct.length;i++){
-                                                    double singleAmount = double.parse(selectedAmount[i].text) * double.parse(selectedQuantity[i].text);
-                                                    totalAmount = totalAmount + singleAmount;
-                                                  }
-
+                                                  double singleAmount = double.parse(selectedAmount[i].text) * double.parse(selectedQuantity[i].text);
+                                                  totalAmount = totalAmount + singleAmount;
 
                                                 }
+
+                                                setState((){
+                                                  allPrice.clear();
+                                                  allQuantity.clear();
+                                                  selectAll = false;
+                                                });
 
                                                 Navigator.pop(context);
                                                 Navigator.pop(context);

@@ -6,6 +6,7 @@ import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,6 +35,10 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
 
   createOrder() async {
 
+    setState(() {
+      isloading = true;
+    });
+
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.get("userId");
 
@@ -50,13 +55,24 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
     
    // print(jsonEncode(data));
 
-    _orderProvider.insertBarcodeOrder(data, "/new_order");
+    await _orderProvider.insertBarcodeOrder(data, "/new_order");
 
     print("Order page ${_orderProvider.isBarcode}");
     if(_orderProvider.isBarcode == true){
 
       getOrders();
 
+    }
+    else{
+      Fluttertoast.showToast(
+          msg: "Create Order Error !!\nPlease Try Again Later",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
     }
   }
 
@@ -104,7 +120,9 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
     };
     await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
 
-    if(_orderProvider.isSuccess == true){
+    setState(() {
+      isloading = false;
+    });
 
       showDialog(
           context: context,
@@ -113,7 +131,6 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
             return SimpleCustomAlert();
           }
       );
-    }
 
   }
 
@@ -134,7 +151,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
                   height: 70,
                   color: AppColors.white,
                   child:
-                  _orderProvider.isLoaded == false || isloading == true
+                  isloading == true
                       ?
                   Center(
                       child: SpinKitThreeBounce(
