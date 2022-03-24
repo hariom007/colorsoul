@@ -2202,15 +2202,14 @@ class _SalesOrderState extends State<SalesOrder> {
                                                   setState(() {
 
                                                     viewProduct.removeAt(index);
-
-                                                    totalAmount =0;
-                                                    totalQuentity =0;
-
-                                                    totalQuentity = totalQuentity + int.parse("${productData['qty']}");
+                                                    totalQuentity = 0;
+                                                    totalAmount = 0;
 
                                                     for(int i=0;i<viewProduct.length;i++){
 
-                                                      double singleAmount = double.parse("${productData['amount']}") * double.parse("${productData['qty']}");
+                                                      totalQuentity = totalQuentity + int.parse("${viewProduct[i]['qty']}");
+
+                                                      double singleAmount = double.parse("${viewProduct[i]['amount']}") * double.parse("${viewProduct[i]['qty']}");
                                                       totalAmount = totalAmount + singleAmount;
                                                     }
 
