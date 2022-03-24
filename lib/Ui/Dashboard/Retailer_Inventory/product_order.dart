@@ -817,7 +817,7 @@ class _ProductOrderState extends State<ProductOrder> {
 
                             if(_formkey.currentState.validate()){
 
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BarcodeOrder(
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => BarcodeOrder(
                                 distributor_name: "${widget.distributor_name}",
                                 distributor_address: "${widget.distributor_address}",
                                 latitude: widget.latitude,

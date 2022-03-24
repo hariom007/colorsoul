@@ -142,7 +142,6 @@ class _NewOrderState extends State<NewOrder> {
     });
   }
 
-
   String groupId;
 
   List<ProductModel> searchNewProductList = [];
