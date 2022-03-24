@@ -1,22 +1,19 @@
 import 'package:colorsoul/Model/Order_Model.dart';
+import 'package:colorsoul/Provider/order_provider.dart';
+import 'package:colorsoul/Ui/Dashboard/OrderList/edit_order.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderDetails extends StatefulWidget {
 
-  String retailerBusinessName,retailerAddress,orderAddress,retailerMobile,orderDate,totalAmount;
-  List<Item> products;
-
+  String orderId;
   OrderDetails({
     Key key,
-    this.retailerBusinessName,
-    this.retailerAddress,
-    this.orderDate,
-    this.retailerMobile,
-    this.totalAmount,
-    this.orderAddress,
-    this.products
+    this.orderId,
   }) : super(key: key);
 
 
@@ -25,13 +22,84 @@ class OrderDetails extends StatefulWidget {
 }
 
 class _OrderDetailsState extends State<OrderDetails> {
+
+  OrderProvider _orderProvider;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _orderProvider = Provider.of<OrderProvider>(context, listen: false);
+
+    getOrders();
+
+  }
+
+  String
+  retailer_id, retailerBusinessName, retailerAddress, orderAddress,
+      retailerMobile, orderDate, totalAmount;
+  var products;
+
+
+  bool isLoading = false;
+  getOrders() async {
+
+    setState(() {
+      isLoading= true;
+    });
+
+    var data = {
+      "id":"${widget.orderId}"
+    };
+
+    await _orderProvider.getOrderDetails(data,'/get_order_detail');
+
+    print(_orderProvider.orderDetails);
+
+
+    if(_orderProvider.isSuccess == true){
+
+      retailerBusinessName = _orderProvider.orderDetails['name'] == "" ?  _orderProvider.orderDetails['business_name'] : _orderProvider.orderDetails['name'];
+      retailer_id = _orderProvider.orderDetails['retailer_id'];
+      retailerAddress = _orderProvider.orderDetails['address'];
+      orderAddress = _orderProvider.orderDetails['address'];
+      retailerMobile = _orderProvider.orderDetails['mobile'];
+      orderDate = _orderProvider.orderDetails['order_date'];
+      totalAmount = _orderProvider.orderDetails['total'];
+      products = _orderProvider.orderDetails['items'];
+
+      print(products);
+
+    }
+
+    setState(() {
+      isLoading= false;
+    });
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
+
+    _orderProvider = Provider.of<OrderProvider>(context, listen: true);
+
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+
+
     return Scaffold(
         backgroundColor: AppColors.black,
-        body:Container(
+        body:
+        isLoading == true
+            ?
+        SpinKitThreeBounce(
+          color: AppColors.white,
+          size: 25.0,
+        )
+            :
+        Container(
             width: width,
             height: height,
             decoration: BoxDecoration(
@@ -55,18 +123,44 @@ class _OrderDetailsState extends State<OrderDetails> {
                               onPressed: (){
                                 Navigator.pop(context);
                               },
-                              child: Image.asset("assets/images/tasks/back.png",height: 16)
+                              child: Image.asset("assets/images/tasks/back.png",height: 18)
                           ),
                         ),
                         SizedBox(width: 8),
-                        Text(
-                          "${widget.retailerBusinessName}",
-                          style: textStyle.copyWith(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold
+                        Expanded(
+                          child: Text(
+                            "${retailerBusinessName}",
+                            style: textStyle.copyWith(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
                           ),
                         ),
-                        Expanded(child: Container()),
+
+                        InkWell(
+                            onTap: () async {
+
+                              final value = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditOrder(
+                                orderId: widget.orderId,
+                                retailerId: retailer_id,
+                                retailerAddress: retailerAddress,
+                                retailerName: retailerBusinessName,
+                                orderDate: orderDate,
+                                productList: products,
+                              )));
+
+                              if(value != null){
+
+                                getOrders();
+
+                              }
+
+                            },
+                            child: Icon(Icons.edit,color: AppColors.white,size: 23)
+                        ),
+
+                        SizedBox(width: 8),
+
                         /*
                         InkWell(
                           onTap: () {
@@ -149,10 +243,12 @@ class _OrderDetailsState extends State<OrderDetails> {
                           child: Image.asset("assets/images/details/menu1.png",width: 20,height: 20)
                         ),
                         */
+
                       ],
                     ),
                   ),
                 ),
+
                 Padding(
                   padding: EdgeInsets.only(right: 30,left: 30),
                   child: Column(
@@ -165,7 +261,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                           SizedBox(width: 10),
                           Flexible(
                             child: Text(
-                              "${widget.retailerAddress}",
+                              "${retailerAddress}",
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: textStyle.copyWith(
@@ -182,7 +278,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                           SizedBox(width: 10),
                           Flexible(
                             child: Text(
-                              "+91 ${widget.retailerMobile}",
+                              "+91 ${retailerMobile}",
                               maxLines: 2,
                               style: textStyle.copyWith(
                                 fontSize: 15,
@@ -233,7 +329,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       SizedBox(width: 10),
                                       Expanded(
                                         child: Text(
-                                          "Silicon Shoppers, F4, 1st Floor, Udhna Main Road, udhna, Surat, Gujarat - 394210 (India)",
+                                          "$orderAddress",
                                           style: textStyle.copyWith(
                                               color: AppColors.black,
                                               height: 1.4
@@ -253,7 +349,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   ),
                                   SizedBox(height: 10),
                                   Text(
-                                    "${widget.orderDate}",
+                                    "${orderDate}",
                                     style: textStyle.copyWith(
                                       color: AppColors.black,
                                     ),
@@ -275,7 +371,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          "Item Code",
+                                          "Item Name",
                                           style: textStyle.copyWith(
                                             color: AppColors.black,
                                             fontSize: 16,
@@ -318,17 +414,17 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   ListView.builder(
                                     physics: NeverScrollableScrollPhysics(),
                                     padding: EdgeInsets.only(top: 10),
-                                    itemCount: widget.products.length,
+                                    itemCount: products.length,
                                     shrinkWrap: true,
                                     itemBuilder:(context, index){
-                                      var productData = widget.products[index];
+                                      var productData = products[index];
                                       return Padding(
                                         padding: const EdgeInsets.only(bottom: 20),
                                         child: Row(
                                           children: [
                                             Expanded(
                                               child: Text(
-                                                "${productData.sku}",
+                                                "${productData['short']}",
                                                 style: textStyle.copyWith(
                                                   color: AppColors.black,
                                                 ),
@@ -337,7 +433,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             Container(
                                               width: 80,
                                               child: Text(
-                                                "${productData.qty}",
+                                                "${productData['qty']}",
                                                 textAlign: TextAlign.center,
                                                 style: textStyle.copyWith(
                                                   color: AppColors.black,
@@ -347,7 +443,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             Container(
                                               width: 80,
                                               child: Text(
-                                                "${productData.amount}",
+                                                "${productData['amount']}",
                                                 textAlign: TextAlign.center,
                                                 style: textStyle.copyWith(
                                                   color: AppColors.black,
@@ -380,7 +476,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             ),
                                             Expanded(child: Container()),
                                             Text(
-                                              "₹ ${widget.totalAmount}",
+                                              "₹ ${totalAmount}",
                                               style: textStyle.copyWith(
                                                   color: AppColors.black,
                                                   fontSize: 16,
@@ -440,7 +536,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             ),
                                             Expanded(child: Container()),
                                             Text(
-                                              "₹100",
+                                              "₹0.0",
                                               style: textStyle.copyWith(
                                                   color: AppColors.black,
                                                   fontSize: 16,
@@ -476,7 +572,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           ),
                                           SizedBox(height: 10),
                                           Text(
-                                            "₹ ${widget.totalAmount}",
+                                            "₹ ${totalAmount}",
                                             style: textStyle.copyWith(
                                                 color: AppColors.black,
                                                 fontSize: 34,

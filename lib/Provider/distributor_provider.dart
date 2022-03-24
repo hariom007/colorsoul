@@ -11,13 +11,13 @@ class DistributorProvider with ChangeNotifier
 
   List<DistributorModel> distributorList = [];
 
-  getDistributor(url) async
+  getDistributor(data,url) async
   {
 
     isLoaded = false;
     notifyListeners();
 
-    await ApiHandler.get(url).then((value){
+    await ApiHandler.post(data,url).then((value){
       List<DistributorModel> list;
 
       if(value["st"] == "success")
@@ -68,7 +68,10 @@ class DistributorProvider with ChangeNotifier
       if(value["st"] == "success")
       {
         isSuccess = true;
-        getDistributor("/getDistributorRetailer/1");
+        var data = {
+          "search_term":""
+        };
+        getDistributor(data,"/getDistributorRetailer/1");
         notifyListeners();
       }
       else
@@ -139,6 +142,48 @@ class DistributorProvider with ChangeNotifier
       }
 
       isDistributorLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+
+  var distributorData;
+  bool isDistributorDataLoaded = true;
+  getDistributorDetails(data,url) async
+  {
+
+    isDistributorDataLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      if(value["st"] == "success")
+      {
+        isSuccess = true;
+
+        distributorData = value['data'];
+        notifyListeners();
+      }
+      else
+      {
+        isSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Distributor Get List Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isDistributorDataLoaded = true;
       notifyListeners();
 
     });

@@ -1,16 +1,14 @@
-// To parse this JSON data, do
-//
-//     final productModel = productModelFromJson(jsonString);
 
 import 'dart:convert';
 
-List<ProductModel> productModelFromJson(String str) => List<ProductModel>.from(json.decode(str).map((x) => ProductModel.fromJson(x)));
+List<RetailerProdcutsModel> retailerProdcutsModelFromJson(String str) => List<RetailerProdcutsModel>.from(json.decode(str).map((x) => RetailerProdcutsModel.fromJson(x)));
 
-String productModelToJson(List<ProductModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String retailerProdcutsModelToJson(List<RetailerProdcutsModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class ProductModel {
-  ProductModel({
+class RetailerProdcutsModel {
+  RetailerProdcutsModel({
     this.clProductId,
+    this.accId,
     this.clProductBrandId,
     this.clProductCatId,
     this.clProductSubCatId,
@@ -48,11 +46,14 @@ class ProductModel {
     this.clCategoryName,
     this.clSubcategoryName,
     this.colors,
-    this.available_stock,
-    this.rate
+    this.productId,
+    this.retailerId,
+    this.totalStock,
+    this.rate,
   });
 
   String clProductId;
+  String accId;
   String clProductBrandId;
   String clProductCatId;
   String clProductSubCatId;
@@ -70,7 +71,7 @@ class ProductModel {
   String clProductSkuCode;
   String clProductAsin;
   String clProductIsbn;
-  List<ClProductImg> clProductImg;
+  List<String> clProductImg;
   String clProductImgUrl;
   String clProductRadioBtn;
   List<Pattribute> pattributes;
@@ -81,7 +82,7 @@ class ProductModel {
   String clProductCreatedBy;
   String clProductUpdatedBy;
   DateTime clProductCreatedDate;
-  String clProductUpdatedDate;
+  DateTime clProductUpdatedDate;
   String isDeleted;
   String hsnCode;
   String hsnIgst;
@@ -89,12 +90,15 @@ class ProductModel {
   String hsnSgst;
   String clCategoryName;
   String clSubcategoryName;
-  List<ApiColor> colors;
-  String available_stock;
+  ReColors colors;
+  String productId;
+  String retailerId;
+  String totalStock;
   String rate;
 
-  factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
+  factory RetailerProdcutsModel.fromJson(Map<String, dynamic> json) => RetailerProdcutsModel(
     clProductId: json["cl_product_id"],
+    accId: json["acc_id"],
     clProductBrandId: json["cl_product_brand_id"],
     clProductCatId: json["cl_product_cat_id"],
     clProductSubCatId: json["cl_product_sub_cat_id"],
@@ -112,7 +116,7 @@ class ProductModel {
     clProductSkuCode: json["cl_product_sku_code"],
     clProductAsin: json["cl_product_asin"],
     clProductIsbn: json["cl_product_isbn"],
-    clProductImg: List<ClProductImg>.from(json["cl_product_img"].map((x) => ClProductImg.fromJson(x))),
+    clProductImg: List<String>.from(json["cl_product_img"].map((x) => x)),
     clProductImgUrl: json["cl_product_img_url"],
     clProductRadioBtn: json["cl_product_radio_btn"],
     pattributes: List<Pattribute>.from(json["pattributes"].map((x) => Pattribute.fromJson(x))),
@@ -123,7 +127,7 @@ class ProductModel {
     clProductCreatedBy: json["cl_product_created_by"],
     clProductUpdatedBy: json["cl_product_updated_by"],
     clProductCreatedDate: DateTime.parse(json["cl_product_created_date"]),
-    clProductUpdatedDate: json["cl_product_updated_date"],
+    clProductUpdatedDate: DateTime.parse(json["cl_product_updated_date"]),
     isDeleted: json["is_deleted"],
     hsnCode: json["hsn_code"],
     hsnIgst: json["hsn_igst"],
@@ -131,13 +135,16 @@ class ProductModel {
     hsnSgst: json["hsn_sgst"],
     clCategoryName: json["cl_category_name"],
     clSubcategoryName: json["cl_subcategory_name"],
-    colors: List<ApiColor>.from(json["colors"].map((x) => ApiColor.fromJson(x))),
-    available_stock: json['available_stock'].toString(),
-    rate: json['rate'].toString()
+    colors: ReColors.fromJson(json["colors"]),
+    productId: json["product_id"],
+    retailerId: json["retailer_id"],
+    totalStock: json["total_stock"],
+    rate: json["rate"],
   );
 
   Map<String, dynamic> toJson() => {
     "cl_product_id": clProductId,
+    "acc_id": accId,
     "cl_product_brand_id": clProductBrandId,
     "cl_product_cat_id": clProductCatId,
     "cl_product_sub_cat_id": clProductSubCatId,
@@ -155,7 +162,7 @@ class ProductModel {
     "cl_product_sku_code": clProductSkuCode,
     "cl_product_asin": clProductAsin,
     "cl_product_isbn": clProductIsbn,
-    "cl_product_img": List<dynamic>.from(clProductImg.map((x) => x.toJson())),
+    "cl_product_img": List<dynamic>.from(clProductImg.map((x) => x)),
     "cl_product_img_url": clProductImgUrl,
     "cl_product_radio_btn": clProductRadioBtn,
     "pattributes": List<dynamic>.from(pattributes.map((x) => x.toJson())),
@@ -166,7 +173,7 @@ class ProductModel {
     "cl_product_created_by": clProductCreatedBy,
     "cl_product_updated_by": clProductUpdatedBy,
     "cl_product_created_date": clProductCreatedDate.toIso8601String(),
-    "cl_product_updated_date": clProductUpdatedDate,
+    "cl_product_updated_date": clProductUpdatedDate.toIso8601String(),
     "is_deleted": isDeleted,
     "hsn_code": hsnCode,
     "hsn_igst": hsnIgst,
@@ -174,66 +181,16 @@ class ProductModel {
     "hsn_sgst": hsnSgst,
     "cl_category_name": clCategoryName,
     "cl_subcategory_name": clSubcategoryName,
-    "colors": List<dynamic>.from(colors.map((x) => x.toJson())),
-    "available_stock":available_stock,
-    "rate":rate
+    "colors": colors.toJson(),
+    "product_id": productId,
+    "retailer_id": retailerId,
+    "total_stock": totalStock,
+    "rate": rate,
   };
 }
 
-class ClProductImg {
-  ClProductImg({
-    this.imageid,
-    this.pimageid,
-    this.iid,
-    this.fileName,
-    this.imageName,
-    this.hPath,
-    this.tPath,
-    this.fileSize,
-    this.fileType,
-    this.fileExt,
-  });
-
-  String imageid;
-  String pimageid;
-  String iid;
-  String fileName;
-  String imageName;
-  String hPath;
-  String tPath;
-  String fileSize;
-  String fileType;
-  String fileExt;
-
-  factory ClProductImg.fromJson(Map<String, dynamic> json) => ClProductImg(
-    imageid: json["imageid"],
-    pimageid: json["pimageid"],
-    iid: json["iid"],
-    fileName: json["file_name"],
-    imageName: json["image_name"],
-    hPath: json["h_path"],
-    tPath: json["t_path"],
-    fileSize: json["file_size"],
-    fileType: json["file_type"],
-    fileExt: json["file_ext"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "imageid": imageid,
-    "pimageid": pimageid,
-    "iid": iid,
-    "file_name": fileName,
-    "image_name": imageName,
-    "h_path": hPath,
-    "t_path": tPath,
-    "file_size": fileSize,
-    "file_type": fileType,
-    "file_ext": fileExt,
-  };
-}
-
-class ApiColor {
-  ApiColor({
+class ReColors {
+  ReColors({
     this.clColorId,
     this.clColorCode,
     this.hexCode,
@@ -245,7 +202,7 @@ class ApiColor {
   String hexCode;
   String skuCode;
 
-  factory ApiColor.fromJson(Map<String, dynamic> json) => ApiColor(
+  factory ReColors.fromJson(Map<String, dynamic> json) => ReColors(
     clColorId: json["cl_color_id"],
     clColorCode: json["cl_color_code"],
     hexCode: json["HexCode"],

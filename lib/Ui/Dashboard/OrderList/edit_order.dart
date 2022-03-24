@@ -7,6 +7,7 @@ import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/confirmorder.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/normal_order.dart';
+import 'package:colorsoul/Ui/Dashboard/OrderList/edit_confirm.dart';
 import 'package:dropdown_below/dropdown_below.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +36,23 @@ class Debouncer {
   }
 }
 
-class NewOrder extends StatefulWidget  {
+class EditOrder extends StatefulWidget {
+
+  String retailerId,retailerName,retailerAddress;
+  String orderDate,orderId;
+  var productList;
+
+  EditOrder({Key key,
+    this.orderId,
+    this.retailerId,
+    this.retailerName,
+    this.retailerAddress,
+    this.orderDate,
+    this.productList
+  }) : super(key: key);
+
   @override
-  _NewOrderState createState() => _NewOrderState();
+  State<EditOrder> createState() => _EditOrderState();
 }
 
 class TypeModel {
@@ -73,7 +88,9 @@ class TypeModel {
   String toString() => name;
 }
 
-class _NewOrderState extends State<NewOrder> {
+
+class _EditOrderState extends State<EditOrder> {
+
 
   TextEditingController _textEditingController1 = new TextEditingController();
   DateTime _selectedDate;
@@ -88,6 +105,34 @@ class _NewOrderState extends State<NewOrder> {
   DistributorProvider _distributorProvider;
   ProductProvider _productProvider;
 
+
+  setdata(){
+
+    setState(() {
+
+      selectedRetailerId = widget.retailerId;
+      selectedRetailerName = widget.retailerName;
+      selectedRetailerAddress = widget.retailerAddress;
+      orderAddress = widget.retailerAddress;
+      selectedRetailerId = widget.retailerId;
+      _textEditingController1 = TextEditingController(text: widget.orderDate);
+
+      viewProduct = widget.productList;
+      isvisible = true;
+      isvisible1 = true;
+
+
+      for(int i=0;i<viewProduct.length;i++){
+
+        totalAmount = totalAmount + double.parse("${viewProduct[i]['amount']}");
+        totalQuentity = totalQuentity + int.parse("${viewProduct[i]['qty']}");
+
+      }
+
+    });
+
+  }
+
   @override
   void initState() {
     super.initState();
@@ -96,10 +141,15 @@ class _NewOrderState extends State<NewOrder> {
 
     getRetailer();
 
+    setdata();
+
   }
 
   bool isLoaded = false;
-  String selectedRetailerId,selectedRetailerName = "Select Retailer",selectedRetailerAddress,orderAddress,selectedRetailerMobile;
+  String selectedRetailerId,selectedRetailerName = "Select Retailer",
+      selectedRetailerAddress,
+      orderAddress,
+      selectedRetailerMobile;
   getRetailer() async {
 
     setState(() {
@@ -116,11 +166,10 @@ class _NewOrderState extends State<NewOrder> {
 
       searchNewDistributor = _distributorProvider.onlyDistributorList;
 
-      // var result  = _distributorProvider.distributorValue;
-      //
       setState(() {
         isLoaded = true;
       });
+
       getGroup();
     }
 
@@ -141,6 +190,7 @@ class _NewOrderState extends State<NewOrder> {
       isLoaded = true;
     });
   }
+
 
   String groupId;
 
@@ -187,6 +237,7 @@ class _NewOrderState extends State<NewOrder> {
                         searchNewProductList = _productProvider.searchProductList;
 
                         for(int i = 0;i<_productProvider.searchProductList.length;i++){
+                          print(i);
                           var data = {
                             "id":"${_productProvider.searchProductList[i].clProductId}",
                             "value": false
@@ -196,10 +247,6 @@ class _NewOrderState extends State<NewOrder> {
                         isLoading = false;
 
                       });
-
-                      print(_productProvider.searchProductList.length);
-                      print(viewProduct.length);
-
                       addNewItem();
 
                     }
@@ -285,9 +332,9 @@ class _NewOrderState extends State<NewOrder> {
                                             leading: Text('${_productProvider.groupList[index].name}',
                                               textAlign: TextAlign.center,
                                               style: textStyle.copyWith(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.black
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppColors.black
                                               ),
                                             ),
                                             trailing: Icon(Icons.chevron_right),
@@ -352,7 +399,7 @@ class _NewOrderState extends State<NewOrder> {
                     };
                     await _productProvider.getSearchProducts(data,'/searchProductByKeyword');
 
-                      isLoading = false;
+                    isLoading = false;
 
                   }
 
@@ -474,12 +521,12 @@ class _NewOrderState extends State<NewOrder> {
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        bottomRight: Radius.circular(20),
-                                        topRight: Radius.circular(20),
-                                        bottomLeft: Radius.circular(20),
-                                      ),
-                                      border: Border.all(color: AppColors.black)
+                                        borderRadius: BorderRadius.only(
+                                          bottomRight: Radius.circular(20),
+                                          topRight: Radius.circular(20),
+                                          bottomLeft: Radius.circular(20),
+                                        ),
+                                        border: Border.all(color: AppColors.black)
                                     ),
                                     height: 50,width: 60,
                                     child: IconButton(
@@ -511,31 +558,31 @@ class _NewOrderState extends State<NewOrder> {
                                 ),
 
                                 Container(
-                                  width: 25,
-                                  height: 25,
-                                  child: Checkbox(
-                                      value: selectAll,
-                                      checkColor: AppColors.white,
-                                      activeColor: AppColors.black,
-                                      onChanged: (value){
+                                    width: 25,
+                                    height: 25,
+                                    child: Checkbox(
+                                        value: selectAll,
+                                        checkColor: AppColors.white,
+                                        activeColor: AppColors.black,
+                                        onChanged: (value){
 
-                                        setState((){
+                                          setState((){
 
-                                          checkBoxList.clear();
+                                            checkBoxList.clear();
 
-                                          selectAll = !selectAll;
+                                            selectAll = !selectAll;
 
-                                          for(int i = 0;i<searchNewProductList.length;i++){
-                                            var data = {
-                                              "id":"${searchNewProductList[i].clProductId}",
-                                              "value": selectAll
-                                            };
-                                            checkBoxList.add(data);
-                                          }
+                                            for(int i = 0;i<searchNewProductList.length;i++){
+                                              var data = {
+                                                "id":"${searchNewProductList[i].clProductId}",
+                                                "value": selectAll
+                                              };
+                                              checkBoxList.add(data);
+                                            }
 
-                                        });
+                                          });
 
-                                      })
+                                        })
                                 ),
 
                               ],
@@ -730,12 +777,9 @@ class _NewOrderState extends State<NewOrder> {
 
                                             if(checkBoxList[i]['id'] == showProductList[j].clProductId){
 
-                                              setState((){
-                                                selectedProductList.add(showProductList[j]);
-                                                selectedQuantity.add(TextEditingController());
-                                                selectedAmount.add(TextEditingController());
-                                              });
-
+                                              selectedProductList.add(showProductList[j]);
+                                              selectedQuantity.add(TextEditingController());
+                                              selectedAmount.add(TextEditingController());
                                             }
 
                                           }
@@ -783,6 +827,7 @@ class _NewOrderState extends State<NewOrder> {
   bool isSelectAll = false;
   TextEditingController allQuantity = TextEditingController();
   TextEditingController allPrice = TextEditingController();
+
 
   List<TextEditingController> selectedQuantity = [];
   List<TextEditingController> selectedAmount = [];
@@ -948,229 +993,217 @@ class _NewOrderState extends State<NewOrder> {
                             SizedBox(height: 10),
 
                             Expanded(
-                              child:
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                                child:
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
 
-                                  Divider(
-                                      height: 20,
-                                      color: Color.fromRGBO(185, 185, 185, 0.75),
-                                      thickness: 1.2
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 10,right: 10),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            "Item Name",
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 70,
-                                          child: Text(
-                                            "Quantity",
-                                            textAlign: TextAlign.center,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 10),
-                                        Container(
-                                          width: 70,
-                                          child: Text(
-                                            "Amount",
-                                            textAlign: TextAlign.center,
-                                            style: textStyle.copyWith(
-                                                color: AppColors.black,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                    Divider(
+                                        height: 20,
+                                        color: Color.fromRGBO(185, 185, 185, 0.75),
+                                        thickness: 1.2
                                     ),
-                                  ),
-                                  Divider(
-                                      height: 20,
-                                      color: Color.fromRGBO(185, 185, 185, 0.75),
-                                      thickness: 1.2
-                                  ),
-
-                                  Expanded(
-                                    child: ListView.builder(
-                                      padding: EdgeInsets.only(top: 10,left: 10,right: 10),
-                                      itemCount: selectedProductList.length,
-                                      shrinkWrap: true,
-                                      itemBuilder:(context, index){
-                                        var productData = selectedProductList[index];
-
-                                        return Padding(
-                                          padding: const EdgeInsets.only(bottom: 20),
-                                          child: Row(
-                                            children: [
-
-                                              Expanded(
-                                                child: Text(
-                                                  "${productData.clProductShortname}",
-                                                  style: textStyle.copyWith(
-                                                    color: AppColors.black,
-                                                  ),
-                                                ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 10,right: 10),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              "Item Name",
+                                              style: textStyle.copyWith(
+                                                  color: AppColors.black,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold
                                               ),
-
-                                              Container(
-                                                width: 70,
-                                                child: TextFormField(
-                                                  controller: selectedQuantity[index],
-                                                  keyboardType: TextInputType.number,
-                                                  validator: (String value) {
-                                                    if(value.isEmpty)
-                                                    {
-                                                      return "";
-                                                    }
-                                                    return null;
-                                                  },
-                                                  style: textStyle.copyWith(
-                                                      fontSize: 16,
-                                                      color: Colors.black
-                                                  ),
-                                                  cursorHeight: 22,
-                                                  textAlign: TextAlign.center,
-                                                  cursorColor: Colors.grey,
-                                                  decoration: InputDecoration(
-                                                    enabledBorder: UnderlineInputBorder(
-                                                      borderRadius: BorderRadius.only(),
-                                                    ),
-                                                    focusedBorder: UnderlineInputBorder(
-                                                      borderRadius: BorderRadius.only(),
-                                                    ),
-                                                    isDense: true,
-                                                    hintText: "Quantity",
-                                                    errorStyle: TextStyle(height: 0,fontSize: 0),
-                                                  ),
-                                                ),
-                                              ),
-
-                                              SizedBox(width: 15),
-
-                                              Container(
-                                                width: 70,
-                                                child: TextFormField(
-                                                  controller: selectedAmount[index],
-                                                  keyboardType: TextInputType.number,
-                                                  validator: (String value) {
-                                                    if(value.isEmpty)
-                                                    {
-                                                      return "";
-                                                    }
-                                                    return null;
-                                                  },
-                                                  style: textStyle.copyWith(
-                                                      fontSize: 16,
-                                                      color: Colors.black
-                                                  ),
-                                                  cursorHeight: 22,
-                                                  textAlign: TextAlign.center,
-                                                  cursorColor: Colors.grey,
-                                                  decoration: InputDecoration(
-                                                    enabledBorder: UnderlineInputBorder(
-                                                      borderRadius: BorderRadius.only(),
-                                                    ),
-                                                    focusedBorder: UnderlineInputBorder(
-                                                      borderRadius: BorderRadius.only(),
-                                                    ),
-                                                    isDense: true,
-                                                    hintText: "Amount",
-                                                    errorStyle: TextStyle(height: 0,fontSize: 0),
-                                                  ),
-                                                ),
-                                              ),
-
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                      height: 50,
-                                      width: MediaQuery.of(context).size.width,
-                                      child: DecoratedBox(
-                                        decoration: BoxDecoration(
-                                            gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                                            borderRadius: round.copyWith()
-                                        ),
-                                        child: ElevatedButton(
-                                          onPressed: () {
-
-                                           if(_formkey2.currentState.validate()){
-
-                                             for(int i=0;i<selectedProductList.length;i++){
-
-                                               var product = {
-                                                 "pid":"${selectedProductList[i].clProductId}",
-                                                 "short":"${selectedProductList[i].clProductShortname}",
-                                                 "color_id":"${selectedProductList[i].colors[0].clColorId}",
-                                                 "color_code":"${selectedProductList[i].colors[0].clColorCode}",
-                                                 "sku":"${selectedProductList[i].colors[0].skuCode}",
-                                                 "amount":"${selectedAmount[i].text}",
-                                                 "qty":"${selectedQuantity[i].text}",
-                                                 "hsnigst":"${selectedProductList[i].hsnIgst}",
-                                                 "hsncgst":"${selectedProductList[i].hsnCgst}",
-                                                 "hsnsgst":"${selectedProductList[i].hsnSgst}",
-                                                 "hsn_code":"${selectedProductList[i].hsnCode}",
-                                               };
-                                               viewProduct.add(product);
-
-                                               totalQuentity = totalQuentity + int.parse("${selectedQuantity[i].text}");
-
-                                               double singleAmount = double.parse(selectedAmount[i].text) * double.parse(selectedQuantity[i].text);
-                                               totalAmount = totalAmount + singleAmount;
-                                             }
-
-                                             setState((){
-                                               allPrice.clear();
-                                               allQuantity.clear();
-                                               selectAll = false;
-                                             });
-
-
-                                             Navigator.pop(context);
-                                             Navigator.pop(context);
-                                             Navigator.pop(context);
-
-                                           }
-
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                              elevation: 10,
-                                              primary: Colors.transparent,
-                                              shape: StadiumBorder()
-                                          ),
-                                          child: Text('Add Products',
-                                            textAlign: TextAlign.center,
-                                            style: textStyle.copyWith(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                        ),
-                                      )
-                                  ),
+                                          Container(
+                                            width: 70,
+                                            child: Text(
+                                              "Quantity",
+                                              textAlign: TextAlign.center,
+                                              style: textStyle.copyWith(
+                                                  color: AppColors.black,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 10),
+                                          Container(
+                                            width: 70,
+                                            child: Text(
+                                              "Amount",
+                                              textAlign: TextAlign.center,
+                                              style: textStyle.copyWith(
+                                                  color: AppColors.black,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Divider(
+                                        height: 20,
+                                        color: Color.fromRGBO(185, 185, 185, 0.75),
+                                        thickness: 1.2
+                                    ),
 
-                                ],
-                              )
+                                    Expanded(
+                                      child: ListView.builder(
+                                        padding: EdgeInsets.only(top: 10,left: 10,right: 10),
+                                        itemCount: selectedProductList.length,
+                                        shrinkWrap: true,
+                                        itemBuilder:(context, index){
+                                          var productData = selectedProductList[index];
+
+                                          return Padding(
+                                            padding: const EdgeInsets.only(bottom: 20),
+                                            child: Row(
+                                              children: [
+
+                                                Expanded(
+                                                  child: Text(
+                                                    "${productData.clProductShortname}",
+                                                    style: textStyle.copyWith(
+                                                      color: AppColors.black,
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                Container(
+                                                  width: 70,
+                                                  child: TextFormField(
+                                                    controller: selectedQuantity[index],
+                                                    keyboardType: TextInputType.number,
+                                                    validator: (String value) {
+                                                      if(value.isEmpty)
+                                                      {
+                                                        return "";
+                                                      }
+                                                      return null;
+                                                    },
+                                                    style: textStyle.copyWith(
+                                                        fontSize: 16,
+                                                        color: Colors.black
+                                                    ),
+                                                    cursorHeight: 22,
+                                                    textAlign: TextAlign.center,
+                                                    cursorColor: Colors.grey,
+                                                    decoration: InputDecoration(
+                                                      enabledBorder: UnderlineInputBorder(
+                                                        borderRadius: BorderRadius.only(),
+                                                      ),
+                                                      focusedBorder: UnderlineInputBorder(
+                                                        borderRadius: BorderRadius.only(),
+                                                      ),
+                                                      isDense: true,
+                                                      hintText: "Quantity",
+                                                      errorStyle: TextStyle(height: 0,fontSize: 0),
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                SizedBox(width: 15),
+
+                                                Container(
+                                                  width: 70,
+                                                  child: TextFormField(
+                                                    controller: selectedAmount[index],
+                                                    keyboardType: TextInputType.number,
+                                                    validator: (String value) {
+                                                      if(value.isEmpty)
+                                                      {
+                                                        return "";
+                                                      }
+                                                      return null;
+                                                    },
+                                                    style: textStyle.copyWith(
+                                                        fontSize: 16,
+                                                        color: Colors.black
+                                                    ),
+                                                    cursorHeight: 22,
+                                                    textAlign: TextAlign.center,
+                                                    cursorColor: Colors.grey,
+                                                    decoration: InputDecoration(
+                                                      enabledBorder: UnderlineInputBorder(
+                                                        borderRadius: BorderRadius.only(),
+                                                      ),
+                                                      focusedBorder: UnderlineInputBorder(
+                                                        borderRadius: BorderRadius.only(),
+                                                      ),
+                                                      isDense: true,
+                                                      hintText: "Amount",
+                                                      errorStyle: TextStyle(height: 0,fontSize: 0),
+                                                    ),
+                                                  ),
+                                                ),
+
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+
+                                    SizedBox(
+                                        height: 50,
+                                        width: MediaQuery.of(context).size.width,
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(
+                                              gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                                              borderRadius: round.copyWith()
+                                          ),
+                                          child: ElevatedButton(
+                                            onPressed: () {
+
+                                              if(_formkey2.currentState.validate()){
+
+                                                for(int i=0;i<selectedProductList.length;i++){
+
+                                                  var product = {
+                                                    "pid":"${selectedProductList[i].clProductId}",
+                                                    "short":"${selectedProductList[i].clProductShortname}",
+                                                    "color_id":"${selectedProductList[i].colors[0].clColorId}",
+                                                    "color_code":"${selectedProductList[i].colors[0].clColorCode}",
+                                                    "sku":"${selectedProductList[i].colors[0].skuCode}",
+                                                    "amount":"${selectedAmount[i].text}",
+                                                    "qty":"${selectedQuantity[i].text}",
+                                                  };
+                                                  viewProduct.add(product);
+
+                                                  totalAmount = totalAmount + double.parse("${selectedAmount[i].text}");
+                                                  totalQuentity = totalQuentity + int.parse("${selectedQuantity[i].text}");
+
+                                                }
+
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+
+                                              }
+
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                elevation: 10,
+                                                primary: Colors.transparent,
+                                                shape: StadiumBorder()
+                                            ),
+                                            child: Text('Add Products',
+                                              textAlign: TextAlign.center,
+                                              style: textStyle.copyWith(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                    ),
+
+                                  ],
+                                )
                             ),
 
                           ],
@@ -1389,16 +1422,15 @@ class _NewOrderState extends State<NewOrder> {
 
                                       setState(() {
                                         selectedRetailerId = t.id;
-                                        selectedRetailerName =
-                                        t.businessName == ""
+                                        selectedRetailerName = t.name == ""
                                             ?
-                                        t.name  == ""
+                                        t.businessName  == ""
                                             ?
                                         t.mobile
                                             :
-                                        t.name
+                                        t.businessName
                                             :
-                                        t.businessName;
+                                        t.name;
 
                                         selectedRetailerAddress = t.address;
                                         orderAddress = t.address;
@@ -1443,7 +1475,7 @@ class _NewOrderState extends State<NewOrder> {
         }
     ).whenComplete(() {
       setState(() {
-       print("Select Distributor");
+        print("Select Distributor");
       });
     });
   }
@@ -1459,139 +1491,140 @@ class _NewOrderState extends State<NewOrder> {
 
     return Scaffold(
         bottomNavigationBar: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: 70,
-              color: AppColors.white,
-              child: Padding(
-                padding: EdgeInsets.all(10),
-                child:SizedBox(
-                  height: 50,
-                  width: width,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
-                      borderRadius: round.copyWith()
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () {
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                  height: 70,
+                  color: AppColors.white,
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child:SizedBox(
+                        height: 50,
+                        width: width,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey3,AppColors.black]),
+                              borderRadius: round.copyWith()
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
 
-                        if(selectedRetailerId == null){
+                              if(selectedRetailerId == null){
 
-                          Fluttertoast.showToast(
-                              msg: "Please Select Retailer.",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0
-                          );
+                                Fluttertoast.showToast(
+                                    msg: "Please Select Retailer.",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0
+                                );
 
-                        }
-                        else if(_textEditingController1.text == null || _textEditingController1.text == ""){
-
-
-                          Fluttertoast.showToast(
-                              msg: "Please Select Order Date.",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0
-                          );
-
-                        }
-                        else if(viewProduct.length ==0){
-
-                          Fluttertoast.showToast(
-                              msg: "Please Add Product First.",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0
-                          );
-
-                        }
-                        else{
-
-                          if(_formkey.currentState.validate())
-                          {
-
-                            var FinalProduct = [];
-                            for(int i=0;i<viewProduct.length;i++){
-
-                              double singleAmount = double.parse("${viewProduct[i]['amount']}") * double.parse("${viewProduct[i]['qty']}");
-
-                              var singleProduct = {
-                                "pid":"${viewProduct[i]['pid']}",
-                                "color_id":"${viewProduct[i]['color_id']}",
-                                "color_code":"${viewProduct[i]['color_code']}",
-                                "sku":"${viewProduct[i]['sku']}",
-                                "amount":"${viewProduct[i]['amount']}",
-                                "qty":"${viewProduct[i]['qty']}"
-                              };
-                              FinalProduct.add(singleProduct);
-
-                            }
-                            //print(FinalProduct);
-
-                            double FinalAmount = 0.0;
-
-                            for(int i=0;i<FinalProduct.length;i++){
-                              double singleAmount = double.parse(FinalProduct[i]['amount']) * double.parse(FinalProduct[i]['qty']);
-                              FinalAmount = FinalAmount + singleAmount;
-                            }
-
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => NormalOrder(
-                              retailerId: selectedRetailerId,
-                              address: orderAddress,
-                              orderDate: _textEditingController1.text,
-                              totalAmount: "${FinalAmount}",
-                              productList: FinalProduct,
-                            )));
-
-                          }
-                          else{
-
-                            Fluttertoast.showToast(
-                                msg: "Please Add Products Amount.",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                fontSize: 16.0
-                            );
-
-                          }
-
-                        }
+                              }
+                              else if(_textEditingController1.text == null || _textEditingController1.text == ""){
 
 
-                      },
-                      style: ElevatedButton.styleFrom(
-                          elevation: 10,
-                          primary: Colors.transparent,
-                          shape: StadiumBorder()
-                      ),
-                      child: Text('Next',
-                        textAlign: TextAlign.center,
-                        style: textStyle.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                                Fluttertoast.showToast(
+                                    msg: "Please Select Order Date.",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0
+                                );
+
+                              }
+                              else if(viewProduct.length ==0){
+
+                                Fluttertoast.showToast(
+                                    msg: "Please Add Product First.",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0
+                                );
+
+                              }
+                              else{
+
+                                if(_formkey.currentState.validate())
+                                {
+
+                                  var FinalProduct = [];
+                                  for(int i=0;i<viewProduct.length;i++){
+
+                                    double singleAmount = double.parse("${viewProduct[i]['amount']}") * double.parse("${viewProduct[i]['qty']}");
+
+                                    var singleProduct = {
+                                      "pid":"${viewProduct[i]['pid']}",
+                                      "color_id":"${viewProduct[i]['color_id']}",
+                                      "color_code":"${viewProduct[i]['color_code']}",
+                                      "sku":"${viewProduct[i]['sku']}",
+                                      "amount":"${viewProduct[i]['amount']}",
+                                      "qty":"${viewProduct[i]['qty']}"
+                                    };
+                                    FinalProduct.add(singleProduct);
+
+                                  }
+                                  //print(FinalProduct);
+
+                                  double FinalAmount = 0.0;
+
+                                  for(int i=0;i<FinalProduct.length;i++){
+                                    double singleAmount = double.parse(FinalProduct[i]['amount']) * double.parse(FinalProduct[i]['qty']);
+                                    FinalAmount = FinalAmount + singleAmount;
+                                  }
+
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditConfirmOrder(
+                                    orderid: widget.orderId,
+                                    retailerId: selectedRetailerId,
+                                    address: orderAddress,
+                                    orderDate: _textEditingController1.text,
+                                    totalAmount: "${FinalAmount}",
+                                    productList: FinalProduct,
+                                  )));
+
+                                }
+                                else{
+
+                                  Fluttertoast.showToast(
+                                      msg: "Please Add Products Amount.",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0
+                                  );
+
+                                }
+
+                              }
+
+
+                            },
+                            style: ElevatedButton.styleFrom(
+                                elevation: 10,
+                                primary: Colors.transparent,
+                                shape: StadiumBorder()
+                            ),
+                            child: Text('Next',
+                              textAlign: TextAlign.center,
+                              style: textStyle.copyWith(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        )
                     ),
                   )
-                ),
               )
-            )
-          ]
+            ]
         ),
         backgroundColor: Colors.white,
         body:Form(
@@ -1600,10 +1633,10 @@ class _NewOrderState extends State<NewOrder> {
               width: width,
               height: height,
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/Flesh2.png"),
-                  fit: BoxFit.fill,
-                )
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/Flesh2.png"),
+                    fit: BoxFit.fill,
+                  )
               ),
               child: Column(
                 children: [
@@ -1625,7 +1658,7 @@ class _NewOrderState extends State<NewOrder> {
                           ),
                           SizedBox(width: 10),
                           Text(
-                            "Create Order",
+                            "Edit Order",
                             style: textStyle.copyWith(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold
@@ -1653,7 +1686,7 @@ class _NewOrderState extends State<NewOrder> {
                           color: AppColors.black,
                           size: 25.0,
                         )
-                        :
+                            :
                         Padding(
                             padding: EdgeInsets.only(right: 10,left: 10),
                             child: NotificationListener<OverscrollIndicatorNotification>(
@@ -1683,7 +1716,6 @@ class _NewOrderState extends State<NewOrder> {
                                           ),
                                           SizedBox(height: 5),
                                           SizedBox(height: height*0.01),
-
 
                                           TextFormField(
                                               style: textStyle.copyWith(
@@ -2038,19 +2070,7 @@ class _NewOrderState extends State<NewOrder> {
                                               InkWell(
                                                 onTap: (){
                                                   setState(() {
-
                                                     viewProduct.removeAt(index);
-                                                    totalQuentity = 0;
-                                                    totalAmount = 0;
-
-                                                    for(int i=0;i<viewProduct.length;i++){
-
-                                                      totalQuentity = totalQuentity + int.parse("${viewProduct[i]['qty']}");
-
-                                                      double singleAmount = double.parse("${viewProduct[i]['amount']}") * double.parse("${viewProduct[i]['qty']}");
-                                                      totalAmount = totalAmount + singleAmount;
-                                                    }
-
                                                   });
                                                 },
                                                 child: Icon(Icons.close,size: 20),
@@ -2094,6 +2114,7 @@ class _NewOrderState extends State<NewOrder> {
                                     ),
 
                                     SizedBox(height: 10),
+
 
                                     viewProduct.length == 0
                                         ?

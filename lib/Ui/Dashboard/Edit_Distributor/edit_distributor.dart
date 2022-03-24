@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:colorsoul/Values/appColors.dart';
@@ -9,6 +10,7 @@ import 'package:dropdown_below/dropdown_below.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,8 +32,9 @@ class TypeModel{
 
 class EditDistributers extends StatefulWidget {
 
-  String distributor_name,distributor_address,distributor_image,latitude,longitude,home_address,distributor_gst,landmark,city,state,
+  String distributor_name,distributor_address,latitude,longitude,home_address,distributor_gst,landmark,city,state,
       person_name,person_mobile,person_tel,opentime,closetime,business_type,type,id;
+  List distributor_image;
   EditDistributers({Key key, this.distributor_name,this.distributor_address,this.distributor_image,this.latitude,this.longitude,this.distributor_gst,this.landmark,
     this.person_name,this.person_mobile,this.person_tel,this.opentime,this.closetime,this.business_type,this.type,this.id,this.home_address,this.city,this.state
   }) : super(key: key);
@@ -61,25 +64,55 @@ class _EditDistributersState extends State<EditDistributers> {
   bool isvisible = false;
   int selectValue = 1;
 
-  File _image;
+  List<File> _image = [];
   final _picker = ImagePicker();
+  bool isLoading = false;
   Future getImage(ImageSource source) async {
-    final XFile photo = await _picker.pickImage(source: source);
-    File cropped = await ImageCropper.cropImage(
-        sourcePath: photo.path,
-        // aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
-        compressQuality: 100,
-        maxWidth: 700,
-        maxHeight: 700,
-        compressFormat: ImageCompressFormat.jpg,
-        androidUiSettings: AndroidUiSettings(
-            initAspectRatio: CropAspectRatioPreset.original,
-            toolbarWidgetColor: AppColors.white
-        )
-    );
+
     setState(() {
-      _image = File(cropped.path);
+      isLoading = true;
     });
+
+    final List<XFile> photo = await _picker.pickMultiImage(
+        maxWidth: MediaQuery
+            .of(context)
+            .size
+            .width,
+        maxHeight: MediaQuery
+            .of(context)
+            .size
+            .height,
+        imageQuality: 100
+    );
+
+    for(int i=0;i<photo.length;i++){
+
+      if(i > 5){
+
+        Fluttertoast.showToast(
+            msg: "You can upload only 5 Images!!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+        break;
+      }
+      else{
+        setState(() {
+          _image.add(File(photo[i].path));
+        });
+        sendImage(File(photo[i].path));
+      }
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+
   }
 
   DistributorProvider _distributorProvider;
@@ -119,9 +152,9 @@ class _EditDistributersState extends State<EditDistributers> {
   }
 
 
-  String imageUrl;
+  List imageUrl = [];
 
-  sendImage() async {
+  sendImage(File image) async {
 
     _distributorProvider.isLoaded == false;
 
@@ -136,7 +169,7 @@ class _EditDistributersState extends State<EditDistributers> {
 
     if(_image != null){
       request.fields['folder'] = selectValue == 1 ? "distributor" : "retailer";
-      request.files.add(await http.MultipartFile.fromPath('file', _image.path));
+      request.files.add(await http.MultipartFile.fromPath('file', image.path));
 
       request.send().then((response) async {
         var res = await response.stream.bytesToString();
@@ -144,7 +177,9 @@ class _EditDistributersState extends State<EditDistributers> {
         var body = json.decode(res);
 
         if (response.statusCode == 200 && body['st'] == "success") {
-          imageUrl = body['file'];
+          setState(() {
+            imageUrl.add(body['file']);
+          });
         }
         else{
           print("Image Upload Error");
@@ -153,8 +188,6 @@ class _EditDistributersState extends State<EditDistributers> {
       });
 
     }
-
-    addDistributor();
 
   }
 
@@ -174,9 +207,9 @@ class _EditDistributersState extends State<EditDistributers> {
       "address":"$address",
       "home_address": _addressNoController.text,
       "landmark":"${_addressController.text}",
-      "city":"$city",
-      "state":"$state",
-      "pincode":"$pincode",
+      "city":city,
+      "state":state,
+      "pincode":pincode,
       "latitude":"$latitude",
       "longitude":"$logitude",
       "name":_personNameController.text,
@@ -184,14 +217,13 @@ class _EditDistributersState extends State<EditDistributers> {
       "telephone":"${_personTelephoneController.text}",
       "open_time":"${_openTimeController.text}",
       "close_time":"${_closeTimeController.text}",
-      "image":"$imageUrl"
+      "image":imageUrl
     };
-    print(data);
+   // print(jsonEncode(data));
 
     _distributorProvider.distributorList.clear();
     await _distributorProvider.insertDistributor(data,'/createDistributorRetailer');
     if(_distributorProvider.isSuccess == true){
-      Navigator.pop(context,'Refresh');
       Navigator.pop(context,'Refresh');
     }
 
@@ -228,7 +260,6 @@ class _EditDistributersState extends State<EditDistributers> {
   final _formkey = GlobalKey<FormState>();
 
 
-
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -240,7 +271,7 @@ class _EditDistributersState extends State<EditDistributers> {
         bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _distributorProvider.isLoaded == false
+              _distributorProvider.isLoaded == false || isLoading == true
                   ?
               SpinKitThreeBounce(
                 color: AppColors.black,
@@ -263,50 +294,8 @@ class _EditDistributersState extends State<EditDistributers> {
                           child: ElevatedButton(
                             onPressed: () {
 
-                              /*if(_formkey.currentState.validate()){
+                              addDistributor();
 
-                                if(address == null){
-
-                                  Fluttertoast.showToast(
-                                      msg: "Please Enter Address.",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0
-                                  );
-
-                                }
-                                else{
-
-                                  if(selectValue == 2){
-
-                                    if(selectedDistributorId == null){
-
-                                      Fluttertoast.showToast(
-                                          msg: "Please Select Distributor.",
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.BOTTOM,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor: Colors.red,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0
-                                      );
-
-                                    }
-                                    else{
-                                      sendImage();
-                                    }
-
-                                  }
-                                  else{
-                                    sendImage();
-                                  }
-
-                                }
-                              }*/
-                              sendImage();
                             },
                             style: ElevatedButton.styleFrom(
                                 elevation: 10,
@@ -994,7 +983,7 @@ class _EditDistributersState extends State<EditDistributers> {
                                                   focusNode: AlwaysDisabledFocusNode(),
                                                   controller: _closeTimeController,
                                                   onTap: () {
-                                                    _pickTime();
+                                                    _pickTime2();
                                                   },
                                                 ),
                                               ),
@@ -1004,15 +993,33 @@ class _EditDistributersState extends State<EditDistributers> {
                                       ],
                                     ),
                                     SizedBox(height: height*0.01),
-                                    Text(
-                                      "Add Photo",
-                                      style: textStyle.copyWith(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16
-                                      ),
+
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "Add Photo",
+                                            style: textStyle.copyWith(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16
+                                            ),
+                                          ),
+                                        ),
+                                        
+                                        InkWell(
+                                          onTap: (){
+                                            getImage(ImageSource.gallery);
+                                          },
+                                            child: Image.asset("assets/images/notes/add1.png",width: 25,height: 25,)
+                                        )
+                                        
+                                      ],
                                     ),
                                     SizedBox(height: height*0.01),
+
+                                    imageUrl.length == 0 
+                                        ?
                                     InkWell(
                                       onTap: () {
                                         getImage(ImageSource.gallery);
@@ -1021,13 +1028,11 @@ class _EditDistributersState extends State<EditDistributers> {
                                           width: MediaQuery.of(context).size.width,
                                           decoration: BoxDecoration(
                                               borderRadius: round.copyWith(),
-                                              border: _image==null ? Border.all(
+                                              border: Border.all(
                                                   color: AppColors.black
-                                              ) : null
+                                              )
                                           ),
-                                          child: _image==null
-                                              ?
-                                          Padding(
+                                          child: Padding(
                                             padding: const EdgeInsets.symmetric(vertical: 10),
                                             child: Column(
                                               children: [
@@ -1042,13 +1047,42 @@ class _EditDistributersState extends State<EditDistributers> {
                                               ],
                                             ),
                                           )
-                                              :
-                                          ClipRRect(
-                                              borderRadius: BorderRadius.circular(8),
-                                              child: Image.file(_image,width: MediaQuery.of(context).size.width,fit: BoxFit.fill)
-                                          )
                                       ),
                                     )
+                                        :
+                                    StaggeredGridView.countBuilder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      scrollDirection: Axis.vertical,
+                                      crossAxisCount: 3,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 15,
+                                      shrinkWrap: true,
+                                      padding: EdgeInsets.zero,
+                                      itemCount: imageUrl.length,
+                                      staggeredTileBuilder: (index) {
+                                        return StaggeredTile.fit(1);
+                                      },
+                                      itemBuilder: (BuildContext context, int index) {
+                                        return ClipRRect(
+                                          borderRadius: BorderRadius.circular(8),
+                                          child: CachedNetworkImage(
+                                            imageUrl: "${imageUrl[index]}",
+                                            placeholder: (context, url) => Center(
+                                                child: SpinKitThreeBounce(
+                                                  color: AppColors.black,
+                                                  size: 25.0,
+                                                )
+                                            ),
+                                            errorWidget: (context, url, error) => Icon(Icons.error),
+                                            width: MediaQuery.of(context).size.width,
+                                            fit: BoxFit.fitWidth,
+                                          ),
+                                        );
+                                      },
+
+                                    ),
+
+
                                   ],
                                 ),
                               ),
@@ -1086,24 +1120,45 @@ class _EditDistributersState extends State<EditDistributers> {
 
     if(t != null)
     {
-      if(_openTimeController.text.isEmpty)
-      {
-        setState(() {
-          time = t;
-          _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
-          String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
-          _openTimeController = TextEditingController(text: "$starttime");
-        });
-      }
-      else
-      {
-        setState(() {
-          time = t;
-          _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
-          String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
-          _closeTimeController = TextEditingController(text: "$starttime");
-        });
-      }
+
+      setState(() {
+        time = t;
+        _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
+        String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
+        _openTimeController = TextEditingController(text: "$starttime");
+      });
+
+    }
+  }
+
+  _pickTime2() async{
+    TimeOfDay t = await showTimePicker(
+        context: context,
+        initialTime: time,
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: ColorScheme.dark(
+                primary: Colors.grey,
+                onPrimary: Colors.black,
+                surface: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor: AppColors.white,
+            ),
+            child: child,
+          );
+        }
+    );
+
+    if(t != null)
+    {
+      setState(() {
+        time = t;
+        _selectedstarttime = DateTime(0, 0, 0, t.hour, t.minute);
+        String starttime = DateFormat("hh : mm a").format(_selectedstarttime);
+        _closeTimeController = TextEditingController(text: "$starttime");
+      });
     }
   }
 }

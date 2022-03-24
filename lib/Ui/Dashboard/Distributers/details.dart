@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Provider/feedback_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/Edit_Distributor/edit_distributor.dart';
 import 'package:colorsoul/Ui/Dashboard/Products/preview.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,12 +17,9 @@ import '../../../Values/appColors.dart';
 
 class Details extends StatefulWidget {
 
-  String distributor_name,distributor_address,distributor_image,latitude,longitude,home_address,distributor_gst,landmark,city,state,
-      person_name,person_mobile,person_tel,time,business_type,opentime,closetime,type,id;
+  String id;
 
-  Details({Key key, this.distributor_name,this.distributor_address,this.distributor_image,this.latitude,this.longitude,this.home_address,this.distributor_gst,
-    this.person_name,this.person_mobile,this.person_tel,this.time,this.business_type,this.opentime,this.closetime,this.type,this.id,this.landmark,this.state,this.city
-  }) : super(key: key);
+  Details({Key key, this.id}) : super(key: key);
 
   @override
   _DetailsState createState() => _DetailsState();
@@ -40,7 +39,7 @@ class _DetailsState extends State<Details> {
       _markers.add(
           Marker(
               markerId: MarkerId('1'),
-              position: LatLng(double.parse(widget.latitude), double.parse(widget.longitude)),
+              position: LatLng(double.parse(latitude), double.parse(longitude)),
               icon: mapMarker
           )
       );
@@ -105,14 +104,20 @@ class _DetailsState extends State<Details> {
 
   FeedBackProvider _feedBackProvider;
 
+
+  DistributorProvider _distributorProvider;
+
+
   @override
   void initState() {
     super.initState();
 
     _feedBackProvider = Provider.of<FeedBackProvider>(context, listen: false);
+    _distributorProvider = Provider.of<DistributorProvider>(context, listen: false);
 
     getFeedback();
     setCustomMarker();
+    getDistributorDetails();
   }
 
   int page = 1;
@@ -132,6 +137,60 @@ class _DetailsState extends State<Details> {
 
   }
 
+  String name;
+
+  String distributor_name,
+      distributor_address,
+      latitude = "19.0760",
+      longitude = "72.8777",
+      home_address,
+      distributor_gst,
+      landmark,
+      city,
+      state,
+      person_name,
+      person_mobile,
+      person_tel,
+      time,
+      business_type,
+      opentime,
+      closetime,
+      type;
+
+  List distributor_image;
+
+  getDistributorDetails() async {
+
+    var data = {
+      "id":"${widget.id}",
+    };
+
+    await _distributorProvider.getDistributorDetails(data, "/get_distributer_detail");
+
+
+    distributor_name = _distributorProvider.distributorData['business_name'];
+    distributor_address = _distributorProvider.distributorData['address'];
+    distributor_image = _distributorProvider.distributorData['image'] == "" ? [] : _distributorProvider.distributorData['image'];
+    distributor_gst = _distributorProvider.distributorData['gst_no'];
+    latitude = _distributorProvider.distributorData['latitude'];
+    longitude = _distributorProvider.distributorData['longitude'];
+    home_address = _distributorProvider.distributorData['home_address'];
+    person_name = _distributorProvider.distributorData['name'];
+    person_mobile = _distributorProvider.distributorData['mobile'];
+    person_tel = _distributorProvider.distributorData['telephone'];
+    business_type = _distributorProvider.distributorData['business_type'];
+    time = "${_distributorProvider.distributorData['open_time']} - ${_distributorProvider.distributorData['close_time']}";
+    opentime = "${_distributorProvider.distributorData['open_time']}";
+    closetime = "${_distributorProvider.distributorData['close_time']}";
+    type = "${_distributorProvider.distributorData['business_type']}";
+    city = "${_distributorProvider.distributorData['city']}";
+    state = "${_distributorProvider.distributorData['state']}";
+
+    print("long $longitude");
+    print("lat $latitude");
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -139,8 +198,22 @@ class _DetailsState extends State<Details> {
     var height = MediaQuery.of(context).size.height;
 
     _feedBackProvider = Provider.of<FeedBackProvider>(context, listen: true);
+    _distributorProvider = Provider.of<DistributorProvider>(context, listen: true);
 
-    return Scaffold(
+    return
+      _distributorProvider.isDistributorDataLoaded == false
+          ?
+      Scaffold(
+        backgroundColor: AppColors.black,
+        body: Center(
+          child:  SpinKitThreeBounce(
+            color: AppColors.white,
+            size: 25.0,
+          ),
+        ),
+      )
+      :
+      Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.black,
           leading: Padding(
@@ -153,7 +226,7 @@ class _DetailsState extends State<Details> {
             ),
           ),
           title: Text(
-            "${widget.distributor_name}",
+            "${distributor_name}",
             style: textStyle.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: 22
@@ -163,39 +236,43 @@ class _DetailsState extends State<Details> {
             Padding(
               padding: const EdgeInsets.all(18.0),
               child: InkWell(
-                onTap: (){
-                  var lat = widget.latitude;
-                  var lon = widget.longitude;
+                onTap: () async {
+                  var lat = latitude;
+                  var lon = longitude;
 
-                  if(widget.latitude == '' || widget.longitude == ''){
+                  if(latitude == '' || longitude == ''){
                     lat = '19.0760';
                     lon = '72.8777';
                   }
 
-
-                  Navigator.push(
+                  final value = await  Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => EditDistributers(
-                        distributor_name: "${widget.distributor_name}",
-                        distributor_address: "${widget.distributor_address}",
-                        distributor_image: "${widget.distributor_image}",
+                        distributor_name: "${distributor_name}",
+                        distributor_address: "${distributor_address}",
+                        distributor_image: distributor_image,
                         latitude: lat,
                         longitude: lon,
-                        person_name: "${widget.person_name}",
-                        home_address: "${widget.home_address}",
-                        landmark: "${widget.landmark}",
-                        person_mobile: "${widget.person_mobile}",
-                        person_tel: "${widget.person_tel}",
-                        business_type: "${widget.business_type}",
-                        distributor_gst: "${widget.distributor_gst}",
-                        opentime: "${widget.opentime}",
-                        closetime: "${widget.closetime}",
-                        type: "${widget.type}",
+                        person_name: "${person_name}",
+                        home_address: "${home_address}",
+                        landmark: "${landmark}",
+                        person_mobile: "${person_mobile}",
+                        person_tel: "${person_tel}",
+                        business_type: "${business_type}",
+                        distributor_gst: "${distributor_gst}",
+                        opentime: "${opentime}",
+                        closetime: "${closetime}",
+                        type: "${type}",
                         id: "${widget.id}",
-                        state: "${widget.state}",
-                        city:"${widget.city}"
+                        state: "${state}",
+                        city:"${city}"
                       ))
                   );
+
+                  if(value != null){
+                    getDistributorDetails();
+                  }
+
                 },
                   child: Icon(Icons.edit,color: AppColors.white,size: 23,)
               ),
@@ -227,8 +304,16 @@ class _DetailsState extends State<Details> {
                     markers: _markers,
                     initialCameraPosition: CameraPosition(
                         target: LatLng(
-                            double.parse(widget.latitude),
-                            double.parse(widget.longitude)
+                            latitude == null || latitude == "" || latitude == "null"
+                            ?
+                            19.0760
+                                :
+                            double.parse(latitude),
+                            longitude == null || longitude == "" || longitude == "null"
+                                ?
+                            72.8777
+                            :
+                            double.parse(longitude)
                             // double.parse(widget.latitude) == null ? 19.0760 : double.parse(widget.latitude),
                             // double.parse(widget.longitude) == null ? 72.8777 : double.parse(widget.longitude)
                         ),
@@ -245,7 +330,7 @@ class _DetailsState extends State<Details> {
                       SizedBox(width: 10),
                       Flexible(
                         child: Text(
-                          '${widget.distributor_address}',
+                          '${distributor_address}',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: textStyle.copyWith(),
@@ -291,7 +376,7 @@ class _DetailsState extends State<Details> {
                                   ),
                                   Expanded(child: Container()),
                                   Text(
-                                    "${widget.person_name}",
+                                    "${person_name}",
                                     style: textStyle.copyWith(
                                         color: AppColors.black,
                                         fontWeight: FontWeight.bold,
@@ -312,7 +397,7 @@ class _DetailsState extends State<Details> {
                                   ),
                                   Expanded(child: Container()),
                                   Text(
-                                    "(+91) ${widget.person_mobile}",
+                                    "(+91) ${person_mobile}",
                                     style: textStyle.copyWith(
                                         color: AppColors.black,
                                         fontWeight: FontWeight.bold,
@@ -333,7 +418,7 @@ class _DetailsState extends State<Details> {
                                   ),
                                   Expanded(child: Container()),
                                   Text(
-                                    "0261 ${widget.person_tel}",
+                                    "0261 ${person_tel}",
                                     style: textStyle.copyWith(
                                         color: AppColors.black,
                                         fontWeight: FontWeight.bold,
@@ -354,7 +439,7 @@ class _DetailsState extends State<Details> {
                                   ),
                                   Expanded(child: Container()),
                                   Text(
-                                    "${widget.time}",
+                                    "${time}",
                                     style: textStyle.copyWith(
                                         color: AppColors.black,
                                         fontWeight: FontWeight.bold,
@@ -375,7 +460,7 @@ class _DetailsState extends State<Details> {
                                   ),
                                   Expanded(child: Container()),
                                   Text(
-                                    "${widget.business_type}",
+                                    "${business_type}",
                                     style: textStyle.copyWith(
                                         color: AppColors.black,
                                         fontWeight: FontWeight.bold,
@@ -386,25 +471,43 @@ class _DetailsState extends State<Details> {
                               ),
                               SizedBox(height: 20),
 
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: CachedNetworkImage(
-                                  imageUrl: "${widget.distributor_image}",
-                                  placeholder: (context, url) => Center(
-                                      child: SpinKitThreeBounce(
-                                        color: AppColors.black,
-                                        size: 25.0,
-                                      )
-                                  ),
-                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                  width: MediaQuery.of(context).size.width,
-                                  fit: BoxFit.fitWidth,
-                                ),
+                              StaggeredGridView.countBuilder(
+                                physics: NeverScrollableScrollPhysics(),
+                                scrollDirection: Axis.vertical,
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 15,
+                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                itemCount: distributor_image.length,
+                                staggeredTileBuilder: (index) {
+                                  return StaggeredTile.fit(1);
+                                },
+                                itemBuilder: (BuildContext context, int index) {
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: CachedNetworkImage(
+                                      imageUrl: "${distributor_image[index]}",
+                                      placeholder: (context, url) => Center(
+                                          child: SpinKitThreeBounce(
+                                            color: AppColors.black,
+                                            size: 25.0,
+                                          )
+                                      ),
+                                      errorWidget: (context, url, error) => Icon(Icons.error),
+                                      width: MediaQuery.of(context).size.width,
+                                      fit: BoxFit.fitWidth,
+                                    ),
+                                  );
+                                },
+
                               ),
+
+
 
                               SizedBox(height: 20),
 
-                              _feedBackProvider.imageFeedBackList.length ==0 && _feedBackProvider.feedBackList.length == 0
+                              _feedBackProvider.imageFeedBackList.length == 0 && _feedBackProvider.feedBackList.length == 0
                               ?
                                   SizedBox()
                               :
@@ -624,7 +727,7 @@ class _DetailsState extends State<Details> {
 
                                         Position position = await getGeoLocationPosition();
 
-                                        String url ='https://www.google.com/maps/dir/?api=1&origin=${position.latitude},${position.longitude}&destination=${widget.latitude},${widget.longitude}&travelmode=driving&dir_action=navigate';
+                                        String url ='https://www.google.com/maps/dir/?api=1&origin=${position.latitude},${position.longitude}&destination=${latitude},${longitude}&travelmode=driving&dir_action=navigate';
                                         launch(url);
 
                                       },

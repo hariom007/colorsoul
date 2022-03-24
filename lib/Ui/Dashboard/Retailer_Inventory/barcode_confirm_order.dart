@@ -1,27 +1,29 @@
 import 'dart:async';
+import 'dart:convert';
+
 import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class NormalOrder extends StatefulWidget {
+class BarcodeConfirmOrder extends StatefulWidget {
 
   List productList = [];
   String orderid,retailerId,address,orderDate,totalAmount;
 
-  NormalOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,
+  BarcodeConfirmOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,
     this.totalAmount,this.orderDate
   }) : super(key: key);
 
   @override
-  _NormalOrderState createState() => _NormalOrderState();
+  State<BarcodeConfirmOrder> createState() => _BarcodeConfirmOrderState();
 }
 
-class _NormalOrderState extends State<NormalOrder> {
-
+class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
   OrderProvider _orderProvider;
   TextEditingController noteController = TextEditingController();
 
@@ -32,6 +34,10 @@ class _NormalOrderState extends State<NormalOrder> {
   }
 
   createOrder() async {
+
+    setState(() {
+      isloading = true;
+    });
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.get("userId");
@@ -46,16 +52,30 @@ class _NormalOrderState extends State<NormalOrder> {
       "total":"${widget.totalAmount}",
       "note":"${noteController.text}"
     };
-    //print(data);
+    
+   // print(jsonEncode(data));
 
-    _orderProvider.insertOrder(data, "/createOrders");
-    if(_orderProvider.isSuccess == true){
+    await _orderProvider.insertBarcodeOrder(data, "/new_order");
+
+    print("Order page ${_orderProvider.isBarcode}");
+    if(_orderProvider.isBarcode == true){
 
       getOrders();
 
     }
-
+    else{
+      Fluttertoast.showToast(
+          msg: "Create Order Error !!\nPlease Try Again Later",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }
   }
+
 
   int page = 1;
   bool isloading = false;
@@ -100,7 +120,10 @@ class _NormalOrderState extends State<NormalOrder> {
     };
     await _orderProvider.getCompleteOrders(data2,'/getOrder/$page');
 
-    if(_orderProvider.isSuccess == true){
+    setState(() {
+      isloading = false;
+    });
+
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -108,7 +131,6 @@ class _NormalOrderState extends State<NormalOrder> {
             return SimpleCustomAlert();
           }
       );
-    }
 
   }
 
@@ -129,7 +151,7 @@ class _NormalOrderState extends State<NormalOrder> {
                   height: 70,
                   color: AppColors.white,
                   child:
-                  _orderProvider.isLoaded == false || isloading == true
+                  isloading == true
                       ?
                   Center(
                       child: SpinKitThreeBounce(
@@ -453,27 +475,27 @@ class _NormalOrderState extends State<NormalOrder> {
                                     child: Text(
                                       "Remark",
                                       style: textStyle.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16
                                       ),
                                     ),
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
-                                    controller: noteController,
-                                    style: textStyle.copyWith(
-                                      color: AppColors.black
-                                    ),
-                                    cursorColor: AppColors.black,
-                                    cursorHeight: 22,
-                                    decoration: fieldStyle1.copyWith(
-                                      hintText: "Add Remark",
-                                      hintStyle: textStyle.copyWith(
-                                        color: AppColors.black
+                                      controller: noteController,
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black
                                       ),
-                                      isDense: true
-                                    )
+                                      cursorColor: AppColors.black,
+                                      cursorHeight: 22,
+                                      decoration: fieldStyle1.copyWith(
+                                          hintText: "Add Remark",
+                                          hintStyle: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          isDense: true
+                                      )
                                   ),
                                   SizedBox(height: height*0.01),
                                 ],
@@ -504,7 +526,6 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
     Timer(
         Duration(milliseconds: 1000),
             () {
-          Navigator.pop(context);
           Navigator.pop(context);
           Navigator.pop(context);
 

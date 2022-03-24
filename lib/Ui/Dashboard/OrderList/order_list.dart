@@ -220,17 +220,8 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                       )]
                                   ),
                                   child:
-                                  _orderProvider.isLoaded == false
-                                      ?
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: SpinKitThreeBounce(
-                                      color: AppColors.white,
-                                      size: 25.0,
-                                    ),
-                                  )
-                                      :
-                                  Text('(${_orderProvider.orderList.length})',
+
+                                  Text('(${_orderProvider.allOrderCount})',
                                     textAlign: TextAlign.center,
                                     style: textStyle.copyWith(
                                         fontSize: 14,
@@ -274,17 +265,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                       )]
                                   ),
                                   child:
-                                  _orderProvider.isLoaded == false
-                                      ?
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: SpinKitThreeBounce(
-                                      color: AppColors.black,
-                                      size: 25.0,
-                                    ),
-                                  )
-                                      :
-                                  Text('(${_orderProvider.completeOrderList.length})',
+                                  Text('(${_orderProvider.completeOrderCount})',
                                     textAlign: TextAlign.center,
                                     style: textStyle.copyWith(
                                         fontSize: 14,
@@ -328,17 +309,8 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                       )]
                                   ),
                                   child:
-                                  _orderProvider.isLoaded == false
-                                      ?
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: SpinKitThreeBounce(
-                                      color: AppColors.black,
-                                      size: 25.0,
-                                    ),
-                                  )
-                                      :
-                                  Text('(${_orderProvider.incompleteOrderList.length})',
+
+                                  Text('(${_orderProvider.incompleteOrderCount})',
                                     textAlign: TextAlign.center,
                                     style: textStyle.copyWith(
                                         fontSize: 14,
@@ -440,13 +412,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                             ),
                                             onTap: () {
                                               Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
-                                                retailerBusinessName: allOrder.retailerBusinessName,
-                                                retailerAddress: allOrder.retailerAddress,
-                                                retailerMobile: allOrder.retailerMobile,
-                                                orderDate: "${DateFormat('dd, MMM yyyy').format(allOrder.orderDate)}",
-                                                orderAddress: allOrder.address,
-                                                products: allOrder.items,
-                                                totalAmount: allOrder.total,
+                                                orderId: allOrder.id,
                                               )));
                                             },
                                           ),
@@ -536,13 +502,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                             onTap: () {
 
                                               Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
-                                                retailerBusinessName: completedOrder.retailerBusinessName,
-                                                retailerAddress: completedOrder.retailerAddress,
-                                                retailerMobile: completedOrder.retailerMobile,
-                                                orderDate: "${DateFormat('dd, MMM yyyy').format(completedOrder.orderDate)}",
-                                                orderAddress: completedOrder.address,
-                                                products: completedOrder.items,
-                                                totalAmount: completedOrder.total,
+                                                orderId: completedOrder.id,
                                               )));
 
                                             },
@@ -739,13 +699,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                               onTap: () {
 
                                                 Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
-                                                  retailerBusinessName: incompleteOrder.retailerBusinessName,
-                                                  retailerAddress: incompleteOrder.retailerAddress,
-                                                  retailerMobile: incompleteOrder.retailerMobile,
-                                                  orderDate: "${DateFormat('dd, MMM yyyy').format(incompleteOrder.orderDate)}",
-                                                  orderAddress: incompleteOrder.address,
-                                                  products: incompleteOrder.items,
-                                                  totalAmount: incompleteOrder.total,
+                                                  orderId: incompleteOrder.id,
                                                 )));
 
                                               },

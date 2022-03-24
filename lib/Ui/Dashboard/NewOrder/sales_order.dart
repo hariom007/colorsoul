@@ -9,6 +9,7 @@ import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:dropdown_below/dropdown_below.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -338,22 +339,6 @@ class _SalesOrderState extends State<SalesOrder> {
             child: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
 
-                  getProducts(String value) async {
-
-                    setState((){
-                      isLoading = true;
-                    });
-
-                    var data ={
-                      "group_id":"$groupId",
-                      "search_term" : "${value}"
-                    };
-                    await _productProvider.getSearchProducts(data,'/searchProductByKeyword');
-
-                    isLoading = false;
-
-                  }
-
                   return Container(
                       padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                       height: MediaQuery.of(context).size.height-100,
@@ -523,9 +508,9 @@ class _SalesOrderState extends State<SalesOrder> {
 
                                             selectAll = !selectAll;
 
-                                            for(int i = 0;i<_productProvider.searchProductList.length;i++){
+                                            for(int i = 0;i<searchNewProductList.length;i++){
                                               var data = {
-                                                "id":"${_productProvider.searchProductList[i].clProductId}",
+                                                "id":"${searchNewProductList[i].clProductId}",
                                                 "value": selectAll
                                               };
                                               checkBoxList.add(data);
@@ -554,12 +539,56 @@ class _SalesOrderState extends State<SalesOrder> {
                               itemCount: _productProvider.searchProductList.length,
                               shrinkWrap: true,
                               itemBuilder:(context, index){
+
                                 var productData = _productProvider.searchProductList[index];
 
                                 return Padding(
                                   padding: EdgeInsets.only(bottom: 10),
                                   child: InkWell(
                                     onTap: (){
+
+                                      checkBoxList[index]["value"] = !checkBoxList[index]["value"];
+
+                                      setState((){
+                                        var data = {
+                                          "id":"${checkBoxList[index]["id"]}",
+                                          "value":checkBoxList[index]["value"]
+                                        };
+                                        checkBoxList[index] = data;
+                                      });
+
+
+                                      if(checkBoxList[index]['value'] == true){
+
+                                        for(int i=0;i<checkBoxList.length;i++){
+
+                                          if(checkBoxList[i]["value"] == false){
+                                            setState((){
+                                              selectAll = false;
+                                            });
+                                            break;
+                                          }
+                                          else{
+                                            selectAll = true;
+                                          }
+
+                                        }
+
+                                      }
+                                      else{
+
+                                        for(int i=0;i<checkBoxList.length;i++){
+
+                                          if(checkBoxList[i]["value"] == true){
+                                            setState((){
+                                              selectAll = false;
+                                            });
+                                            break;
+                                          }
+
+                                        }
+
+                                      }
 
 
                                     },
@@ -603,21 +632,46 @@ class _SalesOrderState extends State<SalesOrder> {
                                                             activeColor: AppColors.black,
                                                             onChanged: (value){
 
-                                                              //print(value);
-
                                                               setState((){
-
-                                                                if(value == false){
-                                                                  selectAll = false;
-                                                                }
-
                                                                 var data = {
                                                                   "id":"${checkBoxList[index2]["id"]}",
                                                                   "value":value
                                                                 };
                                                                 checkBoxList[index2] = data;
-
                                                               });
+
+                                                              if(checkBoxList[index]['value'] == true){
+
+                                                                for(int i=0;i<checkBoxList.length;i++){
+
+                                                                  if(checkBoxList[i]["value"] == false){
+                                                                    setState((){
+                                                                      selectAll = false;
+                                                                    });
+                                                                    break;
+                                                                  }
+                                                                  else{
+                                                                    selectAll = true;
+                                                                  }
+
+                                                                }
+
+                                                              }
+                                                              else{
+
+                                                                for(int i=0;i<checkBoxList.length;i++){
+
+                                                                  if(checkBoxList[i]["value"] == true){
+                                                                    setState((){
+                                                                      selectAll = false;
+                                                                    });
+                                                                    break;
+                                                                  }
+
+                                                                }
+
+                                                              }
+
 
                                                             }),
                                                       )
@@ -803,6 +857,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                           fontSize: 16,
                                           color: Colors.black
                                       ),
+                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                       cursorHeight: 22,
                                       cursorColor: Colors.grey,
                                       decoration: InputDecoration(
@@ -1058,7 +1113,19 @@ class _SalesOrderState extends State<SalesOrder> {
                                                     "hsn_code":"${selectedProductList[i].hsnCode}",
                                                   };
                                                   viewProduct.add(product);
+
+                                                  totalQuentity = totalQuentity + int.parse("${selectedQuantity[i].text}");
+
+                                                  double singleAmount = double.parse(selectedAmount[i].text) * double.parse(selectedQuantity[i].text);
+                                                  totalAmount = totalAmount + singleAmount;
+
                                                 }
+
+                                                setState((){
+                                                  allPrice.clear();
+                                                  allQuantity.clear();
+                                                  selectAll = false;
+                                                });
 
                                                 Navigator.pop(context);
                                                 Navigator.pop(context);
@@ -1109,8 +1176,258 @@ class _SalesOrderState extends State<SalesOrder> {
 
   List finalProduct = [];
   double TotalAmount = 0.0;
+  double totalAmount = 0.0;
+  int totalQuentity = 0;
 
   final _formkey = GlobalKey<FormState>();
+
+
+  List<DistributorModel> searchNewDistributor = [];
+
+  selectDistributor(){
+
+    TextEditingController searchController = TextEditingController();
+
+    showModalBottomSheet(
+        enableDrag: false,
+        isScrollControlled: true,
+        isDismissible: true,
+        backgroundColor: Colors.white,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        builder: (context) {
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+
+                  return Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                      height: MediaQuery.of(context).size.height-100,
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: [
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10,right: 10),
+                            child: Row(
+                              children: [
+
+                                Expanded(
+                                  child: Text(
+                                    "Select Distributor",
+                                    style: textStyle.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16
+                                    ),
+                                  ),
+                                ),
+
+                                InkWell(
+                                  onTap: (){
+
+                                    Navigator.pop(context);
+
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(Icons.close),
+                                  ),
+                                )
+
+
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 20),
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10,right: 10),
+                            child: Row(
+                              children: [
+
+                                Expanded(
+                                  child: TextField(
+                                    onSubmitted: (value){
+
+                                      FocusScope.of(context).requestFocus(new FocusNode());
+                                      setState((){
+
+                                        _debouncer.run(() {
+                                          setState(() {
+                                            _distributorProvider.onlyDistributorList = searchNewDistributor.where((u) {
+                                              return (u.name.toLowerCase().contains(value.toLowerCase()) || u.businessName.toLowerCase().contains(value.toLowerCase()));
+                                            })
+                                                .toList();
+                                            isLoaded == false;
+                                          });
+                                        });
+
+                                      });
+
+                                    },
+                                    onChanged: (value){
+
+                                      setState((){
+
+                                        _debouncer.run(() {
+                                          setState(() {
+                                            _distributorProvider.onlyDistributorList = searchNewDistributor.where((u) {
+                                              return (u.name.toLowerCase().contains(value.toLowerCase()) || u.businessName.toLowerCase().contains(value.toLowerCase()));
+                                            })
+                                                .toList();
+                                            isLoaded == false;
+                                          });
+                                        });
+
+                                      });
+
+
+                                    },
+                                    controller: searchController,
+                                    style: textStyle.copyWith(
+                                        color: AppColors.black
+                                    ),
+                                    cursorColor: AppColors.black,
+                                    cursorHeight: 22,
+                                    decoration: fieldStyle1.copyWith(
+                                        hintText: "Search Distributor",
+                                        hintStyle: textStyle.copyWith(
+                                            color: AppColors.black
+                                        ),
+                                        isDense: true
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(width: 10),
+
+                                InkWell(
+                                  onTap: (){
+
+                                    FocusScope.of(context).requestFocus(new FocusNode());
+                                    setState((){
+
+                                      _debouncer.run(() {
+                                        setState(() {
+                                          _distributorProvider.onlyDistributorList = searchNewDistributor.where((u) {
+                                            return (u.name.toLowerCase().contains(value.toLowerCase()) || u.businessName.toLowerCase().contains(value.toLowerCase()));
+                                          })
+                                              .toList();
+                                          isLoaded == false;
+                                        });
+                                      });
+
+                                    });
+
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                          bottomRight: Radius.circular(20),
+                                          topRight: Radius.circular(20),
+                                          bottomLeft: Radius.circular(20),
+                                        ),
+                                        border: Border.all(color: AppColors.black)
+                                    ),
+                                    height: 50,width: 60,
+                                    child: IconButton(
+                                      icon: new Image.asset('assets/images/locater/search.png',width: 20,height: 20),
+                                      onPressed: null,
+                                    ),
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 10),
+
+                          Expanded(
+                            child:
+                            isLoaded == false
+                                ?
+                            SpinKitThreeBounce(
+                              color: AppColors.black,
+                              size: 25.0,
+                            )
+                                :
+                            ListView.builder(
+                              padding: EdgeInsets.only(left: 10,right: 10,top: 10,bottom: 10),
+                              itemCount: _distributorProvider.onlyDistributorList.length,
+                              shrinkWrap: true,
+                              itemBuilder:(context, index){
+                                var t = _distributorProvider.onlyDistributorList[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 10),
+                                  child: InkWell(
+                                    onTap: (){
+
+                                      print("click");
+                                      setState(() {
+                                        selectedRetailerId = t.id;
+                                        selectedRetailerName =
+                                        t.businessName == ""
+                                            ?
+                                        t.name  == ""
+                                            ?
+                                        t.mobile
+                                            :
+                                        t.name
+                                            :
+                                        t.businessName;
+                                        selectedRetailerAddress = t.address;
+                                        orderAddress = t.address;
+                                        selectedRetailerMobile = t.mobile;
+                                        isvisible = true;
+                                        isvisible1 = true;
+                                      });
+
+                                      Navigator.pop(context);
+
+                                    },
+                                    child:
+                                    ListTile(
+                                      leading: Text(
+                                        _distributorProvider.onlyDistributorList[index].name == ""
+                                            ?
+                                        _distributorProvider.onlyDistributorList[index].businessName
+                                            :
+                                        '${_distributorProvider.onlyDistributorList[index].name}',
+                                        textAlign: TextAlign.center,
+                                        style: textStyle.copyWith(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.black
+                                        ),
+                                      ),
+                                      trailing: Icon(Icons.chevron_right),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+
+
+                        ],
+                      )
+                  );
+                }
+            ),
+          );
+        }
+    ).whenComplete(() {
+      setState(() {
+        print("Select Distributor");
+      });
+    });
+  }
 
 
 
@@ -1464,7 +1781,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                           ),
 */
 
-                                          SizedBox(height: 5),
+                                         /* SizedBox(height: 5),
 
                                           DropdownSearch<DistributorModel>(
                                             mode: Mode.BOTTOM_SHEET,
@@ -1527,6 +1844,30 @@ class _SalesOrderState extends State<SalesOrder> {
                                                 )
                                             ),
                                           ),
+*/
+
+                                          SizedBox(height: 5),
+
+                                          TextFormField(
+                                              style: textStyle.copyWith(
+                                                  color: AppColors.black
+                                              ),
+                                              onTap: () async {
+
+                                                selectDistributor();
+
+                                              },
+                                              cursorColor: AppColors.black,
+                                              cursorHeight: 22,
+                                              readOnly: true,
+                                              decoration: fieldStyle1.copyWith(
+                                                  hintText: "Select Distributor",
+                                                  hintStyle: textStyle.copyWith(
+                                                      color: AppColors.black
+                                                  ),
+                                                  isDense: true
+                                              )
+                                          ),
 
                                           Visibility(
                                             visible: isvisible,
@@ -1538,28 +1879,31 @@ class _SalesOrderState extends State<SalesOrder> {
                                                   SizedBox(height: height*0.02),
                                                   Row(
                                                     children: [
-                                                      RichText(
-                                                          text: TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                    text: "Retailer :- ",
-                                                                    style: textStyle.copyWith(
+                                                      Expanded(
+                                                        child: RichText(
+                                                          maxLines: 2,
+                                                            text: TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                      text: "Retailer :- ",
+                                                                      style: textStyle.copyWith(
+                                                                          fontSize: 16,
+                                                                          color: AppColors.black,
+                                                                          fontWeight: FontWeight.bold
+                                                                      )
+                                                                  ),
+                                                                  TextSpan(
+                                                                      text: "$selectedRetailerName",
+                                                                      style: textStyle.copyWith(
                                                                         fontSize: 16,
+                                                                        overflow: TextOverflow.ellipsis,
                                                                         color: AppColors.black,
-                                                                        fontWeight: FontWeight.bold
-                                                                    )
-                                                                ),
-                                                                TextSpan(
-                                                                    text: "$selectedRetailerName",
-                                                                    style: textStyle.copyWith(
-                                                                      fontSize: 16,
-                                                                      color: AppColors.black,
-                                                                    )
-                                                                )
-                                                              ]
-                                                          )
+                                                                      )
+                                                                  )
+                                                                ]
+                                                            )
+                                                        ),
                                                       ),
-                                                      Expanded(child: Container()),
                                                       InkWell(
                                                           onTap: () {
                                                             setState(() {
@@ -1856,7 +2200,19 @@ class _SalesOrderState extends State<SalesOrder> {
                                               InkWell(
                                                 onTap: (){
                                                   setState(() {
+
                                                     viewProduct.removeAt(index);
+                                                    totalQuentity = 0;
+                                                    totalAmount = 0;
+
+                                                    for(int i=0;i<viewProduct.length;i++){
+
+                                                      totalQuentity = totalQuentity + int.parse("${viewProduct[i]['qty']}");
+
+                                                      double singleAmount = double.parse("${viewProduct[i]['amount']}") * double.parse("${viewProduct[i]['qty']}");
+                                                      totalAmount = totalAmount + singleAmount;
+                                                    }
+
                                                   });
                                                 },
                                                 child: Icon(Icons.close,size: 20),
@@ -1899,6 +2255,47 @@ class _SalesOrderState extends State<SalesOrder> {
                                       },
                                     ),
 
+                                    SizedBox(height: 10),
+
+                                    viewProduct.length == 0
+                                        ?
+                                    SizedBox(height: 10)
+                                        :
+                                    Row(
+                                      children: [
+
+
+                                        Expanded(
+                                          child: Container(
+                                            width: 130,
+                                            child: Text(
+                                              "Quantity : $totalQuentity",
+                                              textAlign: TextAlign.center,
+                                              style: textStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        Expanded(
+                                          child: Container(
+                                            child: Text(
+                                              "Amount : ${totalAmount.toStringAsFixed(2)}",
+                                              textAlign: TextAlign.center,
+                                              style: textStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+
+
 
                                     SizedBox(height: height*0.02),
                                   ],
@@ -1919,7 +2316,7 @@ class _SalesOrderState extends State<SalesOrder> {
     DateTime newSelectedDate = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime.now().subtract(Duration(days: 0)),
+        firstDate: DateTime(2020),
         lastDate: DateTime(2100),
         builder: (BuildContext context, Widget child) {
           return Theme(

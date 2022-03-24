@@ -7,20 +7,20 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class NormalOrder extends StatefulWidget {
+class EditConfirmOrder extends StatefulWidget {
 
   List productList = [];
   String orderid,retailerId,address,orderDate,totalAmount;
 
-  NormalOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,
+  EditConfirmOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,
     this.totalAmount,this.orderDate
   }) : super(key: key);
 
   @override
-  _NormalOrderState createState() => _NormalOrderState();
+  _EditConfirmOrderState createState() => _EditConfirmOrderState();
 }
 
-class _NormalOrderState extends State<NormalOrder> {
+class _EditConfirmOrderState extends State<EditConfirmOrder> {
 
   OrderProvider _orderProvider;
   TextEditingController noteController = TextEditingController();
@@ -37,7 +37,7 @@ class _NormalOrderState extends State<NormalOrder> {
     String userId = sharedPreferences.get("userId");
 
     var data = {
-      "id":"",
+      "id":"${widget.orderid}",
       "uid":"$userId",
       "retailer_id":"${widget.retailerId}",
       "address":"${widget.address}",
@@ -46,6 +46,8 @@ class _NormalOrderState extends State<NormalOrder> {
       "total":"${widget.totalAmount}",
       "note":"${noteController.text}"
     };
+
+
     //print(data);
 
     _orderProvider.insertOrder(data, "/createOrders");
@@ -453,27 +455,27 @@ class _NormalOrderState extends State<NormalOrder> {
                                     child: Text(
                                       "Remark",
                                       style: textStyle.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16
                                       ),
                                     ),
                                   ),
                                   SizedBox(height: height*0.01),
                                   TextFormField(
-                                    controller: noteController,
-                                    style: textStyle.copyWith(
-                                      color: AppColors.black
-                                    ),
-                                    cursorColor: AppColors.black,
-                                    cursorHeight: 22,
-                                    decoration: fieldStyle1.copyWith(
-                                      hintText: "Add Remark",
-                                      hintStyle: textStyle.copyWith(
-                                        color: AppColors.black
+                                      controller: noteController,
+                                      style: textStyle.copyWith(
+                                          color: AppColors.black
                                       ),
-                                      isDense: true
-                                    )
+                                      cursorColor: AppColors.black,
+                                      cursorHeight: 22,
+                                      decoration: fieldStyle1.copyWith(
+                                          hintText: "Add Remark",
+                                          hintStyle: textStyle.copyWith(
+                                              color: AppColors.black
+                                          ),
+                                          isDense: true
+                                      )
                                   ),
                                   SizedBox(height: height*0.01),
                                 ],
@@ -504,9 +506,9 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
     Timer(
         Duration(milliseconds: 1000),
             () {
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.pop(context,"Refresh");
+          Navigator.pop(context,"Refresh");
+          Navigator.pop(context,"Refresh");
 
         }
     );
@@ -531,7 +533,7 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
         width: width/1.4,
         child: Center(
           child: Text(
-              "Order Confirmed",
+              "Order Edited",
               textAlign: TextAlign.center,
               style: textStyle.copyWith(
                   fontSize: 20,

@@ -79,7 +79,7 @@ class OrderProvider with ChangeNotifier
 
 
   List<OrderModel> orderList = [];
-  String allOrderCount,completeOrderCount,incompleteOrderCount;
+  String allOrderCount = "",completeOrderCount = "",incompleteOrderCount = "";
   getAllOrders(data,url) async
   {
 
@@ -94,6 +94,7 @@ class OrderProvider with ChangeNotifier
         isSuccess = true;
 
         var items = value["data"];
+        allOrderCount = "${value["total_result"]}";
 
         List client = items as List;
         list  = client.map<OrderModel>((json) => OrderModel.fromJson(json)).toList();
@@ -140,6 +141,8 @@ class OrderProvider with ChangeNotifier
         isSuccess = true;
 
         var items = value["data"];
+        completeOrderCount = "${value["total_result"]}";
+
 
         List client = items as List;
         list  = client.map<OrderModel>((json) => OrderModel.fromJson(json)).toList();
@@ -186,6 +189,7 @@ class OrderProvider with ChangeNotifier
         isSuccess = true;
 
         var items = value["data"];
+        incompleteOrderCount = "${value["total_result"]}";
 
         List client = items as List;
         list  = client.map<OrderModel>((json) => OrderModel.fromJson(json)).toList();
@@ -255,6 +259,51 @@ class OrderProvider with ChangeNotifier
 
   }
 
+  insertSalesOrder(data,url) async
+  {
+
+    isLoaded = false;
+    isSuccess = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+      print(value);
+      if(value["st"] == "success")
+      {
+        isSuccess = true;
+
+        salesOrderList.clear();
+
+        var data2 = {
+          "uid":"${data["uid"]}",
+        };
+
+        getSalesOrders(data2, "/get_salesorder/1");
+        notifyListeners();
+      }
+      else
+      {
+        isSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Insert Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
 
 
   List<SalesOrderModel> salesOrderList = [];
@@ -267,7 +316,7 @@ class OrderProvider with ChangeNotifier
     await ApiHandler.post(data,url).then((value){
       List<SalesOrderModel> list;
 
-      print(value);
+     // print(value);
       if(value["st"] == "success")
       {
         isSuccess = true;
@@ -303,6 +352,132 @@ class OrderProvider with ChangeNotifier
     });
 
   }
+
+
+  var orderDetails;
+  getOrderDetails(data,url)async
+  {
+
+    isLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      if(value["st"] == "success")
+      {
+        isSuccess = true;
+        orderDetails = value["order_detail"];
+        print(orderDetails);
+
+        notifyListeners();
+      }
+      else
+      {
+        isSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Order Get List Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+
+  var scanProductDetails;
+  bool isProductSuccess = false;
+  getScanProductDetails(data,url)async
+  {
+
+    isLoaded = false;
+    isProductSuccess= false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      if(value["st"] == "success")
+      {
+        isProductSuccess = true;
+        scanProductDetails = value["product_detail"];
+
+        notifyListeners();
+      }
+      else
+      {
+        isProductSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Product Get List Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+
+  bool isBarcode = false;
+  insertBarcodeOrder(data,url) async
+  {
+
+    isLoaded = false;
+    isBarcode = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+      print(value["st"]);
+      if(value["st"] == "success")
+      {
+        isBarcode = true;
+        isLoaded = true;
+        print(isBarcode);
+        notifyListeners();
+      }
+      else
+      {
+        isBarcode = false;
+        isLoaded = true;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Insert Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+    });
+
+  }
+
 
 
 

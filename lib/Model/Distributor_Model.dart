@@ -29,6 +29,7 @@ class DistributorModel {
     this.closeTime,
     this.image,
     this.isApproved,
+    this.parentName,
     this.state,
     this.city
   });
@@ -50,8 +51,9 @@ class DistributorModel {
   String telephone;
   String openTime;
   String closeTime;
-  String image;
+  List<String> image;
   String isApproved;
+  String parentName;
   String state;
   String city;
 
@@ -62,7 +64,7 @@ class DistributorModel {
     businessName: json["business_name"],
     businessType: json["business_type"],
     gstNo: json["gst_no"],
-    address: json["address"] == null ? "" : json["address"],
+    address: json["address"],
     homeAddress: json["home_address"],
     landmark: json["landmark"],
     pincode: json["pincode"],
@@ -73,8 +75,9 @@ class DistributorModel {
     telephone: json["telephone"],
     openTime: json["open_time"],
     closeTime: json["close_time"],
-    image: json["image"],
+    image: json["image"] == "" ? [] : List<String>.from(json["image"].map((x) => x)),
     isApproved: json["isApproved"],
+    parentName: json["parent_name"],
     state: json["state"],
     city: json["city"],
   );
@@ -97,9 +100,10 @@ class DistributorModel {
     "telephone": telephone,
     "open_time": openTime,
     "close_time": closeTime,
-    "image": image,
+    "image": List<dynamic>.from(image.map((x) => x)),
     "isApproved": isApproved,
-    "state": state,
-    "city": city,
+    "parent_name": parentName,
+    "state":state,
+    "city":city
   };
 }

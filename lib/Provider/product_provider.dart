@@ -2,6 +2,7 @@ import 'package:colorsoul/Api%20Handler/ApiHandler.dart';
 import 'package:colorsoul/Model/Group_Model.dart';
 import 'package:colorsoul/Model/Product_Category_Model.dart';
 import 'package:colorsoul/Model/Product_Model.dart';
+import 'package:colorsoul/Model/RetailerProductModel.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -187,6 +188,56 @@ class ProductProvider with ChangeNotifier
 
         Fluttertoast.showToast(
             msg: "Get Group List Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+
+  List<RetailerProdcutsModel> retailerProduct = [];
+  getRetailerProducts(data,url) async
+  {
+
+    isLoaded = false;
+    retailerProduct.clear();
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+      List<RetailerProdcutsModel> list;
+
+      //print(value);
+
+      if(value["st"] == "success")
+      {
+        isSuccess = true;
+
+        var items = value["product_list"];
+
+        List client = items as List;
+        list  = client.map<RetailerProdcutsModel>((json) => RetailerProdcutsModel.fromJson(json)).toList();
+        retailerProduct.addAll(list);
+
+        notifyListeners();
+      }
+      else
+      {
+        isSuccess = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Product Get List Error !!",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

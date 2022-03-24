@@ -7,7 +7,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Values/components.dart';
 import '../Forgot/forgot.dart';
-import '../Pin/pin.dart';
 import 'package:provider/provider.dart';
 
 
