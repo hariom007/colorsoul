@@ -32,10 +32,10 @@ class _CurrentLocationState extends State<CurrentLocation> {
     setState(() {
       _markers.add(
           Marker(
-              markerId: MarkerId('1'),
-              // position: LatLng(21.172160, 72.838998),
-              position: LatLng(widget.position.latitude, widget.position.longitude),
-              icon: mapMarker
+            markerId: MarkerId('1'),
+            // position: LatLng(21.172160, 72.838998),
+            position: LatLng(widget.position.latitude, widget.position.longitude),
+            icon: mapMarker
           )
       );
     });
