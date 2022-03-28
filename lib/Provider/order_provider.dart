@@ -88,6 +88,7 @@ class OrderProvider with ChangeNotifier
 
     await ApiHandler.post(data,url).then((value){
       List<OrderModel> list;
+      print(value);
 
       if(value["st"] == "success")
       {
@@ -479,6 +480,44 @@ class OrderProvider with ChangeNotifier
   }
 
 
+  bool isDelete = false;
+  deleteOrder(data,url) async
+  {
+
+    isDelete = false;
+    isLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+      print(value);
+      if(value["st"] == "success")
+      {
+        isDelete = true;
+        notifyListeners();
+      }
+      else
+      {
+        isDelete = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Order Delete Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
 
 
 }
