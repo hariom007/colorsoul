@@ -88,7 +88,7 @@ class OrderProvider with ChangeNotifier
 
     await ApiHandler.post(data,url).then((value){
       List<OrderModel> list;
-      print(value);
+      //print(value);
 
       if(value["st"] == "success")
       {
@@ -489,7 +489,7 @@ class OrderProvider with ChangeNotifier
     notifyListeners();
 
     await ApiHandler.post(data,url).then((value){
-      print(value);
+      //print(value);
       if(value["st"] == "success")
       {
         isDelete = true;
