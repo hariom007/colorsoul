@@ -139,8 +139,8 @@ class _EditDistributersState extends State<EditDistributers> {
     _personNameController.text = widget.person_name;
     _personMobileController.text = widget.person_mobile;
     _personTelephoneController.text = widget.person_tel;
-    _addressController.text = widget.home_address;
-    _addressNoController.text = widget.landmark;
+    _addressController.text = widget.landmark;
+    _addressNoController.text = widget.home_address;
     _openTimeController.text = widget.opentime;
     _closeTimeController.text = widget.closetime;
     businessTypeController.text = widget.business_type;
@@ -205,7 +205,7 @@ class _EditDistributersState extends State<EditDistributers> {
       "business_type":"${businessTypeController.text}",
       "gst_no":"${businessGSTController.text}",
       "address":"$address",
-      "home_address": _addressNoController.text,
+      "home_address": "${_addressNoController.text}",
       "landmark":"${_addressController.text}",
       "city":city,
       "state":state,

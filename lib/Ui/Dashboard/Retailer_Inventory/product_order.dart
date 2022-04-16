@@ -72,14 +72,32 @@ class _ProductOrderState extends State<ProductOrder> {
           "stock":"${_orderProvider.scanProductDetails['available_stock']}",
         };
         selectedQuantity.add(TextEditingController(text: "0"));
-        orderQuantity.add(TextEditingController(text: "${_orderProvider.scanProductDetails['available_stock']}"));
-        selectedAmount.add(TextEditingController(text: "${_orderProvider.scanProductDetails['rate']}"));
+
+        if("${_orderProvider.scanProductDetails['available_stock']}" == "0"){
+          orderQuantity.add(TextEditingController(text: "1"));
+        }
+        else{
+          orderQuantity.add(TextEditingController(text: "${_orderProvider.scanProductDetails['available_stock']}"));
+        }
+
+        if("${_orderProvider.scanProductDetails['rate']}" == "0"){
+          selectedAmount.add(TextEditingController(text: "1"));
+        }
+        else{
+          selectedAmount.add(TextEditingController(text: "${_orderProvider.scanProductDetails['rate']}"));
+        }
 
         final index = viewProduct.indexWhere((element) =>
         element['pid'] == product['pid']);
         if (index >= 0) {
 
-          Fluttertoast.showToast(
+          setState(() {
+            int value = int.parse(orderQuantity[index].text) + 1;
+            print(value);
+            orderQuantity[index] = TextEditingController(text: "${value}");
+          });
+
+        /*  Fluttertoast.showToast(
               msg: "Product Already Added !!",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
@@ -87,7 +105,7 @@ class _ProductOrderState extends State<ProductOrder> {
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0
-          );
+          );*/
 
           print("Product Already Added");
         }
