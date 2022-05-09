@@ -70,11 +70,103 @@ class _SalesOrderListState extends State<SalesOrderList> {
     var data = {
       "uid":"$userId",
     };
+    print(data);
     await _orderProvider.getSalesOrders(data,'/get_salesorder/$page');
 
     setState(() {
       isScrollingDown = false;
     });
+
+  }
+
+  deleteOrder(String orderId) async {
+
+    var data = {
+      "order_id":"$orderId"
+    };
+
+    await _orderProvider.deleteOrder(data,'/remove_disributor_order');
+
+    if(_orderProvider.isDelete == true){
+
+      setState(() {
+        _orderProvider.salesOrderList.clear();
+      });
+
+      page = 1;
+      getOrders();
+    }
+
+  }
+
+  deleteOrderDailoage(String id){
+
+    showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            insetPadding: EdgeInsets.all(0),
+            contentPadding: EdgeInsets.all(0),
+            backgroundColor: Colors.transparent,
+            content: Container(
+              width: MediaQuery.of(context).size.width/1.2,
+              decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: round1.copyWith()
+              ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20, 14, 20, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Are you sure you want to Delete Order?',
+                      style: textStyle.copyWith(
+                          fontSize: 16,
+                          color: AppColors.black
+                      ),
+                    ),
+                    SizedBox(height: 13),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          child: Text(
+                            'No',
+                            style: textStyle.copyWith(
+                                color: AppColors.black
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                        ),
+                        TextButton(
+                          child: Text(
+                            'Yes, Confirm',
+                            style: textStyle.copyWith(
+                                color: AppColors.black
+                            ),
+                          ),
+                          onPressed: () {
+
+                            Navigator.of(context).pop();
+                            print(id);
+                            deleteOrder(id);
+
+                          },
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+    );
+
 
   }
 
@@ -114,7 +206,7 @@ class _SalesOrderListState extends State<SalesOrderList> {
                   child: Row(
                     children: [
                       Text(
-                        "Sales Order List",
+                        "Distributor Order List",
                         style: textStyle.copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.bold
@@ -158,88 +250,116 @@ class _SalesOrderListState extends State<SalesOrderList> {
                             var allOrder = _orderProvider.salesOrderList[index];
                             return Padding(
                                 padding: EdgeInsets.only(bottom: 10),
-                                child: Card(
-                                    elevation: 10,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: round1.copyWith()
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 5, bottom: 6),
-                                      child: ListTile(
-                                        title: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 6),
-                                          child: Text(
-                                            '${allOrder
-                                                .customerName}',
-                                            style: textStyle.copyWith(
-                                                fontSize: 20,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight
-                                                    .bold
-                                            ),
+                                child: Slidable(
+                                  actionExtentRatio: 0.15,
+                                  actionPane: SlidableDrawerActionPane(),
+                                  secondaryActions: [
+
+                                    InkWell(
+                                      onTap: (){
+
+                                        deleteOrderDailoage(allOrder.id);
+
+                                      },
+                                      child:
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 5,bottom: 5,left: 5),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10),
+                                            color: AppColors.black,
+                                          ),
+                                          child: Center(
+                                              child: Image.asset("assets/images/notes/bin1.png",color: AppColors.white,width: 20,height: 20)
                                           ),
                                         ),
-                                        subtitle: Column(
-                                          children: [
-                                            SizedBox(
-                                              height: height * 0.01,),
-                                            Text(
-                                              '${allOrder.customerAddress}',
-                                              maxLines: 2,
-                                              overflow: TextOverflow
-                                                  .ellipsis,
+                                      ),
+                                    ),
+
+                                  ],
+                                  child: Card(
+                                      elevation: 10,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: round1.copyWith()
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 5, bottom: 6),
+                                        child: ListTile(
+                                          title: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 6),
+                                            child: Text(
+                                              '${allOrder
+                                                  .customerName}',
                                               style: textStyle.copyWith(
+                                                  fontSize: 20,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight
+                                                      .bold
+                                              ),
+                                            ),
+                                          ),
+                                          subtitle: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: height * 0.01,),
+                                              Text(
+                                                '${allOrder.customerAddress}',
+                                                maxLines: 2,
+                                                overflow: TextOverflow
+                                                    .ellipsis,
+                                                style: textStyle.copyWith(
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                    height: 1.4
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          trailing: Column(
+                                            crossAxisAlignment: CrossAxisAlignment
+                                                .end,
+                                            children: [
+                                              Text(
+                                                "${DateFormat('dd, MMM yyyy').format(
+                                                    allOrder.createAt)}",
+                                                style: textStyle.copyWith(
                                                   fontSize: 14,
                                                   color: Colors.black,
-                                                  height: 1.4
+                                                  fontWeight: FontWeight
+                                                      .bold,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
+                                          onTap: () {
+
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        SalesOrderDetails(
+                                                          retailerBusinessName: allOrder
+                                                              .customerName,
+                                                          retailerAddress: allOrder
+                                                              .customerAddress,
+                                                          retailerMobile: allOrder
+                                                              .customerMobile,
+                                                          orderDate: "${DateFormat(
+                                                              'dd, MMM yyyy')
+                                                              .format(
+                                                              allOrder
+                                                                  .createAt)}",
+                                                          orderAddress: allOrder.customerAddress,
+                                                          products: allOrder.items,
+                                                          totalAmount: allOrder.totalAmount,
+                                                        )));
+
+                                          },
+
                                         ),
-                                        trailing: Column(
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .end,
-                                          children: [
-                                            Text(
-                                              "${DateFormat('dd, MMM yyyy').format(
-                                                  allOrder.createAt)}",
-                                              style: textStyle.copyWith(
-                                                fontSize: 14,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight
-                                                    .bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {
-
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SalesOrderDetails(
-                                                        retailerBusinessName: allOrder
-                                                            .customerName,
-                                                        retailerAddress: allOrder
-                                                            .customerAddress,
-                                                        retailerMobile: allOrder
-                                                            .customerMobile,
-                                                        orderDate: "${DateFormat(
-                                                            'dd, MMM yyyy')
-                                                            .format(
-                                                            allOrder
-                                                                .createAt)}",
-                                                        orderAddress: allOrder.customerAddress,
-                                                        products: allOrder.items,
-                                                        totalAmount: allOrder.totalAmount,
-                                                      )));
-
-                                        },
-
-                                      ),
-                                    )
+                                      )
+                                  ),
                                 )
                             );
                           },

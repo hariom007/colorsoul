@@ -1,5 +1,4 @@
 import 'package:colorsoul/Provider/order_provider.dart';
-import 'package:colorsoul/Ui/Dashboard/OrderList/all_order_list.dart';
 import 'package:colorsoul/Ui/Dashboard/Products/productsfilter.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
@@ -13,12 +12,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'order_details.dart';
 
-class OrderList extends StatefulWidget {
+class AllOrderList extends StatefulWidget {
+  const AllOrderList({Key key}) : super(key: key);
+
   @override
-  _OrderListState createState() => _OrderListState();
+  State<AllOrderList> createState() => _AllOrderListState();
 }
 
-class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
+class _AllOrderListState extends State<AllOrderList> with TickerProviderStateMixin {
   TabController _tabController;
   int isSelected = 0;
 
@@ -77,7 +78,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
     String userId = sharedPreferences.get("userId");
 
     var data = {
-      "uid":"$userId",
+      "uid":"",
       "from_date":"",
       "to_date":"",
       "status":""
@@ -86,7 +87,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
 
 
     var data1 = {
-      "uid":"$userId",
+      "uid":"",
       "from_date":"",
       "to_date":"",
       "status":"Pending"
@@ -95,7 +96,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
 
 
     var data2 = {
-      "uid":"$userId",
+      "uid":"",
       "from_date":"",
       "to_date":"",
       "status":"Delivered"
@@ -162,50 +163,19 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                   child: Row(
                     children: [
                       Text(
-                        "Order List",
+                        "All Order List",
                         style: textStyle.copyWith(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold
                         ),
                       ),
                       Expanded(child: Container()),
-
                       InkWell(
-                        onTap: (){
-
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => AllOrderList()));
-
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                          height: 35,
-                          decoration: decoration.copyWith(
-                              gradient: LinearGradient(begin: Alignment.topLeft,end: Alignment.bottomRight,colors: [AppColors.grey1,AppColors.grey2,AppColors.grey2]),
-                              boxShadow: [new BoxShadow(
-                                color: Color.fromRGBO(0,0,0, 0.3),
-                                offset: Offset(0, 5),
-                                blurRadius: 6,
-                              )]
-                          ),
-                          child: Text('All Orders',
-                            textAlign: TextAlign.center,
-                            style: textStyle.copyWith(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.black
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      /*InkWell(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsFilter()));
-                        },
-                        child: Image.asset("assets/images/locater/filter.png",height: 20,width: 20)
-                      )*/
-
-
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ProductsFilter()));
+                          },
+                          child: Image.asset("assets/images/locater/filter.png",height: 20,width: 20)
+                      )
                     ],
                   ),
                 ),
@@ -374,7 +344,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                             topLeft: Radius.circular(20)
                         )
                     ),
-                    padding: EdgeInsets.only(left: 15,right: 15,bottom: 30),
+                    padding: EdgeInsets.only(left: 15,right: 15,bottom: 10),
                     width: width,
                     child: TabBarView(
                       physics: NeverScrollableScrollPhysics(),
@@ -394,31 +364,44 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                 itemBuilder:(context, index){
                                   var allOrder = _orderProvider.orderList[index];
                                   return Padding(
-                                    padding: EdgeInsets.only(bottom: 10),
-                                    child: Card(
-                                        elevation: 10,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: round1.copyWith()
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(top: 5,bottom: 6),
-                                          child: ListTile(
-                                            title: Padding(
-                                              padding: EdgeInsets.only(top: 6),
-                                              child: Row(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                      child: Card(
+                                          elevation: 10,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: round1.copyWith()
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(top: 5,bottom: 6),
+                                            child: ListTile(
+                                              title: Padding(
+                                                padding: EdgeInsets.only(top: 6),
+                                                child: Text(
+                                                  '${allOrder.retailerBusinessName}',
+                                                  style: textStyle.copyWith(
+                                                      fontSize: 20,
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                              ),
+                                              subtitle: Column(
                                                 children: [
-
-                                                  Expanded(
-                                                    child: Text(
-                                                      '${allOrder.retailerBusinessName}',
-                                                      style: textStyle.copyWith(
-                                                          fontSize: 20,
-                                                          color: Colors.black,
-                                                          fontWeight: FontWeight.bold
-                                                      ),
+                                                  SizedBox(height: height*0.01,),
+                                                  Text(
+                                                    '${allOrder.address}',
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: textStyle.copyWith(
+                                                        fontSize: 14,
+                                                        color: Colors.black,
+                                                        height: 1.4
                                                     ),
                                                   ),
-
+                                                ],
+                                              ),
+                                              trailing: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: [
                                                   Text(
                                                     "${DateFormat('dd, MMM yyyy').format(allOrder.orderDate)}",
                                                     style: textStyle.copyWith(
@@ -427,58 +410,16 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                                       fontWeight: FontWeight.bold,
                                                     ),
                                                   ),
-
                                                 ],
                                               ),
+                                              onTap: () {
+                                                Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
+                                                  orderId: allOrder.id,
+                                                )));
+                                              },
                                             ),
-                                            subtitle: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(height: height*0.01,),
-                                                Text(
-                                                  '${allOrder.address}',
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: textStyle.copyWith(
-                                                      fontSize: 14,
-                                                      color: Colors.black,
-                                                      height: 1.4
-                                                  ),
-                                                ),
-
-                                                SizedBox(height: 6),
-
-                                                Row(
-                                                  children: [
-
-                                                    Expanded(child: SizedBox()),
-
-                                                    Text(
-                                                      'Seller : ${allOrder.sales_name}',
-                                                      textAlign: TextAlign.end,
-                                                      maxLines: 2,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: textStyle.copyWith(
-                                                          fontSize: 14,
-                                                          color: Colors.black,
-                                                          fontWeight: FontWeight.w600,
-                                                          height: 1.4
-                                                      ),
-                                                    ),
-
-                                                  ],
-                                                ),
-
-                                              ],
-                                            ),
-                                            onTap: () {
-                                              Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
-                                                orderId: allOrder.id,
-                                              )));
-                                            },
-                                          ),
-                                        )
-                                    )
+                                          )
+                                      )
                                   );
                                 },
                               ),
@@ -493,7 +434,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                 )
                             )
                                 :
-                                SizedBox()
+                            SizedBox()
 
                           ],
                         ),
@@ -501,7 +442,7 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            
+
                             Expanded(
                               child: ListView.builder(
                                 controller: _scrollViewController,
@@ -512,31 +453,44 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                 itemBuilder:(context, index){
                                   var completedOrder = _orderProvider.completeOrderList[index];
                                   return Padding(
-                                    padding: EdgeInsets.only(bottom: 10),
-                                    child: Card(
-                                        elevation: 10,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: round1.copyWith()
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(top: 5,bottom: 6),
-                                          child: ListTile(
-                                            title: Padding(
-                                              padding: EdgeInsets.only(top: 6),
-                                              child: Row(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                      child: Card(
+                                          elevation: 10,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: round1.copyWith()
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(top: 5,bottom: 6),
+                                            child: ListTile(
+                                              title: Padding(
+                                                padding: EdgeInsets.only(top: 6),
+                                                child: Text(
+                                                  '${completedOrder.retailerBusinessName}',
+                                                  style: textStyle.copyWith(
+                                                      fontSize: 20,
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                              ),
+                                              subtitle: Column(
                                                 children: [
-
-                                                  Expanded(
-                                                    child: Text(
-                                                      '${completedOrder.retailerBusinessName}',
-                                                      style: textStyle.copyWith(
-                                                          fontSize: 20,
-                                                          color: Colors.black,
-                                                          fontWeight: FontWeight.bold
-                                                      ),
+                                                  SizedBox(height: height*0.01,),
+                                                  Text(
+                                                    '${completedOrder.address}',
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: textStyle.copyWith(
+                                                        fontSize: 14,
+                                                        color: Colors.black,
+                                                        height: 1.4
                                                     ),
                                                   ),
-
+                                                ],
+                                              ),
+                                              trailing: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: [
                                                   Text(
                                                     "${DateFormat('dd, MMM yyyy').format(completedOrder.orderDate)}",
                                                     style: textStyle.copyWith(
@@ -547,57 +501,16 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                                   ),
                                                 ],
                                               ),
+                                              onTap: () {
+
+                                                Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
+                                                  orderId: completedOrder.id,
+                                                )));
+
+                                              },
                                             ),
-                                            subtitle: Column(
-                                              children: [
-                                                SizedBox(height: height*0.01,),
-                                                Text(
-                                                  '${completedOrder.address}',
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: textStyle.copyWith(
-                                                      fontSize: 14,
-                                                      color: Colors.black,
-                                                      height: 1.4
-                                                  ),
-                                                ),
-
-                                                SizedBox(height: 6),
-
-                                                Row(
-                                                  children: [
-
-                                                    Expanded(child: SizedBox()),
-
-                                                    Text(
-                                                      'Seller : ${completedOrder.sales_name}',
-                                                      textAlign: TextAlign.end,
-                                                      maxLines: 2,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: textStyle.copyWith(
-                                                          fontSize: 14,
-                                                          color: Colors.black,
-                                                          fontWeight: FontWeight.w600,
-                                                          height: 1.4
-                                                      ),
-                                                    ),
-
-                                                  ],
-                                                ),
-
-
-                                              ],
-                                            ),
-                                            onTap: () {
-
-                                              Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(
-                                                orderId: completedOrder.id,
-                                              )));
-
-                                            },
-                                          ),
-                                        )
-                                    )
+                                          )
+                                      )
                                   );
                                 },
                               ),
@@ -748,30 +661,13 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                             child: ListTile(
                                               title: Padding(
                                                 padding: EdgeInsets.only(top: 6),
-                                                child: Row(
-                                                  children: [
-
-                                                    Expanded(
-                                                      child: Text(
-                                                        '${incompleteOrder.retailerBusinessName}',
-                                                        style: textStyle.copyWith(
-                                                            fontSize: 20,
-                                                            color: Colors.black,
-                                                            fontWeight: FontWeight.bold
-                                                        ),
-                                                      ),
-                                                    ),
-
-                                                    Text(
-                                                      "${DateFormat('dd, MMM yyyy').format(incompleteOrder.orderDate)}",
-                                                      style: textStyle.copyWith(
-                                                        fontSize: 14,
-                                                        color: Colors.black,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-
-                                                  ],
+                                                child: Text(
+                                                  '${incompleteOrder.retailerBusinessName}',
+                                                  style: textStyle.copyWith(
+                                                      fontSize: 20,
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.bold
+                                                  ),
                                                 ),
                                               ),
                                               subtitle: Column(
@@ -787,30 +683,19 @@ class _OrderListState extends State<OrderList> with TickerProviderStateMixin{
                                                         height: 1.4
                                                     ),
                                                   ),
-
-                                                  SizedBox(height: 6),
-
-                                                  Row(
-                                                    children: [
-
-                                                      Expanded(child: SizedBox()),
-
-                                                      Text(
-                                                        'Seller : ${incompleteOrder.sales_name}',
-                                                        textAlign: TextAlign.end,
-                                                        maxLines: 2,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: textStyle.copyWith(
-                                                            fontSize: 14,
-                                                            color: Colors.black,
-                                                            fontWeight: FontWeight.w600,
-                                                            height: 1.4
-                                                        ),
-                                                      ),
-
-                                                    ],
+                                                ],
+                                              ),
+                                              trailing: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    "${DateFormat('dd, MMM yyyy').format(incompleteOrder.orderDate)}",
+                                                    style: textStyle.copyWith(
+                                                      fontSize: 14,
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
                                                   ),
-
                                                 ],
                                               ),
                                               onTap: () {

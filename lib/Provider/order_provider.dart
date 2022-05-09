@@ -88,7 +88,7 @@ class OrderProvider with ChangeNotifier
 
     await ApiHandler.post(data,url).then((value){
       List<OrderModel> list;
-      //print(value);
+      print(value);
 
       if(value["st"] == "success")
       {
@@ -271,7 +271,6 @@ class OrderProvider with ChangeNotifier
       print(value);
       if(value["st"] == "success")
       {
-        isSuccess = true;
 
         salesOrderList.clear();
 
@@ -280,6 +279,8 @@ class OrderProvider with ChangeNotifier
         };
 
         getSalesOrders(data2, "/get_salesorder/1");
+
+        isSuccess = true;
         notifyListeners();
       }
       else
