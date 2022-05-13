@@ -41,7 +41,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
 
   pagecount(){
 
-    double a = widget.productList.length/30;
+    double a = widget.productList.length/25;
     //print(a%4);
     if((a)%1 == 0){
       pageLength = a.toInt();
@@ -1206,8 +1206,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       gridList.add(PdfGrid());
       gridList[i].columns.add(count: 5);
       gridList[i].headers.add(1);
-
-      pageList[i].graphics.drawString(
+      pageList[0].graphics.drawString(
           'Tax Invoice',
           PdfStandardFont(PdfFontFamily.helvetica, 15, style: PdfFontStyle.bold),
           brush: PdfSolidBrush(PdfColor(0, 0, 0)),
@@ -1221,7 +1220,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     }
 
     int x=0;
-    int y=30;
+    int y=25;
     if(y>widget.productList.length){
       y=widget.productList.length;
     }
@@ -1308,7 +1307,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       }
 
       x=y;
-      y=y+30;
+      y=y+25;
 
       print(widget.productList.length);
       if(y>widget.productList.length){
