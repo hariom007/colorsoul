@@ -62,17 +62,6 @@ class _splashState extends State<splash> {
 
   AuthProvider _authProvider;
 
-  @override
-  void initState()
-  {
-
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    super.initState();
-    getUserData();
-
-  }
-
   loginMethod() async {
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -128,6 +117,16 @@ class _splashState extends State<splash> {
     else{
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
     }
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    getUserData();
 
   }
 

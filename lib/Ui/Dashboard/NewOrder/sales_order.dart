@@ -102,7 +102,11 @@ class _SalesOrderState extends State<SalesOrder> {
   }
 
   bool isLoaded = true;
-  String selectedRetailerId,selectedRetailerName = "Select Distributor",selectedRetailerAddress,selectedRetailerState,orderAddress,selectedRetailerMobile;
+  String selectedRetailerId,selectedRetailerName = "Select Distributor",
+      selectedRetailerAddress,
+      selectedRetailerState,
+      orderAddress,
+      selectedRetailerMobile;
   getRetailer() async {
 
     setState(() {
@@ -1556,7 +1560,9 @@ class _SalesOrderState extends State<SalesOrder> {
                                       productList: FinalProduct,
                                       totalIgst: "${FinalIgst}",
                                       totalCgst: "${FinalCgst}",
-                                      totalSgst: "${FinalSgst}"
+                                      totalSgst: "${FinalSgst}",
+                                      retailerName: selectedRetailerName,
+                                      retailerNumber: selectedRetailerMobile,
                                   )));
 
                                 }
@@ -2294,8 +2300,6 @@ class _SalesOrderState extends State<SalesOrder> {
 
                                       ],
                                     ),
-
-
 
                                     SizedBox(height: height*0.02),
                                   ],
