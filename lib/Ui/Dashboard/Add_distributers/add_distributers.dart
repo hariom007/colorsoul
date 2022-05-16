@@ -652,9 +652,10 @@ class _AddDistributersState extends State<AddDistributers> {
                                               errorStyle: TextStyle(height: 0,fontSize: 0)
                                           ),
                                         ),
-                                        SizedBox(height: height*0.02),
 
-                                    Text(
+                                       // SizedBox(height: height*0.02),
+
+                                   /* Text(
                                       "Flat no or House no",
                                       style: textStyle.copyWith(
                                           color: Colors.black,
@@ -676,7 +677,8 @@ class _AddDistributersState extends State<AddDistributers> {
                                           isDense: true,
                                           errorStyle: TextStyle(height: 0,fontSize: 0)
                                       ),
-                                    ),
+                                    ),*/
+
                                     SizedBox(height: height*0.02),
 
                                     Text(
@@ -807,13 +809,6 @@ class _AddDistributersState extends State<AddDistributers> {
                                         SizedBox(height: height*0.01),
                                         TextFormField(
                                           controller: _personNameController,
-                                          validator: (String value) {
-                                            if(value.isEmpty)
-                                            {
-                                              return "";
-                                            }
-                                            return null;
-                                          },
                                           style: textStyle.copyWith(
                                               fontSize: 16,
                                               color: Colors.black
