@@ -1397,10 +1397,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     //Dispose the document
     document.dispose();
 
-    await saveAndLaunchFile(bytes, 'Inv.pdf');
+    //await saveAndLaunchFile(bytes, 'Inv.pdf');
 
 
-/*
     final path= Directory("storage/emulated/0/Document/ColorsoulPdf");
     // print(path);
     var status = await Permission.storage.status;
@@ -1416,11 +1415,11 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     }
 
     String route = "storage/emulated/0/Document/ColorsoulPdf";
-    File file = File('$route/Inv-$dateFormate.pdf');
+    File file = File('$route/Invoice_id_${widget.orderid}_$currentDate.pdf');
     await file.writeAsBytes(bytes, flush: true);
     //print("1");
 
-    OpenFile.open('$route/Inv-$dateFormate.pdf').then((value) {
+    OpenFile.open('$route/Invoice_id_${widget.orderid}_$currentDate.pdf').then((value) {
 
       setState(() {
         isLoading = false;
@@ -1428,13 +1427,11 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
 
       return null;
     });
-*/
 
   }
 
   String dateFormate = DateFormat("yyMMddhhmmss").format(DateTime.now());
-  String currentDate = DateFormat("dd MMM, yyyy").format(DateTime.now());
-
+  String currentDate = DateFormat("dd_MMM_yyyy").format(DateTime.now());
 
 }
 
