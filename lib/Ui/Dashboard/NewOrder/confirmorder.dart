@@ -1489,7 +1489,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     File file = File('$route/Invoice_id_${widget.orderid}_$currentDate.pdf');
     await file.writeAsBytes(bytes, flush: true);
 
-    sendImage(file.path);
+    //sendImage(file.path);
 
     OpenFile.open('$route/Invoice_id_${widget.orderid}_$currentDate.pdf').then((value) {
 

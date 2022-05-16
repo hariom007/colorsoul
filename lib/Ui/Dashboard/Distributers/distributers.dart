@@ -503,7 +503,7 @@ class _DistributorsState extends State<Distributors> {
                                                                       type: "${distributorData.type}",
                                                                       id: "${distributorData.id}",
                                                                       state: "${distributorData.state}",
-                                                                      city:"${distributorData.city}"
+                                                                      city:"${distributorData.city}",
                                                                   )));
 
                                                                 }

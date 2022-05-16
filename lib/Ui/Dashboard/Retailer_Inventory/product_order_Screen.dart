@@ -1,4 +1,5 @@
 import 'package:colorsoul/Model/Product_Model.dart';
+import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/normal_order.dart';
@@ -39,12 +40,14 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
   int totalQuentity = 0;
 
   ProductProvider _productProvider;
+  DistributorProvider _distributorProvider;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
+    _distributorProvider = Provider.of<DistributorProvider>(context, listen: false);
     _productProvider = Provider.of<ProductProvider>(context, listen: false);
 
     getGroup();
@@ -1132,6 +1135,38 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
     });
   }
 
+  String person_mobile = "";
+  getDistributorDetails(FinalAmount,FinalProduct) async {
+
+    var data = {
+      "id":"${widget.id}",
+    };
+
+    await _distributorProvider.getDistributorDetails(data, "/get_distributer_detail");
+
+    if(_distributorProvider.isSuccess == true){
+
+      if(_distributorProvider.distributorData['mobile'] == ""){
+        person_mobile = _distributorProvider.distributorData['mobile'];
+      }
+      else{
+        person_mobile = _distributorProvider.distributorData['telephone'];
+      }
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BarcodeConfirmOrder(
+        retailerId: widget.id,
+        address: orderAddress,
+        orderDate: _textEditingController1.text,
+        totalAmount: "${FinalAmount}",
+        productList: FinalProduct,
+          person_mobile: person_mobile,
+        retailerName: widget.distributor_name,
+      )));
+
+    }
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -1139,11 +1174,13 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
     var height = MediaQuery.of(context).size.height;
 
     _productProvider = Provider.of<ProductProvider>(context, listen: true);
+    _distributorProvider = Provider.of<DistributorProvider>(context, listen: true);
 
     return Scaffold(
         bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+
               Container(
                   height: 70,
                   color: AppColors.white,
@@ -1198,13 +1235,8 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
 
                                   }
 
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BarcodeConfirmOrder(
-                                    retailerId: widget.id,
-                                    address: orderAddress,
-                                    orderDate: _textEditingController1.text,
-                                    totalAmount: "${FinalAmount}",
-                                    productList: FinalProduct,
-                                  )));
+                                  getDistributorDetails(FinalAmount,FinalProduct);
+
                                 }
 
 
@@ -1226,6 +1258,7 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
                     ),
                   )
               )
+
             ]
         ),
         backgroundColor: Colors.white,

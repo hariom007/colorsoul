@@ -99,7 +99,8 @@ class _NewOrderState extends State<NewOrder> {
   }
 
   bool isLoaded = false;
-  String selectedRetailerId,selectedRetailerName = "Select Retailer",selectedRetailerAddress,orderAddress,selectedRetailerMobile;
+  String selectedRetailerId,selectedDistributorId,
+      selectedRetailerName = "Select Retailer",selectedRetailerAddress,orderAddress,selectedRetailerMobile;
   getRetailer() async {
 
     setState(() {
@@ -129,6 +130,25 @@ class _NewOrderState extends State<NewOrder> {
     });
 
   }
+
+  String person_mobile = "";
+  getDistributorDetails() async {
+
+    var data = {
+      "id":"$selectedDistributorId",
+    };
+
+    await _distributorProvider.getDistributorDetails(data, "/get_distributer_detail");
+
+    if(_distributorProvider.distributorData['mobile'] == ""){
+      person_mobile = _distributorProvider.distributorData['mobile'];
+    }
+    else{
+      person_mobile = _distributorProvider.distributorData['telephone'];
+    }
+
+  }
+
 
   getGroup() async {
     setState(() {
@@ -1389,6 +1409,7 @@ class _NewOrderState extends State<NewOrder> {
 
                                       setState(() {
                                         selectedRetailerId = t.id;
+                                        selectedDistributorId = t.parentId;
                                         selectedRetailerName =
                                         t.businessName == ""
                                             ?
@@ -1406,6 +1427,8 @@ class _NewOrderState extends State<NewOrder> {
                                         isvisible = true;
                                         isvisible1 = true;
                                       });
+
+                                      getDistributorDetails();
 
                                       Navigator.pop(context);
 
@@ -1553,6 +1576,7 @@ class _NewOrderState extends State<NewOrder> {
                               orderDate: _textEditingController1.text,
                               totalAmount: "${FinalAmount}",
                               productList: FinalProduct,
+                              person_mobile: person_mobile
                             )));
 
                           }
@@ -1683,7 +1707,6 @@ class _NewOrderState extends State<NewOrder> {
                                           ),
                                           SizedBox(height: 5),
                                           SizedBox(height: height*0.01),
-
 
                                           TextFormField(
                                               style: textStyle.copyWith(

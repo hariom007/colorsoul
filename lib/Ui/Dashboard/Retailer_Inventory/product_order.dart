@@ -857,7 +857,6 @@ class _ProductOrderState extends State<ProductOrder> {
                                 selectedAmount: selectedAmount,
                                 selectedQuantity: selectedQuantity,
                                 orderQuantity: orderQuantity,
-
                               )));
 
                             }
