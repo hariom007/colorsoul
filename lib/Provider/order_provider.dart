@@ -521,4 +521,44 @@ class OrderProvider with ChangeNotifier
   }
 
 
+  bool isSendWhatsapp = false;
+  SendWhatsapp(data,url) async
+  {
+
+    isSendWhatsapp = false;
+    isLoaded = false;
+    notifyListeners();
+
+    await ApiHandler.normalPost(data,url).then((value){
+      print(value);
+      if(value["ErrorMessage"] == "success")
+      {
+        isSendWhatsapp = true;
+        notifyListeners();
+      }
+      else
+      {
+        isSendWhatsapp = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Send Whatsapp error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
+
 }

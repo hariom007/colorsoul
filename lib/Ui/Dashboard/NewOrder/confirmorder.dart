@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:colorsoul/Provider/order_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/Pdf/savefile.dart';
@@ -7,12 +8,15 @@ import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:http/http.dart' as http;
+
 
 class ConfirmOrder extends StatefulWidget {
 
@@ -96,6 +100,13 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     await _orderProvider.insertSalesOrder(data, "/add_salesorder");
 
     if(_orderProvider.isSuccess == true){
+
+      pagecount();
+
+      Navigator.pop(context);
+      Navigator.pop(context);
+
+/*
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -103,6 +114,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
             return SimpleCustomAlert();
           }
       );
+      */
+
     }
 
   }
@@ -629,9 +642,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
 
                               //selectPaymentMethod();
 
-                              pagecount();
-
-                              //createOrder();
+                              createOrder();
 
                             },
                             style: ElevatedButton.styleFrom(
@@ -1148,8 +1159,68 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     );
   }
 
-  int pageLength;
+  String url = "";
+  sendImage(path) async {
 
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "4ccda7514adc0f13595a585205fb9761"
+    };
+
+    final uri = 'https://colorsoul.koffeekodes.com/admin/Api/imageUpload';
+    var request = http.MultipartRequest('POST', Uri.parse(uri));
+    request.headers.addAll(headers);
+
+    request.fields['folder'] = "profile";
+    request.files.add(await http.MultipartFile.fromPath('file', path));
+
+    request.send().then((response) async {
+      var res = await response.stream.bytesToString();
+      print(res);
+      var body = json.decode(res);
+
+      if (response.statusCode == 200 && body['st'] == "success") {
+
+        print("Upload done");
+
+        url = body['file'];
+        sendOnWhatsapp(url);
+      }
+      else{
+        Navigator.pop(context);
+
+        Fluttertoast.showToast(
+            msg: "Pdf Upload Error !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+
+    });
+
+  }
+
+  sendOnWhatsapp(String url) async {
+
+    var data = {
+
+      "key": "fd3b0043e7a54dffa1778d00a9e8828e",
+      "to": "918866609678",
+      "url": url,
+      "filename": "Invoice_No_${widget.orderid}.pdf",
+      "isUrgent": true
+    };
+    await _orderProvider.SendWhatsapp(data,'http://smartwhatsapp.dove-sms.com/api/v1/sendDocument');
+    if(_orderProvider.isSendWhatsapp == true){
+      print("Send On Whatsapp done");
+    }
+  }
+
+  int pageLength;
   bool isLoading = false;
   Future<void> _createPDF() async {
     //Create a new PDF document
@@ -1417,7 +1488,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     String route = "storage/emulated/0/Document/ColorsoulPdf";
     File file = File('$route/Invoice_id_${widget.orderid}_$currentDate.pdf');
     await file.writeAsBytes(bytes, flush: true);
-    //print("1");
+
+    sendImage(file.path);
 
     OpenFile.open('$route/Invoice_id_${widget.orderid}_$currentDate.pdf').then((value) {
 
@@ -1431,7 +1503,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   }
 
   String dateFormate = DateFormat("yyMMddhhmmss").format(DateTime.now());
-  String currentDate = DateFormat("dd_MMM_yyyy").format(DateTime.now());
+  String currentDate = DateFormat("dd_MMM_yyyy_hhmmss").format(DateTime.now());
 
 }
 
@@ -1449,9 +1521,11 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
     Timer(
         Duration(milliseconds: 1000),
         () {
+
           Navigator.pop(context);
           Navigator.pop(context);
           Navigator.pop(context);
+
 
         }
     );

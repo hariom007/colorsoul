@@ -237,4 +237,81 @@ class ApiHandler {
       }
   }
 
+  static Future<dynamic> normalPost(body,url) async {
+
+    _setHeadersPost()=> {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    var baseUrl = Uri.parse(url);
+
+    http.Response response = await http.post(
+        baseUrl,
+        headers: _setHeadersPost(),
+        body: jsonEncode(body)
+    );
+
+    // print(json.decode(response.body));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+
+      switch(response.statusCode){
+        case 400:
+          return Fluttertoast.showToast(
+              msg: "Bad Response Format",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+        case 401:
+          return Fluttertoast.showToast(
+              msg: "Unauthorized User",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+        case 500:
+          return Fluttertoast.showToast(
+              msg: "Internal Server Error",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+        case 404:
+          return Fluttertoast.showToast(
+              msg: "Resource Not Found",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+        default:
+          return Fluttertoast.showToast(
+              msg: "Unknown Error",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+      }
+
+    }
+  }
+
 }
