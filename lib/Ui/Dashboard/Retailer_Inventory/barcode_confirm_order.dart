@@ -563,7 +563,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
     var data = {
 
       "key": "fd3b0043e7a54dffa1778d00a9e8828e",
-      "to": "918866609678",
+      "to": "91${widget.person_mobile}",
       "url": url,
       "filename": "Invoice_No_${widget.orderid}.pdf",
       "isUrgent": true
@@ -865,19 +865,6 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
 
     if(widget.person_mobile != ""){
       sendImage(file.path);
-    }
-    else{
-
-      Fluttertoast.showToast(
-          msg: "Distributor Number Not Available !!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-
     }
 
     OpenFile.open('$route/Invoice_id_${widget.orderid}_$currentDate.pdf').then((value) {

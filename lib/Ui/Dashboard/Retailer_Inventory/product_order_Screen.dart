@@ -1146,12 +1146,7 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
 
     if(_distributorProvider.isSuccess == true){
 
-      if(_distributorProvider.distributorData['mobile'] == ""){
-        person_mobile = _distributorProvider.distributorData['mobile'];
-      }
-      else{
-        person_mobile = _distributorProvider.distributorData['telephone'];
-      }
+      person_mobile = _distributorProvider.distributorData['mobile2'];
 
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BarcodeConfirmOrder(
         retailerId: widget.id,

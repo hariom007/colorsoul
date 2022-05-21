@@ -495,7 +495,7 @@ class _DistributorsState extends State<Distributors> {
                                                                       home_address: "${distributorData.homeAddress}",
                                                                       landmark: "${distributorData.landmark}",
                                                                       person_mobile: "${distributorData.mobile}",
-                                                                      person_tel: "${distributorData.telephone}",
+                                                                       person_tel: "${distributorData.telephone}",
                                                                       business_type: "${distributorData.businessType}",
                                                                       distributor_gst: "${distributorData.gstNo}",
                                                                       opentime: "${distributorData.openTime}",
