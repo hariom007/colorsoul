@@ -31,8 +31,8 @@ class Debouncer {
 class ProductOrder extends StatefulWidget {
 
   String distributor_name,distributor_address,latitude,longitude,home_address,distributor_gst,landmark,city,state,
-      person_name,person_mobile,person_tel,opentime,closetime,business_type,type,id;
-  ProductOrder({Key key, this.distributor_name,this.distributor_address,this.latitude,this.longitude,this.distributor_gst,this.landmark,
+      person_name,person_mobile,person_tel,opentime,closetime,business_type,type,id,perentId;
+  ProductOrder({Key key, this.distributor_name,this.distributor_address,this.latitude,this.longitude,this.distributor_gst,this.landmark,this.perentId,
     this.person_name,this.person_mobile,this.person_tel,this.opentime,this.closetime,this.business_type,this.type,this.id,this.home_address,this.city,this.state
   }) : super(key: key);
 
@@ -851,6 +851,7 @@ class _ProductOrderState extends State<ProductOrder> {
                                 closetime: "${widget.closetime}",
                                 type: "${widget.type}",
                                 id: "${widget.id}",
+                                perentId: "${widget.perentId}",
                                 state: "${widget.state}",
                                 city:"${widget.city}",
                                 productList: viewProduct,

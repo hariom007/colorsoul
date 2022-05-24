@@ -269,7 +269,8 @@ class _RetailerInventoryState extends State<RetailerInventory> {
                                                     type: "${distributorData.type}",
                                                     id: "${distributorData.id}",
                                                     state: "${distributorData.state}",
-                                                    city:"${distributorData.city}"
+                                                    city:"${distributorData.city}",
+                                                  perentId: "${distributorData.parentId}",
                                                 )));
 
                                               },

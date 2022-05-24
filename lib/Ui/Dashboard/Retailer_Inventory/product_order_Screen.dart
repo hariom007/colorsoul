@@ -18,7 +18,7 @@ import '../NewOrder/neworder.dart';
 class BarcodeOrder extends StatefulWidget {
 
   String distributor_name,distributor_address,latitude,longitude,home_address,distributor_gst,landmark,city,state,
-      person_name,person_mobile,person_tel,opentime,closetime,business_type,type,id;
+      person_name,person_mobile,person_tel,opentime,closetime,business_type,type,id,perentId;
   List productList;
   List<TextEditingController> selectedQuantity = [];
   List<TextEditingController> orderQuantity = [];
@@ -26,7 +26,7 @@ class BarcodeOrder extends StatefulWidget {
 
   BarcodeOrder({Key key, this.distributor_name,this.distributor_address,this.latitude,this.longitude,this.distributor_gst,this.landmark,
     this.person_name,this.person_mobile,this.person_tel,this.opentime,this.closetime,this.business_type,this.type,this.id,this.home_address,this.city,this.state,
-    this.productList,this.selectedQuantity,this.orderQuantity,this.selectedAmount
+    this.productList,this.selectedQuantity,this.orderQuantity,this.selectedAmount,this.perentId
   }) : super(key: key);
 
   @override
@@ -1139,14 +1139,19 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
   getDistributorDetails(FinalAmount,FinalProduct) async {
 
     var data = {
-      "id":"${widget.id}",
+      "id":"${widget.perentId}",
     };
 
+    print(data);
     await _distributorProvider.getDistributorDetails(data, "/get_distributer_detail");
 
     if(_distributorProvider.isSuccess == true){
 
       person_mobile = _distributorProvider.distributorData['mobile2'];
+
+      print("Person Number :" + person_mobile);
+
+      print(FinalProduct);
 
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BarcodeConfirmOrder(
         retailerId: widget.id,
@@ -1154,7 +1159,7 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
         orderDate: _textEditingController1.text,
         totalAmount: "${FinalAmount}",
         productList: FinalProduct,
-          person_mobile: person_mobile,
+        person_mobile: person_mobile,
         retailerName: widget.distributor_name,
       )));
 

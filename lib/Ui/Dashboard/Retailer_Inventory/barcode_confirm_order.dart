@@ -133,6 +133,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
 
     pagecount();
     Navigator.pop(context);
+    Navigator.pop(context);
 
   }
 
@@ -716,10 +717,10 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
 
         rowList.add(gridList[i].rows.add());
         rowList[j].cells[0].value=(j+1).toString();
-        rowList[j].cells[1].value = widget.productList[j]["name"];
-        rowList[j].cells[2].value = widget.productList[j]["qty"];
-        rowList[j].cells[3].value = widget.productList[j]["price"];
-        rowList[j].cells[4].value = "${double.parse("${widget.productList[j]["qty"]}") * double.parse("${widget.productList[j]["price"]}")}";
+        rowList[j].cells[1].value = "${widget.productList[j]["sku"]}";
+        rowList[j].cells[2].value = "${widget.productList[j]["qty"]}";
+        rowList[j].cells[3].value = "${widget.productList[j]["amount"]}";
+        rowList[j].cells[4].value = "${double.parse("${widget.productList[j]["qty"]}") * double.parse("${widget.productList[j]["amount"]}")}";
 
         rowList[j].cells[1].style = cellStyle1;
         rowList[j].cells[2].style = cellStyle1;

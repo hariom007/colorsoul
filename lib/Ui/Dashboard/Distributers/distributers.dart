@@ -504,6 +504,7 @@ class _DistributorsState extends State<Distributors> {
                                                                       id: "${distributorData.id}",
                                                                       state: "${distributorData.state}",
                                                                       city:"${distributorData.city}",
+                                                                      perentId: "${distributorData.parentId}"
                                                                   )));
 
                                                                 }

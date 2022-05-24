@@ -139,13 +139,7 @@ class _NewOrderState extends State<NewOrder> {
     };
 
     await _distributorProvider.getDistributorDetails(data, "/get_distributer_detail");
-
-    if(_distributorProvider.distributorData['mobile'] == ""){
-      person_mobile = _distributorProvider.distributorData['mobile'];
-    }
-    else{
-      person_mobile = _distributorProvider.distributorData['telephone'];
-    }
+    person_mobile = _distributorProvider.distributorData['mobile2'];
 
   }
 
@@ -1569,6 +1563,8 @@ class _NewOrderState extends State<NewOrder> {
                               double singleAmount = double.parse(FinalProduct[i]['amount']) * double.parse(FinalProduct[i]['qty']);
                               FinalAmount = FinalAmount + singleAmount;
                             }
+
+                            print("Person Number :" + person_mobile);
 
                             Navigator.push(context, MaterialPageRoute(builder: (context) => NormalOrder(
                               retailerId: selectedRetailerId,
