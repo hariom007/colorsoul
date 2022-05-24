@@ -23,7 +23,7 @@ class BarcodeConfirmOrder extends StatefulWidget {
   String orderid,retailerId,address,orderDate,totalAmount,person_mobile,retailerName;
 
   BarcodeConfirmOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,
-    this.totalAmount,this.orderDate,this.person_mobile,retailerName
+    this.totalAmount,this.orderDate,this.person_mobile,this.retailerName
   }) : super(key: key);
 
   @override
