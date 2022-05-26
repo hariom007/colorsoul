@@ -132,8 +132,6 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
     });
 
     pagecount();
-    Navigator.pop(context);
-    Navigator.pop(context);
 
   }
 
@@ -542,7 +540,6 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
         sendOnWhatsapp(url);
       }
       else{
-        Navigator.pop(context);
 
         Fluttertoast.showToast(
             msg: "Pdf Upload Error !!",
@@ -793,15 +790,15 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
       gridu.columns[0].width = 510;
 
 //Add rows to grid
-      PdfGridRow rowug3 = gridu.rows.add();
+/*      PdfGridRow rowug3 = gridu.rows.add();
       rowug3.cells[0].value = "Invoice No : ${widget.orderid}";
       rowug3.cells[0].style.borders = borderb;
-      rowug3.style = rowStyle;
+      rowug3.style = rowStyle;*/
 
       PdfGridRow rowug1 = gridu.rows.add();
       rowug1.cells[0].value = "Retailer Name : ${widget.retailerName}";
       rowug1.style = rowStylebold;
-      rowug1.cells[0].style.borders = bordempty;
+      rowug1.cells[0].style.borders = borderb;
 
       PdfGridRow rowup2 = gridu.rows.add();
       rowup2.cells[0].value = "Address : ${widget.address}";
@@ -846,7 +843,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
     //await saveAndLaunchFile(bytes, 'Inv.pdf');
 
 
-    final path= Directory("storage/emulated/0/Document/ColorsoulPdf");
+    final path= Directory("storage/emulated/0/Documents");
     // print(path);
     var status = await Permission.storage.status;
     if (!status.isGranted) {
@@ -860,15 +857,43 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
       path.create();
     }
 
-    String route = "storage/emulated/0/Document/ColorsoulPdf";
+    String route = "storage/emulated/0/Documents";
     File file = File('$route/Invoice_id_${widget.orderid}_$currentDate.pdf');
     await file.writeAsBytes(bytes, flush: true);
 
     if(widget.person_mobile != ""){
       sendImage(file.path);
+      setState(() {
+        isLoading = false;
+
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return SimpleCustomAlert();
+            }
+        );
+
+      });
+    }
+    else{
+      setState(() {
+        isLoading = false;
+
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return SimpleCustomAlert();
+            }
+        );
+
+      });
     }
 
-    OpenFile.open('$route/Invoice_id_${widget.orderid}_$currentDate.pdf').then((value) {
+
+
+   /* OpenFile.open('$route/Invoice_id_${widget.orderid}_$currentDate.pdf').then((value) {
 
       setState(() {
         isLoading = false;
@@ -876,7 +901,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
 
       return null;
     });
-
+*/
   }
 
   String dateFormate = DateFormat("yyMMddhhmmss").format(DateTime.now());
@@ -900,7 +925,7 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
             () {
           Navigator.pop(context);
           Navigator.pop(context);
-
+          Navigator.pop(context);
         }
     );
   }
