@@ -1136,7 +1136,7 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
   }
 
   String person_mobile = "";
-  getDistributorDetails(FinalAmount,FinalProduct) async {
+  getDistributorDetails(FinalAmount,FinalProduct,ProductName) async {
 
     var data = {
       "id":"${widget.perentId}",
@@ -1160,9 +1160,12 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
         address: orderAddress,
         orderDate: _textEditingController1.text,
         totalAmount: "${FinalAmount}",
+        totalQuantity: "${totalQuentity}",
         productList: FinalProduct,
         person_mobile: person_mobile,
         retailerName: widget.person_name,
+          mobile_number: widget.person_mobile,
+          ProductName: ProductName
       )));
 
     }
@@ -1217,6 +1220,7 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
 
                                   double FinalAmount = 0.0;
                                   var FinalProduct = [];
+                                  var ProductName = [];
 
                                   for(int i=0;i<widget.productList.length;i++){
 
@@ -1231,15 +1235,35 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
                                     };
 
                                     FinalProduct.add(singleProduct);
+                                    ProductName.add("${widget.productList[i]['name']}");
 
                                     double singleAmount = double.parse(widget.selectedAmount[i].text) * double.parse(widget.orderQuantity[i].text);
                                     FinalAmount = FinalAmount + singleAmount;
 
                                   }
 
-                                  getDistributorDetails(FinalAmount,FinalProduct);
+                                  if(widget.perentId == "0"){
 
-                                }
+                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BarcodeConfirmOrder(
+                                      orderid: "0",
+                                      retailerId: widget.id,
+                                      address: orderAddress,
+                                      orderDate: _textEditingController1.text,
+                                      totalAmount: "${FinalAmount}",
+                                      productList: FinalProduct,
+                                        totalQuantity: "${totalQuentity}",
+                                        mobile_number: widget.person_mobile,
+                                        person_mobile: person_mobile,
+                                      retailerName: widget.person_name,
+                                        ProductName: ProductName
+                                    )));
+
+                                  }
+                                  else{
+                                    getDistributorDetails(FinalAmount,FinalProduct,ProductName);
+                                  }
+
+                              }
 
 
                             },

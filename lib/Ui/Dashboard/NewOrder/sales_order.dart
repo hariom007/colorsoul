@@ -6,13 +6,10 @@ import 'package:colorsoul/Provider/distributor_provider.dart';
 import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/confirmorder.dart';
 import 'package:colorsoul/Ui/Dashboard/NewOrder/location_page.dart';
-import 'package:dropdown_below/dropdown_below.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -1432,7 +1429,6 @@ class _SalesOrderState extends State<SalesOrder> {
       });
     });
   }
-
 
 
   @override

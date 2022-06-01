@@ -34,7 +34,7 @@ class _DistributorsState extends State<Distributors> {
   final _picker = ImagePicker();
   Future getImage(ImageSource source,id) async {
     final XFile photo = await _picker.pickImage(source: source);
-    File cropped = await ImageCropper.cropImage(
+    File cropped = await ImageCropper().cropImage(
         sourcePath: photo.path,
         // aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
         compressQuality: 100,

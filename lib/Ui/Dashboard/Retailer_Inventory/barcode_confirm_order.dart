@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:colorsoul/Provider/order_provider.dart';
+import 'package:colorsoul/Ui/Dashboard/NewOrder/Pdf/savefile.dart';
 import 'package:colorsoul/Values/appColors.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +21,11 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 class BarcodeConfirmOrder extends StatefulWidget {
 
   List productList = [];
-  String orderid,retailerId,address,orderDate,totalAmount,person_mobile,retailerName;
+  List ProductName = [];
+  String orderid,retailerId,address,orderDate,totalAmount,totalQuantity,person_mobile,mobile_number,retailerName;
 
-  BarcodeConfirmOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,
-    this.totalAmount,this.orderDate,this.person_mobile,this.retailerName
+  BarcodeConfirmOrder({Key key,this.orderid,this.productList,this.retailerId,this.address,this.mobile_number,
+    this.totalAmount,this.orderDate,this.person_mobile,this.retailerName,this.ProductName,this.totalQuantity
   }) : super(key: key);
 
   @override
@@ -133,6 +135,8 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
 
     pagecount();
 
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 
 
@@ -563,7 +567,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
       "key": "fd3b0043e7a54dffa1778d00a9e8828e",
       "to": "91${widget.person_mobile}",
       "url": url,
-      "filename": "Invoice_No_${widget.orderid}.pdf",
+      "filename": "Invoice_No_${_orderProvider.orderId}.pdf",
       "isUrgent": true
     };
     await _orderProvider.SendWhatsapp(data,'http://smartwhatsapp.dove-sms.com/api/v1/sendDocument');
@@ -610,16 +614,24 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
         alignment: PdfTextAlignment.center,
         lineAlignment: PdfVerticalAlignment.middle,
         wordSpacing: 10);
+
     PdfGridRowStyle rowStylebold = PdfGridRowStyle(
         font: PdfStandardFont(
             PdfFontFamily.timesRoman, 12, style: PdfFontStyle.bold));
+
+    PdfGridRowStyle rowStyleboldExtra = PdfGridRowStyle(
+        font: PdfStandardFont(
+            PdfFontFamily.timesRoman, 12, style: PdfFontStyle.bold));
+
     PdfGridRowStyle rowStyle = PdfGridRowStyle(
         font: PdfStandardFont(PdfFontFamily.timesRoman, 11));
+
     PdfGridCellStyle cellStyle1 = PdfGridCellStyle(
       //cellPadding: PdfPaddings(left: 2, right: 3, top: 4, bottom: 5),
       font: PdfStandardFont(
           PdfFontFamily.timesRoman, 10, style: PdfFontStyle.bold),
     );
+
 
     PdfBorders borderu = PdfBorders(
       top: PdfPen(PdfColor.empty),
@@ -637,8 +649,13 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
       cellPadding: PdfPaddings(left: 7, right: 7, top: 3, bottom: 0),
     );
     PdfGridStyle gridStyle1 = PdfGridStyle(
-      cellPadding: PdfPaddings(left: 7, right: 7, top: 4, bottom: 4),
+      cellPadding: PdfPaddings(left: 7, right: 7, top: 0, bottom: 0),
     );
+
+    PdfGridStyle gridStyle2 = PdfGridStyle(
+      cellPadding: PdfPaddings(left: 7, right: 7, top: 7, bottom: 0),
+    );
+
     PdfGridStyle gridStylewithheader = PdfGridStyle(
       cellPadding: PdfPaddings(left: 5, right: 5, top: 03, bottom: 0),
     );
@@ -650,7 +667,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
       gridList[i].columns.add(count: 5);
       gridList[i].headers.add(1);
       pageList[0].graphics.drawString(
-          'Tax Invoice',
+          'Order Invoice',
           PdfStandardFont(PdfFontFamily.helvetica, 15, style: PdfFontStyle.bold),
           brush: PdfSolidBrush(PdfColor(0, 0, 0)),
           bounds: Rect.fromLTWH(225, 00, 500, 0));
@@ -673,18 +690,16 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
 
       hadderList.add(gridList[i].headers[0]);
       hadderList[i].cells[0].value ="Sr.";//Save the document
-      hadderList[i].cells[1].value ="Item Code";//Save the document
-      hadderList[i].cells[2].value ="Quantity";
-      hadderList[i].cells[3].value ="Rate";
-      hadderList[i].cells[4].value ="Amount";
+      hadderList[i].cells[1].value ="Product Name";//Save the document
+      hadderList[i].cells[2].value ="Color Code";
+      hadderList[i].cells[3].value ="Quantity";
 
       hadderList[i].style = rowStyle;
 
       gridList[i].columns[0].width=30;
-      gridList[i].columns[1].width=250;
-      gridList[i].columns[2].width=60;
-      gridList[i].columns[3].width=60;
-      gridList[i].columns[4].width=110;
+      gridList[i].columns[1].width=320;
+      gridList[i].columns[2].width=80;
+      gridList[i].columns[3].width=80;
       gridList[i].rows.applyStyle(gridStylewithheader);
 
       // header.cells[0].style =PdfGridCellStyle(,cellPadding: PdfPaddings(left: 100,right: 100));
@@ -704,25 +719,18 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
           alignment: PdfTextAlignment.center,
           lineAlignment: PdfVerticalAlignment.middle,
           wordSpacing: 10);
-      hadderList[i].cells[4].style.stringFormat = PdfStringFormat(
-          alignment: PdfTextAlignment.center,
-          lineAlignment: PdfVerticalAlignment.middle,
-          wordSpacing: 10);
-
 
       for (int j = x; j < y; j++) {
 
         rowList.add(gridList[i].rows.add());
         rowList[j].cells[0].value=(j+1).toString();
-        rowList[j].cells[1].value = "${widget.productList[j]["sku"]}";
-        rowList[j].cells[2].value = "${widget.productList[j]["qty"]}";
-        rowList[j].cells[3].value = "${widget.productList[j]["amount"]}";
-        rowList[j].cells[4].value = "${double.parse("${widget.productList[j]["qty"]}") * double.parse("${widget.productList[j]["amount"]}")}";
+        rowList[j].cells[1].value = "${widget.ProductName[j]}";
+        rowList[j].cells[2].value = "${widget.productList[j]["color_code"]}";
+        rowList[j].cells[3].value = "${widget.productList[j]["qty"]}";
 
         rowList[j].cells[1].style = cellStyle1;
         rowList[j].cells[2].style = cellStyle1;
         rowList[j].cells[3].style = cellStyle1;
-        rowList[j].cells[4].style = cellStyle1;
 
         rowList[j].cells[i].style = PdfGridCellStyle(
           cellPadding: PdfPaddings(left: 3, right: 3, top: 4, bottom: 0),
@@ -743,9 +751,6 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
         rowList[j].cells[3].style.borders = PdfBorders(
             bottom:PdfPen(PdfColor.empty),top:PdfPen(PdfColor.empty)
         );
-        rowList[j].cells[4].style.borders = PdfBorders(
-            bottom:PdfPen(PdfColor.empty),top:PdfPen(PdfColor.empty)
-        );
 
       }
 
@@ -756,6 +761,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
       if(y>widget.productList.length){
         y=widget.productList.length;
       }
+
 
       PdfGridRow r2=gridList[i].rows.add();
 
@@ -776,11 +782,16 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
                 lineAlignment: PdfVerticalAlignment.middle,
                 wordSpacing: 0);
           }
+          if(d==3){
+
+            r2.cells[d].style = cellStyle1;
+
+          }
         }
 
       }
-      r2.cells[4].value=" Rs.${widget.totalAmount}";
-      r2.cells[1].value="Total Amount ";
+      r2.cells[3].value=" ${widget.totalQuantity}";
+      r2.cells[1].value= "Total Quantity ";
 
       PdfGrid gridu = PdfGrid();
 
@@ -795,16 +806,35 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
       rowug3.cells[0].style.borders = borderb;
       rowug3.style = rowStyle;*/
 
+      PdfGridRow rowug6 = gridu.rows.add();
+      rowug6.cells[0].value = "";
+      rowug6.style = rowStyleboldExtra;
+      rowug6.cells[0].style.borders = borderb;
+
+      PdfGridRow rowug4 = gridu.rows.add();
+      rowug4.cells[0].value = "Order No - ${_orderProvider.orderId}";
+      rowug4.style = rowStylebold;
+      rowug4.cells[0].style.borders = bordempty;
+
+      PdfGridRow rowug5 = gridu.rows.add();
+      rowug5.cells[0].value = "Order Date - ${widget.orderDate}";
+      rowug5.style = rowStylebold;
+      rowug5.cells[0].style.borders = bordempty;
+
       PdfGridRow rowug1 = gridu.rows.add();
-      rowug1.cells[0].value = "Retailer Name : ${widget.retailerName}";
+      rowug1.cells[0].value = "Retailer Name - ${widget.retailerName}";
       rowug1.style = rowStylebold;
-      rowug1.cells[0].style.borders = borderb;
+      rowug1.cells[0].style.borders = bordempty;
 
       PdfGridRow rowup2 = gridu.rows.add();
-      rowup2.cells[0].value = "Address : ${widget.address}";
+      rowup2.cells[0].value = "Retailer Address - ${widget.address}";
       rowup2.style = rowStylebold;
       rowup2.cells[0].style.borders = bordempty;
 
+      PdfGridRow rowup3 = gridu.rows.add();
+      rowup3.cells[0].value = "Retailer Phone No - ${widget.mobile_number}";
+      rowup3.style = rowStylebold;
+      rowup3.cells[0].style.borders = bordempty;
 
       PdfLayoutResult result,result1;
 
@@ -858,42 +888,39 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
     }
 
     String route = "storage/emulated/0/Documents";
-    File file = File('$route/Invoice_id_${widget.orderid}_$currentDate.pdf');
+    File file = File('$route/Invoice_id_${_orderProvider.orderId}_$currentDate.pdf');
     await file.writeAsBytes(bytes, flush: true);
 
-    if(widget.person_mobile != ""){
+   /* if(widget.person_mobile != ""){
       sendImage(file.path);
-      setState(() {
-        isLoading = false;
 
-        showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) {
-              return SimpleCustomAlert();
-            }
-        );
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return SimpleCustomAlert();
+          }
+      );
 
-      });
     }
     else{
-      setState(() {
-        isLoading = false;
 
-        showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) {
-              return SimpleCustomAlert();
-            }
-        );
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return SimpleCustomAlert();
+          }
+      );
 
-      });
     }
 
+    setState(() {
+      isLoading = false;
+    });*/
 
 
-   /* OpenFile.open('$route/Invoice_id_${widget.orderid}_$currentDate.pdf').then((value) {
+    OpenFile.open('$route/Invoice_id_${_orderProvider.orderId}_$currentDate.pdf').then((value) {
 
       setState(() {
         isLoading = false;
@@ -901,7 +928,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
 
       return null;
     });
-*/
+
   }
 
   String dateFormate = DateFormat("yyMMddhhmmss").format(DateTime.now());
@@ -924,8 +951,7 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
         Duration(milliseconds: 1000),
             () {
           Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
+
         }
     );
   }

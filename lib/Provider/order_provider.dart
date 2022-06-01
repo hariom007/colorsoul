@@ -442,6 +442,7 @@ class OrderProvider with ChangeNotifier
 
 
   bool isBarcode = false;
+  String orderId = "";
   insertBarcodeOrder(data,url) async
   {
 
@@ -450,11 +451,12 @@ class OrderProvider with ChangeNotifier
     notifyListeners();
 
     await ApiHandler.post(data,url).then((value){
-      print(value["st"]);
+      print(value);
       if(value["st"] == "success")
       {
         isBarcode = true;
         isLoaded = true;
+        orderId = "${value["id"]}";
         print(isBarcode);
         notifyListeners();
       }

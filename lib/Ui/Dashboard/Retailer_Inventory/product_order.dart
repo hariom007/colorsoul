@@ -61,6 +61,7 @@ class _ProductOrderState extends State<ProductOrder> {
 
         var product = {
           "pid":"${_orderProvider.scanProductDetails['cl_product_id']}",
+          "name":"${_orderProvider.scanProductDetails['cl_product_name']}",
           "short":"${_orderProvider.scanProductDetails['cl_product_shortname']}",
           "color_id":"${_orderProvider.scanProductDetails['colors']['cl_color_id']}",
           "color_code":"${_orderProvider.scanProductDetails['colors']['cl_color_code']}",
@@ -733,6 +734,7 @@ class _ProductOrderState extends State<ProductOrder> {
 
                                                 var product = {
                                                   "pid":"${showProductList[i].clProductId}",
+                                                  "name": "${showProductList[i].clProductName}",
                                                   "short":"${showProductList[i].clProductShortname}",
                                                   "color_id":"${showProductList[i].colors[0].clColorId}",
                                                   "color_code":"${showProductList[i].colors[0].clColorCode}",

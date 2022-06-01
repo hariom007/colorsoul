@@ -32,7 +32,7 @@ class _AddNotesState extends State<AddNotes> {
     final _picker = ImagePicker();
 
     final XFile photo = await _picker.pickImage(source: source);
-    File cropped = await ImageCropper.cropImage(
+    File cropped = await ImageCropper().cropImage(
       sourcePath: photo.path,
       // aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
       compressQuality: 100,
