@@ -47,7 +47,7 @@ class _ProductOrderState extends State<ProductOrder> {
   List<TextEditingController> selectedQuantity = [];
   List<TextEditingController> orderQuantity = [];
   List<TextEditingController> selectedAmount = [];
-
+  
   addProducts() async {
 
     var data = {

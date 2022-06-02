@@ -180,6 +180,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
                             onPressed: () {
 
                               createOrder();
+                              //pagecount();
 
                             },
                             style: ElevatedButton.styleFrom(
@@ -763,35 +764,51 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
         y=widget.productList.length;
       }
 
-      PdfGridRow r2=gridList[i].rows.add();
+      if(i == gridList.length-1){
 
-      for (int d = 0; d < gridList[i].columns.count; d++) {
-        if(d==1||d==4){
-          r2.cells[d].style = PdfGridCellStyle(
-            cellPadding: PdfPaddings(left: 2, right: 3, top: 5, bottom: 5),
-            font: PdfStandardFont(PdfFontFamily.timesRoman, 10,style: PdfFontStyle.bold),
-          );
-          if(d==1){
+        PdfGridRow r2 = gridList[gridList.length-1].rows.add();
 
+        for (int d = 0; d < gridList[gridList.length-1].columns.count; d++) {
+          if(d==1||d==4){
             r2.cells[d].style = PdfGridCellStyle(
-              cellPadding: PdfPaddings(left: 2, right: 3, top: 0, bottom: 5),
+              cellPadding: PdfPaddings(left: 2, right: 3, top: 5, bottom: 5),
               font: PdfStandardFont(PdfFontFamily.timesRoman, 10,style: PdfFontStyle.bold),
             );
-            r2.cells[d].style.stringFormat = PdfStringFormat(
-                alignment: PdfTextAlignment.right,
-                lineAlignment: PdfVerticalAlignment.middle,
-                wordSpacing: 0);
-          }
-          if(d==3){
+            if(d==1){
 
-            r2.cells[d].style = cellStyle1;
+              r2.cells[d].style = PdfGridCellStyle(
+                cellPadding: PdfPaddings(left: 2, right: 3, top: 0, bottom: 5),
+                font: PdfStandardFont(PdfFontFamily.timesRoman, 10,style: PdfFontStyle.bold),
+              );
+              r2.cells[d].style.stringFormat = PdfStringFormat(
+                  alignment: PdfTextAlignment.right,
+                  lineAlignment: PdfVerticalAlignment.middle,
+                  wordSpacing: 0);
+            }
+            if(d==3){
 
+              r2.cells[d].style = cellStyle1;
+            }
           }
+
         }
+        r2.cells[3].value=" ${widget.totalQuantity}";
+        r2.cells[1].value= "Total Quantity ";
 
       }
-      r2.cells[3].value=" ${widget.totalQuantity}";
-      r2.cells[1].value= "Total Quantity ";
+      else{
+
+        PdfGridRow r3 = gridList[i].rows.add();
+
+        for (int d = 0; d < gridList[i].columns.count; d++) {
+          //r3.cells[d].style = cellStyle1;
+          r3.cells[d].style.borders =  PdfBorders(
+              top:PdfPen(PdfColor.empty)
+          );
+          }
+
+      }
+
 
       PdfGrid gridu = PdfGrid();
 
@@ -924,14 +941,16 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
     });
 
 
-  /*  OpenFile.open('$route/Invoice_id_${_orderProvider.orderId}_$currentDate.pdf').then((value) {
+/*
+    OpenFile.open('$route/Invoice_id_${_orderProvider.orderId}_$currentDate.pdf').then((value) {
 
       setState(() {
         isLoading = false;
       });
 
       return null;
-    });*/
+    });
+*/
 
   }
 
