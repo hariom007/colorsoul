@@ -1153,6 +1153,7 @@ class _SimpleCustomAlertState extends State<SimpleCustomAlert> {
 
           Navigator.pop(context);
           Navigator.pop(context);
+          Navigator.pop(context);
 
         }
     );

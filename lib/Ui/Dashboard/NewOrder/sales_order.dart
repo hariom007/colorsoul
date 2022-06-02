@@ -122,6 +122,8 @@ class _SalesOrderState extends State<SalesOrder> {
         isLoaded = true;
       });
 
+      searchNewDistributor = _distributorProvider.onlyDistributorList;
+
       getGroup();
     }
     setState(() {

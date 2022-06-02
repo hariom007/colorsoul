@@ -895,7 +895,7 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
     File file = File('$route/Invoice_id_${_orderProvider.orderId}_$currentDate.pdf');
     await file.writeAsBytes(bytes, flush: true);
 
-   /* if(widget.person_mobile != ""){
+    if(widget.person_mobile != ""){
       sendImage(file.path);
 
       showDialog(
@@ -921,17 +921,17 @@ class _BarcodeConfirmOrderState extends State<BarcodeConfirmOrder> {
 
     setState(() {
       isLoading = false;
-    });*/
+    });
 
 
-    OpenFile.open('$route/Invoice_id_${_orderProvider.orderId}_$currentDate.pdf').then((value) {
+  /*  OpenFile.open('$route/Invoice_id_${_orderProvider.orderId}_$currentDate.pdf').then((value) {
 
       setState(() {
         isLoading = false;
       });
 
       return null;
-    });
+    });*/
 
   }
 
