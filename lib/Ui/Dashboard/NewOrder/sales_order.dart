@@ -1255,7 +1255,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                   child: TextField(
                                     onSubmitted: (value){
 
-                                      FocusScope.of(context).requestFocus(new FocusNode());
+                                  /*    FocusScope.of(context).requestFocus(new FocusNode());
                                       setState((){
 
                                         _debouncer.run(() {
@@ -1268,12 +1268,12 @@ class _SalesOrderState extends State<SalesOrder> {
                                           });
                                         });
 
-                                      });
+                                      });*/
 
                                     },
                                     onChanged: (value){
 
-                                      setState((){
+                                     /* setState((){
 
                                         _debouncer.run(() {
                                           setState(() {
@@ -1285,7 +1285,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                           });
                                         });
 
-                                      });
+                                      });*/
 
 
                                     },
