@@ -204,7 +204,7 @@ class _EditDistributersState extends State<EditDistributers> {
       "business_name":businessNameController.text,
       "business_type":"${businessTypeController.text}",
       "gst_no":"${businessGSTController.text}",
-      "address":"$address",
+      "address":"${_addressController.text}",
       "home_address": "${_addressNoController.text}",
       "landmark":"${_addressController.text}",
       "city":city,

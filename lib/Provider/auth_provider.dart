@@ -29,7 +29,7 @@ class AuthProvider with ChangeNotifier
           notifyListeners();
 
           Fluttertoast.showToast(
-              msg: "Number or Password are Wrong !!",
+              msg: "${value["msg"]}",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,

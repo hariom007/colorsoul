@@ -7,6 +7,7 @@ import 'package:colorsoul/Values/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -47,6 +48,10 @@ class _DetailsState extends State<Details> {
   }
 
   Future<Position> getGeoLocationPosition() async {
+
+    setState(() {
+      _distributorProvider.isCheckLoading = true;
+    });
 
     bool serviceEnabled;
     LocationPermission permission;
@@ -186,11 +191,59 @@ class _DetailsState extends State<Details> {
     city = "${_distributorProvider.distributorData['city']}";
     state = "${_distributorProvider.distributorData['state']}";
 
-    print("long $longitude");
-    print("lat $latitude");
+    //print("long $longitude");
+    //print("lat $latitude");
+
+    getRetailerStatus();
 
   }
 
+  bool isCheckShow = true;
+  bool isCheck = false;
+  getRetailerCheckIn(String lat,String long,String address) async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+        "r_id": "${widget.id}",
+        "user_id": userId,
+        "name": "$distributor_name",
+        "address": "$address",
+        "in_lat": "$lat",
+        "in_long": "$long",
+        "out_lat": "$lat",
+        "out_long": "$long",
+        "type": isCheckShow == true ? "in" : "out"
+    };
+
+    await _distributorProvider.getRetailerCheckIn(data, "/salesman_log");
+    getRetailerStatus();
+
+  }
+
+  getRetailerStatus() async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.get("userId");
+
+    var data = {
+      "user_id": userId,
+    };
+
+    await _distributorProvider.getRetailerStatus(data, "/salesman_status");
+    if(_distributorProvider.distributorStatus['status'] == "checked_id" && _distributorProvider.distributorStatus['r_id'] == "${widget.id}"){
+      setState(() {
+        isCheck = true;
+      });
+    }
+    else{
+      setState(() {
+        isCheck = false;
+      });
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -233,6 +286,36 @@ class _DetailsState extends State<Details> {
             ),
           ),
           actions: [
+
+            _distributorProvider.isCheckLoading == true
+                ?
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(color: AppColors.white),
+                )
+                :
+            FlutterSwitch(
+              height: 30,
+              showOnOff: true,
+              activeTextColor: AppColors.white,
+              inactiveTextColor: AppColors.white,
+              activeColor: Colors.green,
+              inactiveColor: Colors.red,
+              value: isCheck,
+              onToggle: (val) async {
+
+                setState(() {
+                  isCheckShow = val;
+                });
+
+                Position position = await getGeoLocationPosition();
+                getRetailerCheckIn("${position.latitude}","${position.latitude}","");
+
+              },
+              activeText: "In",
+              inactiveText : "Out",
+            ),
+
             Padding(
               padding: const EdgeInsets.all(18.0),
               child: InkWell(

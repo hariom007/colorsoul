@@ -191,4 +191,78 @@ class DistributorProvider with ChangeNotifier
   }
 
 
+  var distributorStatusData;
+  bool isCheckIn = true;
+  bool isCheckLoading = false;
+
+  getRetailerCheckIn(data,url) async
+  {
+
+    isCheckIn = false;
+    isCheckLoading = true;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      if(value["st"] == "success")
+      {
+        isCheckIn = true;
+        isCheckLoading = false;
+        notifyListeners();
+      }
+      else
+      {
+        isCheckIn = false;
+        isCheckLoading = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "${value['msg']}",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+    });
+
+  }
+
+
+  bool isStatusLoading = false;
+  var distributorStatus;
+  getRetailerStatus(data,url) async
+  {
+
+    isStatusLoading = true;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      if(value["st"] == "success")
+      {
+        isStatusLoading = false;
+        distributorStatus = value;
+        notifyListeners();
+      }
+      else
+      {
+        isStatusLoading = false;
+        distributorStatus = {
+          "status": "false",
+        };
+        notifyListeners();
+
+      }
+
+    });
+
+  }
+
+
+
 }

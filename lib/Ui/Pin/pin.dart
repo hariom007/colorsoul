@@ -4,6 +4,7 @@ import 'package:colorsoul/Ui/Login/login.dart';
 import 'package:colorsoul/Values/components.dart';
 import 'package:colorsoul/Ui/Pin/forgotpin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/auth_strings.dart';
@@ -37,6 +38,11 @@ class _PinState extends State<Pin> {
     if(widget.authValue == true){
       _authenticate();
     }
+    else{
+      setState(() {
+        isLoading = false;
+      });
+    }
 
   }
 
@@ -69,12 +75,20 @@ class _PinState extends State<Pin> {
         goToSettingsDescription: 'Please set up your Touch ID.',
         lockOut: 'Please Re-enable your Touch ID');
 
-    authenticated = await auth.authenticateWithBiometrics(
-      localizedReason: 'Please authenticate to Login your Account',
-      iOSAuthStrings: iosStrings,
-      useErrorDialogs: true,
-      stickyAuth: true,
-    );
+    try{
+
+      authenticated = await auth.authenticateWithBiometrics(
+        localizedReason: 'Please authenticate to Login your Account',
+        iOSAuthStrings: iosStrings,
+        useErrorDialogs: true,
+        stickyAuth: true,
+      );
+
+    } on PlatformException {
+      setState(() {
+        isLoading = false;
+      });
+    }
 
     if(authenticated == true){
 

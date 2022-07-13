@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:colorsoul/Provider/auth_provider.dart';
 import 'package:colorsoul/Ui/Pin/forgotpin.dart';
 import 'package:colorsoul/Values/appColors.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -31,11 +34,34 @@ class _LoginState extends State<Login> {
 
   }
 
+  String deviceId;
+  SharedPreferences sharedPreferences;
+  getDeviceId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isIOS) { // import 'dart:io'
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+
+      deviceId = iosInfo.identifierForVendor;
+
+      loginMethod();
+
+    } else if(Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
+      deviceId = androidInfo.androidId;
+
+      loginMethod();
+    }
+
+  }
+
   loginMethod() async {
 
     var data = {
       "username": "${numberController.text}",
-      "password": "${passwordController.text}"
+      "password": "${passwordController.text}",
+      "device_id": "${deviceId}"
     };
 
     await _authProvider.loginApi(data,'/login');
@@ -266,7 +292,7 @@ class _LoginState extends State<Login> {
                           onPressed: () {
                             if(_formkey.currentState.validate())
                             {
-                              loginMethod();
+                              getDeviceId();
                             }
                           },
                           style: ElevatedButton.styleFrom(

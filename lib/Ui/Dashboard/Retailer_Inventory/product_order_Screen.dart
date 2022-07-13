@@ -1149,10 +1149,10 @@ class _BarcodeOrderState extends State<BarcodeOrder> {
 
       person_mobile = _distributorProvider.distributorData['mobile2'];
 
+
       print("Person Number :" + person_mobile);
       print("Person Name :" + widget.person_name);
 
-      print(FinalProduct);
 
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BarcodeConfirmOrder(
         orderid: "0",

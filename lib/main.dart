@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 //import 'package:colorsoul/components.dart';
 import 'package:colorsoul/Provider/auth_provider.dart';
 import 'package:colorsoul/Provider/distributor_provider.dart';
@@ -9,11 +10,11 @@ import 'package:colorsoul/Provider/product_provider.dart';
 import 'package:colorsoul/Provider/task_provider.dart';
 import 'package:colorsoul/Provider/todo_provider.dart';
 import 'package:colorsoul/Ui/Pin/pin.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'appColors.dart';
 import 'Ui/Login/login.dart';
 
 
@@ -62,7 +63,19 @@ class _splashState extends State<splash> {
 
   AuthProvider _authProvider;
 
+  String deviceId;
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   loginMethod() async {
+
+    if (Platform.isIOS) { // import 'dart:io'
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+
+      deviceId = iosInfo.identifierForVendor;
+    } else if(Platform.isAndroid) {
+
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      deviceId = androidInfo.androidId;
+    }
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     userName = sharedPreferences.get("number");
@@ -70,7 +83,8 @@ class _splashState extends State<splash> {
 
     var data = {
       "username": "$userName",
-      "password": "$password"
+      "password": "$password",
+      "device_id": "$deviceId",
     };
 
     await _authProvider.loginApi(data,'/login');

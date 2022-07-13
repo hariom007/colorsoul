@@ -166,7 +166,7 @@ class _AddDistributersState extends State<AddDistributers> {
       "business_name":businessNameController.text,
       "business_type":"${businessTypeController.text}",
       "gst_no":"${businessGSTController.text}",
-      "address":address,
+      "address":_addressController.text,
       "home_address":_addressNoController.text,
       "landmark":_addressController.text,
       "city":city,
@@ -181,6 +181,7 @@ class _AddDistributersState extends State<AddDistributers> {
       "close_time":"${_closeTimeController.text}",
       "image": imageUrl
     };
+
 
     _distributorProvider.distributorList.clear();
     await _distributorProvider.insertDistributor(data,'/createDistributorRetailer');
