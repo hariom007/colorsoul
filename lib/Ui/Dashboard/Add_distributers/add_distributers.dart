@@ -119,8 +119,12 @@ class _AddDistributersState extends State<AddDistributers> {
   }
 
   List imageUrl = [];
-
+  bool isUploading = false;
   sendImage(File image) async {
+
+    setState(() {
+      isUploading = true;
+    });
 
     Map<String, String> headers = {
       "Accept": "application/json",
@@ -143,9 +147,18 @@ class _AddDistributersState extends State<AddDistributers> {
         if (response.statusCode == 200 && body['st'] == "success") {
           imageUrl.add(body['file']);
 
+          setState(() {
+            isUploading = false;
+          });
+
         }
         else{
           print("Image Upload Error");
+
+          setState(() {
+            isUploading = false;
+          });
+
         }
 
       });
@@ -255,7 +268,22 @@ class _AddDistributersState extends State<AddDistributers> {
                         child: ElevatedButton(
                           onPressed: () {
 
-                            addDistributor();
+                            if(isUploading == false){
+                              addDistributor();
+                            }
+                            else{
+
+                              Fluttertoast.showToast(
+                                  msg: "Images are Uploading Please wait",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.yellow,
+                                  textColor: Colors.black,
+                                  fontSize: 16.0
+                              );
+
+                            }
 
                             /*if(_formkey.currentState.validate()){
 

@@ -80,7 +80,7 @@ class DistributorProvider with ChangeNotifier
         notifyListeners();
 
         Fluttertoast.showToast(
-            msg: "Insert Distributor Error !!",
+            msg: "${value["msg"]}",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

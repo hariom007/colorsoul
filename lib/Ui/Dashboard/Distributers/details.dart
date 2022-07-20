@@ -9,6 +9,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -109,7 +110,6 @@ class _DetailsState extends State<Details> {
 
   FeedBackProvider _feedBackProvider;
 
-
   DistributorProvider _distributorProvider;
 
 
@@ -194,12 +194,9 @@ class _DetailsState extends State<Details> {
     //print("long $longitude");
     //print("lat $latitude");
 
-    getRetailerStatus();
-
   }
 
-  bool isCheckShow = true;
-  bool isCheck = false;
+  bool isShowCheck = true;
   getRetailerCheckIn(String lat,String long,String address) async {
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -214,34 +211,27 @@ class _DetailsState extends State<Details> {
         "in_long": "$long",
         "out_lat": "$lat",
         "out_long": "$long",
-        "type": isCheckShow == true ? "in" : "out"
+        "type": "in"
     };
 
     await _distributorProvider.getRetailerCheckIn(data, "/salesman_log");
-    getRetailerStatus();
+    if(_distributorProvider.isCheckIn == true){
+      setState(() {
+        isShowCheck = false;
+      });
+    }
 
   }
 
-  getRetailerStatus() async {
+  Future<void> getAddressFromLatLong(Position position)async {
+    final coordinates = new Coordinates(position.latitude, position.longitude);
 
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String userId = sharedPreferences.get("userId");
+    var fullAddress = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    var first = fullAddress.first;
 
-    var data = {
-      "user_id": userId,
-    };
+    String finalAddress = "${first.addressLine},${first.locality},${first.subAdminArea},${first.adminArea},${first.postalCode}";
 
-    await _distributorProvider.getRetailerStatus(data, "/salesman_status");
-    if(_distributorProvider.distributorStatus['status'] == "checked_id" && _distributorProvider.distributorStatus['r_id'] == "${widget.id}"){
-      setState(() {
-        isCheck = true;
-      });
-    }
-    else{
-      setState(() {
-        isCheck = false;
-      });
-    }
+    getRetailerCheckIn("${position.latitude}","${position.latitude}","$finalAddress");
 
   }
 
@@ -287,33 +277,43 @@ class _DetailsState extends State<Details> {
           ),
           actions: [
 
+            isShowCheck == false
+                ?
+            SizedBox()
+                :
             _distributorProvider.isCheckLoading == true
                 ?
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(color: AppColors.white),
-                )
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(color: AppColors.white),
+            )
                 :
-            FlutterSwitch(
-              height: 30,
-              showOnOff: true,
-              activeTextColor: AppColors.white,
-              inactiveTextColor: AppColors.white,
-              activeColor: Colors.green,
-              inactiveColor: Colors.red,
-              value: isCheck,
-              onToggle: (val) async {
-
-                setState(() {
-                  isCheckShow = val;
-                });
+            InkWell(
+              onTap: () async {
 
                 Position position = await getGeoLocationPosition();
-                getRetailerCheckIn("${position.latitude}","${position.latitude}","");
+                getAddressFromLatLong(position);
 
               },
-              activeText: "In",
-              inactiveText : "Out",
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 13),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.green
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  child: Center(
+                    child: Text(
+                      "Check In",
+                      style: textStyle.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
 
             Padding(
