@@ -231,7 +231,7 @@ class _DetailsState extends State<Details> {
 
     String finalAddress = "${first.addressLine},${first.locality},${first.subAdminArea},${first.adminArea},${first.postalCode}";
 
-    getRetailerCheckIn("${position.latitude}","${position.latitude}","$finalAddress");
+    getRetailerCheckIn("${position.latitude}","${position.longitude}","$finalAddress");
 
   }
 
