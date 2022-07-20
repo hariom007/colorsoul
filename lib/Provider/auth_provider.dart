@@ -86,4 +86,42 @@ class AuthProvider with ChangeNotifier
 
   }
 
+  bool idSession = false;
+  checkSession(data,url) async
+  {
+
+    idSession = true;
+    notifyListeners();
+
+    await ApiHandler.post(data,url).then((value){
+
+      if(value["st"] == true)
+      {
+        idSession = true;
+        notifyListeners();
+      }
+      else
+      {
+        idSession = false;
+        notifyListeners();
+
+        Fluttertoast.showToast(
+            msg: "Session expired !!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+      isLoaded = true;
+      notifyListeners();
+
+    });
+
+  }
+
 }

@@ -118,14 +118,43 @@ class _splashState extends State<splash> {
   }
 
 
-  String userName,password,userPin,name;
+  String userName,password,userPin,name,userId;
 
   getUserData() async {
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     userName = sharedPreferences.get("pin");
+    userId = sharedPreferences.get("userId");
 
     if(userName != null){
+      checkDeviceId();
+    }
+    else{
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+    }
+
+  }
+
+  checkDeviceId() async {
+
+    if (Platform.isIOS) { // import 'dart:io'
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+
+      deviceId = iosInfo.identifierForVendor;
+    } else if(Platform.isAndroid) {
+
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      deviceId = androidInfo.androidId;
+    }
+
+    var data = {
+      "id": "$userId",
+      "device_id": "$deviceId"
+    };
+
+    await _authProvider.checkSession(data,'/device_auth');
+
+    if(_authProvider.idSession == true){
       loginMethod();
     }
     else{
