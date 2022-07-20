@@ -51,7 +51,7 @@ class _DetailsState extends State<Details> {
   Future<Position> getGeoLocationPosition() async {
 
     setState(() {
-      _distributorProvider.isCheckLoading = true;
+     _distributorProvider.isCheckLoading = true;
     });
 
     bool serviceEnabled;
@@ -197,7 +197,7 @@ class _DetailsState extends State<Details> {
   }
 
   bool isShowCheck = true;
-  getRetailerCheckIn(String lat,String long,String address) async {
+  getRetailerCheckIn(String lat,String long,String address,String city,String state) async {
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String userId = sharedPreferences.get("userId");
@@ -207,6 +207,8 @@ class _DetailsState extends State<Details> {
         "user_id": userId,
         "name": "$distributor_name",
         "address": "$address",
+        "city":"$city",
+        "state":"$state",
         "in_lat": "$lat",
         "in_long": "$long",
         "out_lat": "$lat",
@@ -231,7 +233,8 @@ class _DetailsState extends State<Details> {
 
     String finalAddress = "${first.addressLine},${first.locality},${first.subAdminArea},${first.adminArea},${first.postalCode}";
 
-    getRetailerCheckIn("${position.latitude}","${position.longitude}","$finalAddress");
+    //print(first.adminArea);
+   getRetailerCheckIn("${position.latitude}","${position.longitude}","$finalAddress","${first.subAdminArea}","${first.adminArea}");
 
   }
 
